@@ -166,3 +166,107 @@ DELIMITER ;
 CREATE INDEX idx_venta_folio ON venta(folio_nota);
 CREATE INDEX idx_producto_corte ON producto(tipo_corte);
 CREATE INDEX idx_distribucion_estado ON distribution(estado_entrega);
+
+-- 1. EMPLEADOS
+INSERT INTO empleado (curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, contrasenia, rol) VALUES
+('RAMA980101HDFR01', 'Alexis', 'Jair', 'Ramírez', 'González', 'Masculino', '5551234567', 'alexis_admin', '$2b$10$HASHED_PASSWORD_HERE', 'ADMINISTRADOR'),
+('LOPD990202HDFR02', 'David', 'Samuel', 'López', 'Valencia', 'Masculino', '5559876543', 'david_dist', '$2b$10$HASHED_PASSWORD_HERE', 'DISTRIBUCION'),
+('HERP000303MDFR03', 'Paula', NULL, 'Hernández', 'Hernández', 'Femenino', '5554567890', 'paula_almacen', '$2b$10$HASHED_PASSWORD_HERE', 'ALMACEN'),
+('LOPM010404MDFR04', 'Salma', 'Michelle', 'López', 'Martínez', 'Femenino', '5553332211', 'salma_ventas', '$2b$10$HASHED_PASSWORD_HERE', 'VENTAS');
+
+-- 2. CLIENTES
+INSERT INTO cliente (nombre_razonsocial, telefono, calle, colonia, codigo_postal, ciudad) VALUES
+('Carnicería El Chicharito / Juan N.', '5551112233', 'Av. Insurgentes 123', 'Centro', '06000', 'Ciudad de México'),
+('Restaurante La Cerdita / Ana Ruiz', '5554445566', 'Calle Reforma 45', 'Juárez', '06600', 'Ciudad de México'),
+('Público General / Venta Mostrador', '5550000000', 'N/A', 'N/A', '00000', 'N/A');
+
+-- 3. PRODUCTOS
+INSERT INTO producto (nombre_producto, tipo_corte, precio_kg, estado) VALUES
+('Tocino Ahumado Rebanado', 'Tocino', 180.00, TRUE),
+('Tocino Tira Especial', 'Tocino', 165.50, TRUE),
+('Lomo de Cerdo Fresh', 'Lomo', 140.00, TRUE),
+('Costilla para BBQ', 'Costilla', 155.00, TRUE),
+('Chicharrón Prensadito', 'Chicharrón', 120.00, TRUE);
+
+-- 4. INVENTARIO
+INSERT INTO inventario (id_producto, cantidad_kg) VALUES
+(1, 50.000),  
+(2, 30.000),  
+(3, 100.000), 
+(4, 40.000),  
+(5, 25.000);  
+
+-- 5. VENTA EN MOSTRADOR
+INSERT INTO venta (folio_nota, id_cliente, id_empleado_ven, metodo_pago, total_venta, estado_venta) VALUES
+(1001, 3, 4, 'EFECTIVO', 605.00, 'COMPLETADA');
+
+-- Items de la nota 
+INSERT INTO ticket (id_venta, id_producto, cantidad_kg, precio_kg, subtotal) VALUES
+(1, 1, 2.500, 180.00, 450.00), 
+(1, 4, 1.000, 155.00, 155.00); 
+
+-- 6. VENTA CON PEDIDO Y DISTRIBUCIÓN
+INSERT INTO venta (folio_nota, id_cliente, id_empleado_ven, metodo_pago, total_venta, estado_venta) VALUES
+(1002, 1, 4, 'TRANSFERENCIA', 900.00, 'COMPLETADA');
+
+INSERT INTO ticket (id_venta, id_producto, cantidad_kg, precio_kg, subtotal) VALUES
+(2, 1, 5.000, 180.00, 900.00);
+
+-- Registra el Pedido
+INSERT INTO pedido (id_venta, id_empleado_rep, direccion_entrega, estado_preparacion) VALUES
+(2, 2, 'Av. Insurgentes 123, Col. Centro', 'PREPARADO');
+
+-- Registrando la Distribución del Pedido
+INSERT INTO distribution (id_pedido, transporte, estado_entrega) VALUES
+(1, 'Motocicleta Izuka 150', 'EN_CAMINO');
+
+
+-- CONSULTAS
+
+SELECT id_empleado, nombre, seg_nombre, apellido_p, apellido_m, rol, usuario 
+FROM empleado;
+
+SELECT 
+    v.folio_nota,
+    v.fecha_venta,
+    c.nombre_razonsocial AS cliente,
+    CONCAT(e.nombre, ' ', e.apellido_p) AS atendio_empleado,
+    v.metodo_pago,
+    v.total_venta,
+    v.estado_venta
+FROM venta v
+JOIN cliente c ON v.id_cliente = c.id_cliente
+JOIN empleado e ON v.id_empleado_ven = e.id_empleado;
+
+SELECT 
+    v.folio_nota,
+    p.nombre_producto,
+    t.cantidad_kg,
+    t.precio_kg,
+    t.subtotal
+FROM ticket t
+JOIN venta v ON t.id_venta = v.id_venta
+JOIN producto p ON t.id_producto = p.id_producto;
+
+SELECT 
+    p.id_producto,
+    p.nombre_producto,
+    p.tipo_corte,
+    p.precio_kg,
+    i.cantidad_kg AS stock_restante_kg,
+    i.fecha_actualizacion
+FROM inventario i
+JOIN producto p ON i.id_producto = p.id_producto;
+
+SELECT 
+    p.id_pedido,
+    v.folio_nota,
+    CONCAT(e.nombre, ' ', e.apellido_p) AS repartidor_asignado,
+    p.direccion_entrega,
+    p.estado_preparacion,
+    d.transporte,
+    d.estado_entrega
+FROM pedido p
+JOIN venta v ON p.id_venta = v.id_venta
+LEFT JOIN empleado e ON p.id_empleado_rep = e.id_empleado
+LEFT JOIN distribution d ON p.id_pedido = d.id_pedido;
