@@ -54,9 +54,9 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             return; // Evita continuar con una identidad no autenticada.
         } // Finaliza la comprobación de credenciales.
 
-        // Deniega una cuenta inactiva después de comprobar la contraseña válida.
-        if (array_key_exists('estado', $empleadoEncontrado) && (int) $empleadoEncontrado['estado'] !== 1) { // Rechaza estados inactivos cuando la columna existe en el esquema.
-            $this->mostrarLogin('La cuenta está inactiva o bloqueada.', 'danger'); // Expone claramente que el acceso fue denegado por estado.
+        // Deniega la cuenta si su estado no confirma explícitamente que está activa.
+        if ((int) ($empleadoEncontrado['estado'] ?? 0) !== 1) { // Trata cero y la ausencia inesperada del estado como desactivados por seguridad.
+            $this->mostrarLogin('Cuenta desactivada. Contacte al administrador.', 'danger'); // Presenta el mensaje controlado requerido para cuentas inactivas.
             return; // No crea sesión para una cuenta inactiva.
         } // Finaliza la validación de estado de la cuenta.
 

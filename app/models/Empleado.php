@@ -23,9 +23,9 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         // Obtiene los nombres de columna informados por el servidor MariaDB o MySQL.
         $columnasExistentes = array_column($consultaColumnas->fetchAll(), 'Field'); // No obtiene ni imprime datos de empleados.
         // Define las columnas mínimas conocidas para identificar y validar una cuenta.
-        $columnasConsulta = ['id_empleado', 'nombre', 'apellido_p', 'usuario', 'contrasenia', 'rol']; // Mantiene los campos obligatorios comunes al diccionario y la tabla existente.
+        $columnasConsulta = ['id_empleado', 'nombre', 'apellido_p', 'usuario', 'contrasenia', 'rol', 'estado']; // Incluye el estado requerido para validar la activación de la cuenta.
         // Define los campos adicionales documentados que pueden faltar en el esquema actualmente desplegado.
-        $columnasOpcionales = ['curp', 'seg_nombre', 'apellido_m', 'genero', 'telefono', 'estado', 'es_temporal']; // Permite ambas variantes del esquema sin alterar la base.
+        $columnasOpcionales = ['curp', 'seg_nombre', 'apellido_m', 'genero', 'telefono', 'es_temporal']; // Mantiene opcionales solo los campos que pueden faltar en el esquema.
         // Añade a la consulta solo campos opcionales que realmente existan en empleado.
         foreach ($columnasOpcionales as $columnaOpcional) { // Recorre una lista fija de identificadores confiables.
             // Comprueba el nombre de columna contra los metadatos obtenidos del servidor.
