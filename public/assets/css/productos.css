@@ -1,0 +1,142 @@
+/* Estilos específicos para el módulo unificado de productos e inventarios. */
+/* Define la estética consistente con la guía de diseño visual y las pantallas Figma. */
+
+/* Limita el ancho del encabezado de la página de productos en pantallas grandes. */
+.encabezado-productos {
+    max-width: 1000px;
+    /* Ajusta el contenido principal a una anchura cómoda de lectura. */
+}
+
+/* Finaliza el encabezado de productos. */
+
+/* Estiliza la tarjeta de formulario de productos con borde suave y sombra sutil. */
+.tarjeta-producto {
+    border: 1px solid var(--empleados-borde);
+    /* Aplica el tono beige cálido del sistema. */
+    border-radius: 0.75rem;
+    /* Redondea las esquinas con el radio estándar del proyecto. */
+    background-color: var(--empleados-superficie);
+    /* Emplea superficie blanca pura para las tarjetas. */
+    box-shadow: 0 0.25rem 1.25rem rgba(43, 47, 39, 0.04);
+    /* Aplica una elevación suave sin saturar el lienzo. */
+}
+
+/* Finaliza la tarjeta de formulario de productos. */
+
+/* Define la altura mínima y los bordes para los campos y selectores de productos. */
+.tarjeta-producto .form-control,
+.tarjeta-producto .form-select {
+    min-height: 2.75rem;
+    /* Facilita la interacción táctil en dispositivos móviles. */
+    border-color: var(--empleados-borde);
+    /* Integra los controles con el color beige del diseño. */
+}
+
+/* Finaliza las dimensiones de controles del formulario. */
+
+/* Estiliza el estado de foco en controles activos con el tono verde de acento. */
+.tarjeta-producto .form-control:focus,
+.tarjeta-producto .form-select:focus {
+    border-color: #9aa990;
+    /* Resalta el contorno con el tono verde cálido. */
+    box-shadow: 0 0 0 0.2rem rgba(109, 127, 105, 0.16);
+    /* Dibuja un aro de resplandor sutil para indicar foco del usuario. */
+}
+
+/* Finaliza el estado de foco de controles. */
+
+/* Estiliza el texto adicional del grupo de entrada para precios y unidades. */
+.tarjeta-producto .input-group-text {
+    border-color: var(--empleados-borde);
+    /* Aplica el borde suave al prefijo o sufijo. */
+    background-color: #f7f5f0;
+    /* Fondo neutro suave que armoniza con la paleta. */
+    color: var(--empleados-secundario);
+    /* Texto secundario de buen contraste. */
+    font-weight: 600;
+    /* Enfatiza el símbolo monetario y de unidad. */
+}
+
+/* Finaliza el estilo de prefijos de grupos de entrada. */
+
+/* Diseña el contenedor destacado para la sección especial de almacén e inventario. */
+.seccion-almacen {
+    padding: 1.25rem;
+    /* Separa los controles del borde del contenedor. */
+    border: 1px solid #e0d5c3;
+    /* Borde destacado ligeramente más cálido. */
+    border-radius: 0.5rem;
+    /* Esquinas suaves para el bloque de almacén. */
+    background-color: #fbf9f4;
+    /* Fondo marfil suave que destaca sobre la tarjeta blanca. */
+}
+
+/* Finaliza el contenedor de la sección de almacén. */
+
+/* Diseña la insignia de la sección de almacén para jerarquía visual. */
+.insignia-almacen {
+    background-color: #e9eee5;
+    /* Fondo verde claro distintivo. */
+    color: var(--empleados-acento);
+    /* Texto verde acento con alto contraste. */
+    font-weight: 600;
+    /* Enfatiza el rótulo de almacén. */
+    font-size: 0.75rem;
+    /* Tamaño compacto adecuado para badges de sección. */
+    padding: 0.35rem 0.65rem;
+    /* Proporciona separación interna equilibrada. */
+}
+
+/* Finaliza la insignia de almacén. */
+
+/* Ajusta el interruptor de estado activo/inactivo para que tenga mayor presencia táctil. */
+.interruptor-estado .form-check-input {
+    width: 3rem;
+    /* Amplía el ancho del interruptor deslizable. */
+    height: 1.5rem;
+    /* Amplía la altura para fácil interacción. */
+    cursor: pointer;
+    /* Cambia el cursor a puntero para indicar interactividad. */
+}
+
+/* Finaliza el interruptor de estado. */
+
+/* Define la tarjeta interactiva para selección de producto en el buscador. */
+.item-catalogo-buscador {
+    cursor: pointer;
+    /* Indica que el elemento es seleccionable con clic. */
+    transition: background-color 0.15s ease-in-out;
+    /* Suaviza el cambio de color al pasar el cursor. */
+    border-bottom: 1px solid #f0e9df;
+    /* Separa los elementos del listado. */
+}
+
+/* Finaliza el estilo base del ítem de catálogo. */
+
+/* Efecto hover al pasar el cursor sobre un producto en el buscador. */
+.item-catalogo-buscador:hover {
+    background-color: #f6f2ea;
+    /* Resalta la fila con un fondo cálido sutil. */
+}
+
+/* Finaliza el efecto hover de ítem de catálogo. */
+
+/* Fila activa del producto actualmente seleccionado para edición. */
+.item-catalogo-buscador.seleccionado {
+    background-color: #edf2eb;
+    /* Fondo verde muy suave indicativo de selección. */
+    border-left: 3px solid var(--empleados-acento);
+    /* Franja verde lateral que confirma el producto activo. */
+}
+
+/* Finaliza el estilo de producto seleccionado. */
+
+/* Optimización para pantallas móviles compactas. */
+@media (max-width: 575.98px) {
+    .tarjeta-producto .card-body {
+        padding: 1.15rem;
+        /* Reduce los márgenes interiores en teléfonos estrechos. */
+    }
+}
+
+/* Finaliza la adaptación móvil de productos. */

@@ -23,6 +23,7 @@ $accionSolicitada = isset($_GET['a']) ? (string) $_GET['a'] : ''; // Evita depen
 // Define solo las combinaciones permitidas de controlador y acción en la URL.
 $rutasPorControlador = [ // Evita despachar clases o métodos arbitrarios desde parámetros HTTP.
     'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro', 'perfil' => 'empleados-perfil'], // Mantiene disponibles las acciones de empleados y perfil.
+    'producto' => ['nuevo' => 'productos-nuevo', 'editar' => 'productos-editar'], // Registra las acciones del módulo de catálogo e inventarios.
     'auth' => ['logout' => 'cerrar-sesion'], // Convierte el enlace de salida en una acción interna permitida.
 ]; // Finaliza el mapa permitido de alias MVC.
 // Resuelve los alias c=...&a=... o usa la ruta accion existente como alternativa.
@@ -155,6 +156,22 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
                 $controladorAuth->mostrarCambioTemporal(); // Renderiza la vista de actualización de contraseña.
             } // Finaliza la selección del método HTTP para el cambio temporal.
             break; // Impide que la ejecución continúe en otra acción.
+
+        case 'productos-nuevo': // Atiende el formulario protegido de alta de producto e inventario.
+            require_once dirname(__DIR__) . '/app/models/Inventario.php'; // Carga el modelo de inventario requerido por ProductoController.
+            require_once dirname(__DIR__) . '/app/models/Producto.php'; // Carga el modelo transaccional de productos.
+            require_once dirname(__DIR__) . '/app/controllers/ProductoController.php'; // Carga el controlador con restricción ALMACEN o ADMINISTRADOR.
+            $controladorProducto = new ProductoController(new Producto($conexion), new Inventario($conexion)); // Inyecta ambos modelos con la conexión PDO compartida.
+            $controladorProducto->nuevo(); // Presenta el formulario o procesa el alta transaccional.
+            break; // Finaliza el enrutamiento del registro de producto.
+
+        case 'productos-editar': // Atiende el buscador y formulario integrado de edición de productos.
+            require_once dirname(__DIR__) . '/app/models/Inventario.php'; // Carga el modelo de inventario necesario.
+            require_once dirname(__DIR__) . '/app/models/Producto.php'; // Carga el modelo transaccional de productos.
+            require_once dirname(__DIR__) . '/app/controllers/ProductoController.php'; // Carga el controlador con restricción de rol.
+            $controladorProducto = new ProductoController(new Producto($conexion), new Inventario($conexion)); // Inyecta las dependencias con la conexión activa.
+            $controladorProducto->editar(); // Busca el producto o procesa la actualización transaccional.
+            break; // Finaliza el enrutamiento de la edición de producto.
 
         default: // Rechaza cualquier acción no incluida en esta sección del proyecto.
             http_response_code(404); // Informa que la ruta solicitada no está implementada.
