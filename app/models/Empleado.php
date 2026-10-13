@@ -18,8 +18,26 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
     // Busca por usuario y devuelve las columnas necesarias para autenticación o null si no existe.
     public function buscarPorUsuario(string $usuario): ?array // Tipifica el usuario y el resultado opcional de la consulta.
     { // Inicia la búsqueda de un empleado por su nombre de usuario.
-        // Prepara una consulta limitada a las columnas reales requeridas para identificar la cuenta.
-        $consulta = $this->db->prepare('SELECT id_empleado, curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, contrasenia, rol, estado, es_temporal FROM empleado WHERE usuario = :usuario LIMIT 1'); // Evita interpolar el valor recibido en SQL.
+        // Consulta las columnas existentes para adaptarse al esquema real sin modificarlo.
+        $consultaColumnas = $this->db->query('SHOW COLUMNS FROM empleado'); // Lee solo metadatos de la tabla para detectar columnas opcionales.
+        // Obtiene los nombres de columna informados por el servidor MariaDB o MySQL.
+        $columnasExistentes = array_column($consultaColumnas->fetchAll(), 'Field'); // No obtiene ni imprime datos de empleados.
+        // Define las columnas mínimas conocidas para identificar y validar una cuenta.
+        $columnasConsulta = ['id_empleado', 'nombre', 'apellido_p', 'usuario', 'contrasenia', 'rol']; // Mantiene los campos obligatorios comunes al diccionario y la tabla existente.
+        // Define los campos adicionales documentados que pueden faltar en el esquema actualmente desplegado.
+        $columnasOpcionales = ['curp', 'seg_nombre', 'apellido_m', 'genero', 'telefono', 'estado', 'es_temporal']; // Permite ambas variantes del esquema sin alterar la base.
+        // Añade a la consulta solo campos opcionales que realmente existan en empleado.
+        foreach ($columnasOpcionales as $columnaOpcional) { // Recorre una lista fija de identificadores confiables.
+            // Comprueba el nombre de columna contra los metadatos obtenidos del servidor.
+            if (in_array($columnaOpcional, $columnasExistentes, true)) { // Evita crear consultas contra columnas inexistentes.
+                // Agrega a la selección la columna válida detectada en el esquema.
+                $columnasConsulta[] = $columnaOpcional; // Usa únicamente identificadores predefinidos.
+            } // Finaliza la comprobación de existencia de la columna opcional.
+        } // Finaliza la detección de columnas opcionales.
+        // Construye la selección usando exclusivamente nombres incluidos en las listas locales.
+        $columnasSql = implode(', ', $columnasConsulta); // Los valores externos nunca participan en los identificadores SQL.
+        // Prepara la búsqueda parametrizada con el conjunto de columnas que soporta el esquema activo.
+        $consulta = $this->db->prepare("SELECT {$columnasSql} FROM empleado WHERE usuario = :usuario LIMIT 1"); // Evita errores por columnas faltantes sin cambiar tablas.
         // Asocia el usuario recibido al parámetro nombrado de la consulta preparada.
         $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR); // Envía el dato como texto al controlador PDO.
         // Ejecuta la búsqueda parametrizada en la tabla empleado existente.

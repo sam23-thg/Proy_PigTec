@@ -33,15 +33,21 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         $usuario = trim((string) ($datos['usuario'] ?? '')); // Normaliza el identificador para buscarlo.
         // Conserva exactamente la contraseña recibida para que password_verify pueda validarla.
         $contrasenia = (string) ($datos['contrasenia'] ?? ''); // Evita alterar espacios que formen parte de la credencial.
-
         // Deniega las solicitudes incompletas también cuando el navegador no ejecutó JavaScript.
         if ($usuario === '' || $contrasenia === '') { // Repite en servidor las reglas de obligatoriedad del formulario.
             $this->mostrarLogin('Usuario o contraseña incorrectos', 'danger'); // Usa un mensaje uniforme para datos inválidos.
             return; // Termina el procesamiento sin consultar la base de datos.
         } // Finaliza la validación de campos obligatorios.
 
-        // Busca la cuenta por el nombre de usuario mediante la consulta parametrizada del modelo.
-        $empleadoEncontrado = $this->empleado->buscarPorUsuario($usuario); // Obtiene null cuando no existe una cuenta coincidente.
+        // Busca la cuenta por usuario y presenta un mensaje técnico controlado ante fallos de PDO.
+        try { // Aísla errores de consulta para no confundirlos con una contraseña incorrecta.
+            $empleadoEncontrado = $this->empleado->buscarPorUsuario($usuario); // Ejecuta la búsqueda parametrizada sobre el esquema activo.
+        } catch (Throwable $excepcion) { // Captura errores de conexión y consulta sin revelar detalles al navegador.
+            error_log('Falló la consulta de una cuenta durante el inicio de sesión.'); // Registra información genérica sin credenciales.
+            http_response_code(503); // Informa que el servicio de autenticación no está disponible por un fallo técnico.
+            $this->mostrarLogin('No fue posible conectar con el sistema. Inténtalo nuevamente más tarde.', 'warning'); // Expone un error de servicio, no detalles del servidor.
+            return; // Finaliza el proceso sin crear sesión ni aceptar la contraseña.
+        } // Finaliza el manejo controlado de errores PDO.
         // Comprueba la existencia y el hash antes de crear cualquier dato de sesión.
         if ($empleadoEncontrado === null || !password_verify($contrasenia, (string) $empleadoEncontrado['contrasenia'])) { // Rechaza usuario inexistente o credencial incorrecta.
             $this->mostrarLogin('Usuario o contraseña incorrectos', 'danger'); // No revela cuál de los dos datos falló.
@@ -49,7 +55,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         } // Finaliza la comprobación de credenciales.
 
         // Deniega una cuenta inactiva después de comprobar la contraseña válida.
-        if ((int) ($empleadoEncontrado['estado'] ?? 0) !== 1) { // Interpreta el valor booleano almacenado por MariaDB o MySQL.
+        if (array_key_exists('estado', $empleadoEncontrado) && (int) $empleadoEncontrado['estado'] !== 1) { // Rechaza estados inactivos cuando la columna existe en el esquema.
             $this->mostrarLogin('La cuenta está inactiva o bloqueada.', 'danger'); // Expone claramente que el acceso fue denegado por estado.
             return; // No crea sesión para una cuenta inactiva.
         } // Finaliza la validación de estado de la cuenta.
@@ -64,7 +70,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             'permisos' => [], // Mantiene una lista segura porque el esquema documentado no define tabla ni columnas de permisos.
         ]; // Finaliza la asignación de la identidad de sesión.
         // Conserva si la cuenta requiere renovar su contraseña antes de navegar.
-        $_SESSION['requiereCambioTemporal'] = (int) ($empleadoEncontrado['es_temporal'] ?? 0) === 1; // Lee la bandera es_temporal documentada para empleado.
+        $_SESSION['requiereCambioTemporal'] = array_key_exists('es_temporal', $empleadoEncontrado) && (int) $empleadoEncontrado['es_temporal'] === 1; // Aplica el flujo temporal cuando la columna existe y está activada.
         // Prepara una notificación que se mostrará después de redirigir al destino interno.
         $_SESSION['mensajeAutenticacion'] = 'Inicio de sesión correcto.'; // Evita enviar mensajes mediante parámetros manipulables de la URL.
 
