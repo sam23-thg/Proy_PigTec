@@ -78,7 +78,7 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
     require_once dirname(__DIR__) . '/app/controllers/AuthController.php'; // Carga el controlador después de disponer de sus dependencias.
     $controladorAuth = new AuthController(new Empleado($conexion)); // Inyecta el modelo con la conexión PDO única.
 
-    // Distribuye las solicitudes únicamente entre las acciones de la Sección 3.
+    // Distribuye las solicitudes recibidas entre autenticación y lista administrativa.
     switch ($accion) { // Selecciona el flujo según la acción permitida.
         case 'login': // Atiende el formulario de inicio de sesión.
             if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') { // Procesa credenciales únicamente cuando se envía el formulario.
@@ -87,6 +87,12 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
                 $controladorAuth->mostrarLogin(); // Renderiza la vista del formulario de acceso.
             } // Finaliza la selección del método HTTP para el acceso.
             break; // Impide que la ejecución continúe en otra acción.
+
+        case 'empleados-lista': // Atiende la pantalla protegida de lista de empleados.
+            require_once dirname(__DIR__) . '/app/controllers/EmpleadoController.php'; // Carga el controlador que verifica la sesión y el rol administrador.
+            $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Inyecta el modelo y la conexión PDO ya preparada.
+            $controladorEmpleado->lista(); // Obtiene los datos con listarTodos y renderiza la vista de empleados.
+            break; // Finaliza el enrutamiento de la pantalla de usuarios.
 
         case 'cambiar-temporal': // Atiende la pantalla obligatoria para renovar una contraseña temporal.
             if ($requiereCambioTemporal !== true) { // Impide cambiar una contraseña que no esté marcada temporal.

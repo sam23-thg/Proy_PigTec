@@ -113,4 +113,15 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         // Devuelve las filas asociativas obtenidas o una colección vacía si no hay empleados.
         return $consulta->fetchAll(); // Conserva el modo FETCH_ASSOC configurado en la conexión PDO.
     } // Finaliza la consulta del listado de empleados.
+
+    // Recupera las columnas visibles para la tabla administrativa sin exponer contrasenias.
+    public function listarTodos(): array // Devuelve los datos básicos de cada empleado en formato asociativo.
+    { // Inicia la consulta que alimenta la vista de lista de empleados.
+        // Prepara una consulta que excluye contrasenia y compone el nombre usando los campos reales del esquema.
+        $consulta = $this->db->prepare("SELECT id_empleado, CONCAT_WS(' ', nombre, NULLIF(seg_nombre, ''), apellido_p, NULLIF(apellido_m, '')) AS nombre_completo, usuario, rol, telefono FROM empleado ORDER BY id_empleado DESC"); // Omite la contraseña y presenta primero los registros recientes.
+        // Ejecuta la consulta preparada, aunque no reciba filtros externos.
+        $consulta->execute(); // Conserva el uso de PDO preparado solicitado para esta operación.
+        // Devuelve las filas de forma asociativa para que la vista escape cada valor al renderizarlo.
+        return $consulta->fetchAll(); // Usa el modo asociativo configurado en la conexión PDO.
+    } // Finaliza la consulta de todos los empleados.
 } // Finaliza la definición de la clase Empleado.

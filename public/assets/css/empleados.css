@@ -1,0 +1,297 @@
+/* Define los tonos cálidos extraídos de la pantalla administrativa del diseño Figma. */
+:root {
+    --empleados-fondo: #f6f0e6;
+    /* Reproduce el fondo marfil de la pantalla HU4. */
+    --empleados-superficie: #ffffff;
+    /* Mantiene las tarjetas y el menú en blanco. */
+    --empleados-borde: #e5dacb;
+    /* Usa el borde beige visible entre paneles. */
+    --empleados-texto: #1f2a26;
+    /* Mantiene un tono verde-neutro oscuro para títulos. */
+    --empleados-secundario: #5c6661;
+    /* Atenúa títulos auxiliares y metadatos. */
+    --empleados-acento: #6d7f69;
+    /* Destaca la navegación activa con un verde suave. */
+}
+
+/* Finaliza las variables cromáticas de la lista. */
+
+/* Aplica el fondo, el texto y la tipografía general a la pantalla administrativa. */
+.pagina-empleados {
+    min-width: 320px;
+    /* Evita que la tabla colapse por debajo de un móvil estrecho. */
+    min-height: 100vh;
+    /* Extiende el fondo hasta el borde inferior del navegador. */
+    background-color: var(--empleados-fondo);
+    /* Reproduce la superficie cálida indicada en Figma. */
+    color: var(--empleados-texto);
+    /* Mantiene contraste de lectura para el contenido. */
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Usa una tipografía de sistema limpia sin dependencia adicional. */
+}
+
+/* Finaliza el estilo general de la página. */
+
+/* Fija el menú lateral en el ancho de 260px medido en el marco Figma. */
+.barra-empleados {
+    flex: 0 0 260px;
+    /* Mantiene constante el ancho del menú en escritorio. */
+    width: 260px;
+    /* Coincide con la dimensión del panel lateral del diseño. */
+    min-height: 100vh;
+    /* Extiende el menú por toda la altura de la pantalla. */
+    border-right: 1px solid var(--empleados-borde);
+    /* Separa el menú del contenido con el borde beige. */
+    background-color: var(--empleados-superficie);
+    /* Mantiene el área lateral blanca como en Figma. */
+}
+
+/* Finaliza las dimensiones y superficie de la barra lateral. */
+
+/* Estiliza la marca lateral para que conserve el color de texto del diseño. */
+.marca-empleados {
+    min-height: 56px;
+    /* Mantiene la altura del bloque de marca Figma. */
+    color: var(--empleados-texto);
+    /* Evita el color azul predeterminado de los enlaces. */
+}
+
+/* Finaliza los estilos del enlace de marca. */
+
+/* Proporciona una base redonda para la inicial de la marca cuando el recurso gráfico no está disponible en el repositorio. */
+.distintivo-marca {
+    flex: 0 0 56px;
+    /* Impide que la insignia se reduzca dentro de la fila. */
+    width: 56px;
+    /* Coincide con el tamaño del círculo de marca del marco Figma. */
+    height: 56px;
+    /* Conserva la forma circular del distintivo. */
+    background-color: #e9eee5;
+    /* Usa un verde grisáceo suave complementario del panel marfil. */
+    color: var(--empleados-acento);
+    /* Destaca la inicial sin alterar la paleta general. */
+    font-size: 1.5rem;
+    /* Hace legible la inicial dentro de la insignia. */
+}
+
+/* Finaliza la insignia textual de marca. */
+
+/* Reduce el contraste del rótulo de categoría del menú lateral. */
+.titulo-navegacion {
+    color: var(--empleados-secundario);
+    /* Usa el tono secundario documentado por el diseño. */
+    letter-spacing: 0.06em;
+    /* Separa levemente las letras del rótulo superior. */
+}
+
+/* Finaliza la etiqueta de grupo de navegación. */
+
+/* Mantiene el color de los enlaces laterales no activos. */
+.enlace-navegacion {
+    color: var(--empleados-secundario);
+    /* Distingue el texto inactivo de la opción seleccionada. */
+    font-size: 0.9rem;
+    /* Ajusta la lectura del menú compacto. */
+}
+
+/* Finaliza el estilo base de los enlaces de navegación. */
+
+/* Resalta la opción activa sin perder el contraste sobre el fondo claro. */
+.enlace-navegacion.activo {
+    background-color: #edf1e9;
+    /* Aplica un relleno verde muy pálido para el estado activo. */
+    color: #344b39;
+    /* Refuerza el contraste del enlace seleccionado. */
+    font-weight: 600;
+    /* Señala la página actual dentro del menú. */
+}
+
+/* Finaliza el estilo activo de navegación. */
+
+/* Presenta el separador superior de la identidad de sesión del menú. */
+.sesion-empleado {
+    min-height: 51px;
+    /* Coincide con la altura del bloque de sesión del diseño. */
+    border-top: 1px solid var(--empleados-borde);
+    /* Separa la identidad del resto del menú. */
+}
+
+/* Finaliza el contenedor de sesión lateral. */
+
+/* Dibuja el avatar textual compacto del administrador actual. */
+.avatar-empleado {
+    flex: 0 0 36px;
+    /* Mantiene el tamaño circular aunque el nombre sea largo. */
+    width: 36px;
+    /* Coincide con las dimensiones del avatar Figma. */
+    height: 36px;
+    /* Conserva la proporción cuadrada previa al redondeo. */
+    background-color: #e9eee5;
+    /* Asocia el avatar a la paleta suave de la marca. */
+    color: #344b39;
+    /* Mantiene legibles las iniciales. */
+    font-size: 0.75rem;
+    /* Ajusta las iniciales al tamaño del círculo. */
+}
+
+/* Finaliza los estilos del avatar de administrador. */
+
+/* Limita la superficie de trabajo al ancho disponible sin ampliar su contenido. */
+.contenido-empleados {
+    min-width: 0;
+    /* Permite que la tabla responda a anchos reducidos. */
+    background-color: var(--empleados-fondo);
+    /* Mantiene continuidad con el lienzo Figma. */
+}
+
+/* Finaliza el panel principal de empleados. */
+
+/* Aplica los colores de lectura secundarios a la ruta de navegación superior. */
+.miga-pan {
+    color: var(--empleados-secundario);
+    /* Separa la ruta de navegación del título principal. */
+}
+
+/* Finaliza el estilo de la ruta de navegación. */
+
+/* Delimita la tarjeta de datos con el trazo beige del sistema visual. */
+.tarjeta-lista {
+    border: 1px solid var(--empleados-borde);
+    /* Reproduce el contorno de las tarjetas de Figma. */
+    border-radius: 0.75rem;
+    /* Mantiene esquinas discretamente redondeadas. */
+    background-color: var(--empleados-superficie);
+    /* Da contraste a la tabla sobre el fondo marfil. */
+    box-shadow: 0 0.25rem 1.25rem rgba(43, 47, 39, 0.04);
+    /* Añade profundidad suave sin apartarse del diseño. */
+}
+
+/* Finaliza la tarjeta de usuarios. */
+
+/* Limita la anchura del campo de búsqueda en pantallas grandes. */
+.busqueda-empleados {
+    width: min(100%, 390px);
+    /* Conserva una caja compacta y permite ocupar todo el ancho en móvil. */
+}
+
+/* Finaliza el ancho del buscador. */
+
+/* Ajusta el tono del icono de búsqueda para que coincida con los controles neutros. */
+.busqueda-empleados .input-group-text {
+    border-color: var(--empleados-borde);
+    /* Unifica el contorno del icono y del campo. */
+    background-color: #fbfaf7;
+    /* Mantiene el extremo del input en una superficie clara. */
+    color: var(--empleados-secundario);
+    /* Usa contraste secundario para el símbolo. */
+}
+
+/* Finaliza el estilo del extremo de búsqueda. */
+
+/* Ajusta el borde del control de texto al tono cálido del marco. */
+.busqueda-empleados .form-control {
+    border-color: var(--empleados-borde);
+    /* Integra el campo con la tarjeta de la tabla. */
+}
+
+/* Finaliza el campo de búsqueda. */
+
+/* Define una superficie discreta para el contador de usuarios. */
+.etiqueta-total {
+    background-color: #edf1e9;
+    /* Diferencia el contador mediante un relleno verde tenue. */
+    color: #344b39;
+    /* Conserva alto contraste para la cantidad. */
+    font-weight: 600;
+    /* Refuerza la lectura del indicador numérico. */
+}
+
+/* Finaliza el contador de usuarios. */
+
+/* Quita el borde superior predeterminado de la tabla y mantiene separación entre filas. */
+.tabla-empleados {
+    --bs-table-bg: transparent;
+    /* Deja visible el fondo blanco de la tarjeta. */
+    --bs-table-border-color: #eee8df;
+    /* Usa divisores suaves entre los registros. */
+    font-size: 0.9rem;
+    /* Mantiene densidad legible para una tabla administrativa. */
+}
+
+/* Finaliza los ajustes generales de tabla. */
+
+/* Destaca la fila de encabezados con el tono de texto secundario. */
+.tabla-empleados thead th {
+    padding-top: 0.85rem;
+    /* Da espacio superior a los títulos de columna. */
+    padding-bottom: 0.85rem;
+    /* Mantiene altura pareja en la cabecera. */
+    color: var(--empleados-secundario);
+    /* Reduce competencia visual frente a los datos. */
+    font-size: 0.75rem;
+    /* Compacta los títulos de tabla. */
+    font-weight: 700;
+    /* Distingue claramente encabezados y datos. */
+    letter-spacing: 0.04em;
+    /* Mejora lectura de encabezados cortos. */
+    text-transform: uppercase;
+    /* Uniforma el estilo de las etiquetas de columna. */
+    white-space: nowrap;
+    /* Evita que los nombres de columnas se dividan. */
+}
+
+/* Finaliza los estilos de cabecera de tabla. */
+
+/* Mantiene suficiente altura y relleno táctil para cada empleado. */
+.tabla-empleados tbody td {
+    padding-top: 0.9rem;
+    /* Separa el contenido del borde superior de cada fila. */
+    padding-bottom: 0.9rem;
+    /* Separa el contenido del borde inferior de cada fila. */
+    vertical-align: middle;
+    /* Alinea etiquetas y controles al centro de la fila. */
+}
+
+/* Finaliza la altura de filas de empleados. */
+
+/* Usa una tinta diferente para nombres de usuario con formato de cuenta. */
+.texto-usuario {
+    color: #52665a;
+    /* Distingue el usuario sin usar un color de enlace. */
+    font-weight: 600;
+    /* Hace reconocible el identificador de inicio de sesión. */
+}
+
+/* Finaliza el estilo del nombre de usuario. */
+
+/* Mantiene las etiquetas de rol en armonía con el panel de marca. */
+.etiqueta-rol {
+    background-color: #f1eee7;
+    /* Usa un gris cálido neutral para todas las categorías. */
+    color: #4d5852;
+    /* Conserva legibilidad en el distintivo. */
+    font-weight: 600;
+    /* Marca la categoría sin competir con el nombre. */
+}
+
+/* Finaliza la etiqueta de rol. */
+
+/* Da un ancho apropiado a los botones de fila sin obligar a romper el contenido. */
+.tabla-empleados .btn {
+    white-space: nowrap;
+    /* Mantiene cada acción en una sola línea. */
+}
+
+/* Finaliza el comportamiento de botones en la tabla. */
+
+/* Recorta el espacio horizontal en tabletas, conservando la tabla desplazable. */
+@media (max-width: 991.98px) {
+    .contenido-empleados {
+        width: 100%;
+        /* Permite que el contenido ocupe la pantalla al ocultarse el menú lateral. */
+    }
+
+    /* Finaliza la adaptación del panel principal en dispositivos pequeños. */
+}
+
+/* Finaliza el punto de adaptación responsiva. */
