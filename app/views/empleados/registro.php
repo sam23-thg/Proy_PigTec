@@ -60,7 +60,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
         <!-- Reutiliza el menú lateral del módulo de usuarios mostrado en la referencia visual. -->
         <aside class="barra-empleados d-none d-lg-flex flex-column p-3" aria-label="Navegación administrativa">
             <!-- Agrupa el distintivo y nombre de marca en la zona superior del menú. -->
-            <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?accion=empleados-lista" aria-label="El Güero, lista de usuarios">
+            <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-label="El Güero, lista de usuarios">
                 <!-- Representa el distintivo de marca con una inicial accesible como decoración. -->
                 <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Apila el nombre de la tocinería y el descriptor de su sistema. -->
@@ -73,26 +73,30 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                 </span>
             <!-- Cierra el enlace de marca. -->
             </a>
-            <!-- Agrupa las rutas de seguridad disponibles en el menú. -->
+            <!-- Agrupa las opciones de control de personal disponibles para el administrador. -->
             <nav class="mt-4" aria-label="Seguridad y acceso">
                 <!-- Nombra la categoría de navegación del módulo. -->
                 <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Seguridad y acceso</p>
-                <!-- Enlaza a la lista de usuarios desde el menú lateral. -->
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?accion=empleados-lista">
-                    <!-- Representa el icono de la sección de usuarios sin una dependencia externa. -->
-                    <span aria-hidden="true">●</span>
-                    <!-- Nombra el listado de usuarios. -->
-                    <span>Usuarios</span>
-                <!-- Cierra el enlace a la lista. -->
-                </a>
-                <!-- Indica la sección actual de registro con el estado activo. -->
-                <span class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2" aria-current="page">
-                    <!-- Representa el acceso a registro mediante un signo más. -->
-                    <span aria-hidden="true">＋</span>
-                    <!-- Nombra el formulario de alta actual. -->
-                    <span>Registrar usuario</span>
-                <!-- Cierra la etiqueta de navegación activa. -->
-                </span>
+                <!-- Limita la visibilidad de ambos enlaces a una sesión de rol ADMINISTRADOR exacto. -->
+                <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
+                    <!-- Enlaza a la lista de usuarios con el controlador y acción solicitados. -->
+                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
+                        <!-- Representa el acceso a la lista con un indicador visual sencillo. -->
+                        <span aria-hidden="true">●</span>
+                        <!-- Identifica claramente la lista de cuentas. -->
+                        <span>Lista de Usuarios</span>
+                    <!-- Cierra el enlace a la lista. -->
+                    </a>
+                    <!-- Indica la sección actual de registro con el estado activo. -->
+                    <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro" aria-current="page">
+                        <!-- Representa el acceso de alta mediante un signo más. -->
+                        <span aria-hidden="true">＋</span>
+                        <!-- Nombra el formulario actual de incorporación. -->
+                        <span>Agregar Usuario</span>
+                    <!-- Cierra el enlace al formulario de registro. -->
+                    </a>
+                <!-- Finaliza la condición de visibilidad para roles que no sean administrador. -->
+                <?php endif; ?>
             <!-- Cierra la navegación lateral. -->
             </nav>
             <!-- Presenta la identidad del administrador en el borde inferior del menú. -->
@@ -320,7 +324,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                         <!-- Alinea los botones con el borde final del formulario en pantallas grandes. -->
                         <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
                             <!-- Permite regresar a la lista sin enviar los datos del formulario. -->
-                            <a class="btn btn-outline-secondary" href="index.php?accion=empleados-lista">Cancelar</a>
+                            <a class="btn btn-outline-secondary" href="index.php?c=empleado&amp;a=lista">Cancelar</a>
                             <!-- Envía los campos para validar duplicados y guardar el empleado. -->
                             <button class="btn btn-primary px-4" type="submit">Registrar empleado</button>
                         <!-- Cierra la fila de acciones del formulario. -->

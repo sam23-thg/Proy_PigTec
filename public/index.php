@@ -16,8 +16,14 @@ if (session_status() !== PHP_SESSION_ACTIVE) { // Evita avisos por inicializar l
     session_start(); // Habilita el almacenamiento de la autenticación entre solicitudes.
 } // Finaliza la inicialización condicional de la sesión.
 
-// Obtiene la acción solicitada y usa el formulario de acceso como ruta inicial.
-$accion = isset($_GET['accion']) ? (string) $_GET['accion'] : 'login'; // No acepta nombres de acción como rutas de archivo.
+// Obtiene el controlador solicitado para reconocer enlaces administrativos legibles.
+$controladorSolicitado = isset($_GET['c']) ? (string) $_GET['c'] : ''; // Usa un valor vacío cuando la URL no incluye controlador.
+// Obtiene la acción solicitada dentro del controlador indicado.
+$accionSolicitada = isset($_GET['a']) ? (string) $_GET['a'] : ''; // Evita depender de parámetros ausentes.
+// Define alias permitidos para acciones de empleados sin aceptar nombres arbitrarios.
+$rutasEmpleados = ['lista' => 'empleados-lista', 'registro' => 'empleados-registro']; // Limita los alias a la lista y el registro solicitados.
+// Resuelve los enlaces c=empleado&a=... a las acciones internas existentes o usa la ruta accion previa.
+$accion = $controladorSolicitado === 'empleado' && isset($rutasEmpleados[$accionSolicitada]) ? $rutasEmpleados[$accionSolicitada] : (isset($_GET['accion']) ? (string) $_GET['accion'] : 'login'); // Conserva la compatibilidad con las rutas ya implementadas.
 // Obtiene la identidad autenticada de la sesión o null para visitantes sin autenticar.
 $usuarioSesion = $_SESSION['user'] ?? null; // Centraliza la identidad de la sesión definida por AuthController.
 // Obtiene la bandera de cambio obligatorio de contraseña desde el estado de sesión.

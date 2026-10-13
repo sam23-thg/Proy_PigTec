@@ -45,7 +45,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
         <!-- Presenta la navegación administrativa con el ancho visual del panel Figma. -->
         <aside class="barra-empleados d-none d-lg-flex flex-column p-3" aria-label="Navegación administrativa">
             <!-- Agrupa el distintivo y el nombre de la tocinería en la cabecera lateral. -->
-            <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?accion=empleados-lista" aria-label="El Güero, lista de usuarios">
+            <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-label="El Güero, lista de usuarios">
                 <!-- Representa el distintivo circular de la marca con la inicial de la tocinería. -->
                 <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Presenta el nombre comercial y su descriptor como dos líneas. -->
@@ -58,26 +58,30 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                 </span>
             <!-- Cierra el enlace de identidad de marca. -->
             </a>
-            <!-- Agrupa las rutas de seguridad bajo su categoría de navegación. -->
+            <!-- Agrupa las opciones de control de personal bajo su categoría de navegación. -->
             <nav class="mt-4" aria-label="Seguridad y acceso">
                 <!-- Identifica el grupo de navegación de seguridad. -->
                 <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Seguridad y acceso</p>
-                <!-- Marca visualmente la opción actualmente seleccionada. -->
-                <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?accion=empleados-lista" aria-current="page">
-                    <!-- Muestra la sección de usuarios en el menú lateral. -->
-                    <span aria-hidden="true">●</span>
-                    <!-- Nombra la página de usuarios actual. -->
-                    <span>Usuarios</span>
-                <!-- Cierra el enlace de navegación activo. -->
-                </a>
-                <!-- Representa la ruta de restablecimiento que se completará en la acción administrativa correspondiente. -->
-                <span class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-secondary" aria-disabled="true">
-                    <!-- Muestra un símbolo sencillo para la sección de credenciales. -->
-                    <span aria-hidden="true">↻</span>
-                    <!-- Describe la función relacionada con las contraseñas. -->
-                    <span>Restablecer contraseña</span>
-                <!-- Cierra la etiqueta informativa de restablecimiento. -->
-                </span>
+                <!-- Muestra los enlaces del personal solo a una sesión con rol administrador exacto. -->
+                <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
+                    <!-- Enlaza a la lista de usuarios usando el controlador y la acción solicitados. -->
+                    <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-current="page">
+                        <!-- Muestra un indicador visual para la lista de usuarios. -->
+                        <span aria-hidden="true">●</span>
+                        <!-- Nombra de forma explícita la lista de usuarios. -->
+                        <span>Lista de Usuarios</span>
+                    <!-- Cierra el enlace a la lista administrativa. -->
+                    </a>
+                    <!-- Enlaza al formulario de alta mediante el controlador y acción especificados. -->
+                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
+                        <!-- Representa la acción de alta con un signo más. -->
+                        <span aria-hidden="true">＋</span>
+                        <!-- Nombra claramente la acción de agregar un usuario. -->
+                        <span>Agregar Usuario</span>
+                    <!-- Cierra el enlace al formulario de registro. -->
+                    </a>
+                <!-- Finaliza la condición de visibilidad de las opciones administrativas. -->
+                <?php endif; ?>
             <!-- Cierra la navegación lateral. -->
             </nav>
             <!-- Mantiene la identificación de sesión anclada al borde inferior del menú. -->
@@ -113,7 +117,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                     <!-- Cierra el bloque de texto del encabezado. -->
                     </div>
                     <!-- Enlaza a la pantalla del formulario de alta de usuarios. -->
-                    <a class="btn btn-primary flex-shrink-0" href="index.php?accion=empleados-registro">Registrar usuario</a>
+                    <a class="btn btn-primary flex-shrink-0" href="index.php?c=empleado&amp;a=registro">Registrar usuario</a>
                 <!-- Cierra la fila de encabezado y acción. -->
                 </div>
             <!-- Cierra el encabezado de la pantalla. -->
