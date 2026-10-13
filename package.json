@@ -1,0 +1,29 @@
+{
+  "name": "proy_pigtec",
+  "version": "1.0.0",
+  "description": "Aplicación web MVC para la gestión del sistema de la tocinería El Puerquito Digital.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sam23-thg/Proy_PigTec.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sam23-thg/Proy_PigTec/issues"
+  },
+  "homepage": "https://github.com/sam23-thg/Proy_PigTec#readme",
+  "devDependencies": {
+    "vite": "^8.3.4"
+  }
+  
+}
