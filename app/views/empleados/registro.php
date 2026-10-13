@@ -97,6 +97,14 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                     </a>
                 <!-- Finaliza la condición de visibilidad para roles que no sean administrador. -->
                 <?php endif; ?>
+                <!-- Enlaza al perfil del usuario autenticado disponible para cualquier rol. -->
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
+                    <!-- Representa la acción de perfil con un símbolo descriptivo. -->
+                    <span aria-hidden="true">👤</span>
+                    <!-- Identifica el acceso al perfil personal. -->
+                    <span>Mi Perfil</span>
+                <!-- Cierra el enlace al perfil. -->
+                </a>
             <!-- Cierra la navegación lateral. -->
             </nav>
             <!-- Presenta la identidad del administrador en el borde inferior del menú. -->

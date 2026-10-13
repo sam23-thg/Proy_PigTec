@@ -50,17 +50,21 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                     </span>
                 <!-- Cierra el enlace de identidad. -->
                 </a>
-                <!-- Muestra las opciones de control de personal únicamente en el panel del administrador autenticado. -->
-                <?php if ($sesionIniciadaVista && isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
-                    <!-- Agrupa los accesos administrativos como lista vertical Bootstrap dentro de la barra lateral. -->
-                    <nav class="list-group list-group-flush mt-4" aria-label="Control de personal">
-                        <!-- Enlaza al directorio de usuarios con el controlador y la acción solicitados. -->
-                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=lista">📋 Lista de Usuarios</a>
-                        <!-- Enlaza al formulario de alta de empleados con la ruta MVC solicitada. -->
-                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=registro">➕ Registrar Empleado</a>
-                    <!-- Cierra el menú visible solo para administración. -->
+                <!-- Muestra las opciones de navegación únicamente en el panel del usuario autenticado. -->
+                <?php if ($sesionIniciadaVista): ?>
+                    <!-- Agrupa los accesos como lista vertical Bootstrap dentro de la barra lateral. -->
+                    <nav class="list-group list-group-flush mt-4" aria-label="Control y navegación">
+                        <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
+                            <!-- Enlaza al directorio de usuarios con el controlador y la acción solicitados. -->
+                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=lista">📋 Lista de Usuarios</a>
+                            <!-- Enlaza al formulario de alta de empleados con la ruta MVC solicitada. -->
+                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=registro">➕ Registrar Empleado</a>
+                        <?php endif; ?>
+                        <!-- Enlaza al perfil del usuario autenticado para cualquier rol. -->
+                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=perfil">👤 Mi Perfil</a>
+                    <!-- Cierra el menú visible. -->
                     </nav>
-                <!-- Finaliza la condición que restringe el menú de personal al administrador. -->
+                <!-- Finaliza la condición que restringe el menú a la sesión iniciada. -->
                 <?php endif; ?>
                 <!-- Centra el mensaje de bienvenida entre la marca y el pie del panel. -->
                 <section class="my-auto py-5" aria-labelledby="titulo-bienvenida">
@@ -133,7 +137,9 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                                         <!-- Presenta el usuario validado y escapa su contenido. -->
                                         <p class="mb-2"><strong>Usuario:</strong> <?= htmlspecialchars((string) ($usuarioAutenticado ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
                                         <!-- Presenta el rol autorizado y escapa su contenido. -->
-                                        <p class="mb-0"><strong>Área:</strong> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
+                                        <p class="mb-3"><strong>Área:</strong> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
+                                        <!-- Enlace directo al perfil del empleado. -->
+                                        <a class="btn btn-outline-success w-100" href="index.php?c=empleado&amp;a=perfil">👤 Mi Perfil</a>
                                     <!-- Cierra el resumen de sesión. -->
                                     </div>
                                 <!-- Muestra el formulario si todavía no hay una sesión autenticada. -->

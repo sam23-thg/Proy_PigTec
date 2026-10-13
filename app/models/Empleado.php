@@ -57,6 +57,19 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         return $consulta->fetchColumn() !== false; // Convierte la existencia de una fila en un resultado booleano.
     } // Finaliza la comprobación de CURP duplicado.
 
+    // Busca un empleado por su identificador primario y devuelve sus columnas para el perfil.
+    public function buscarPorId(int $id): ?array // Facilita la carga de datos del perfil por identificador de sesión.
+    { // Inicia la búsqueda de un empleado por su clave primaria.
+        // Prepara la consulta parametrizada que selecciona los datos del empleado activo.
+        $consulta = $this->db->prepare('SELECT id_empleado, curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, rol, estado FROM empleado WHERE id_empleado = :id_empleado LIMIT 1'); // Excluye contrasenia por seguridad.
+        // Asocia el identificador numérico al parámetro nombrado con tipo entero.
+        $consulta->bindValue(':id_empleado', $id, PDO::PARAM_INT); // Evita inyección SQL mediante enlace tipificado.
+        // Ejecuta la consulta de lectura preparada en la tabla empleado.
+        $consulta->execute(); // Ejecuta una lectura sin modificar datos.
+        // Devuelve el registro asociativo o null si el identificador no existe.
+        return $consulta->fetch() ?: null; // Retorna los datos limpios para la vista de perfil.
+    } // Finaliza la búsqueda de empleado por identificador.
+
     // Registra un empleado usando las columnas reales y el hash generado por el controlador.
     public function registrar(array $datos): bool // Recibe datos validados y la contraseña ya cifrada con BCRYPT.
     { // Inicia el registro de un empleado.

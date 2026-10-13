@@ -22,7 +22,7 @@ $controladorSolicitado = isset($_GET['c']) ? (string) $_GET['c'] : ''; // Usa un
 $accionSolicitada = isset($_GET['a']) ? (string) $_GET['a'] : ''; // Evita depender de parámetros ausentes.
 // Define solo las combinaciones permitidas de controlador y acción en la URL.
 $rutasPorControlador = [ // Evita despachar clases o métodos arbitrarios desde parámetros HTTP.
-    'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro'], // Mantiene disponibles las acciones administrativas ya protegidas.
+    'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro', 'perfil' => 'empleados-perfil'], // Mantiene disponibles las acciones de empleados y perfil.
     'auth' => ['logout' => 'cerrar-sesion'], // Convierte el enlace de salida en una acción interna permitida.
 ]; // Finaliza el mapa permitido de alias MVC.
 // Resuelve los alias c=...&a=... o usa la ruta accion existente como alternativa.
@@ -134,6 +134,13 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
             $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Comparte el modelo construido con la conexión PDO actual.
             $controladorEmpleado->registro(); // Procesa el POST o presenta el formulario de registro.
             break; // Finaliza el enrutamiento del alta de empleados.
+
+        case 'perfil': // Permite invocar el perfil mediante el alias directo de acción.
+        case 'empleados-perfil': // Atiende la visualización y edición del perfil de cualquier empleado autenticado.
+            require_once dirname(__DIR__) . '/app/controllers/EmpleadoController.php'; // Carga el controlador de empleados.
+            $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Inyecta el modelo y la conexión PDO preparada.
+            $controladorEmpleado->perfil(); // Carga los datos actuales del usuario activo o procesa la actualización.
+            break; // Finaliza el enrutamiento del perfil de empleado.
 
         case 'cambiar-temporal': // Atiende la pantalla obligatoria para renovar una contraseña temporal.
             if ($requiereCambioTemporal !== true) { // Impide cambiar una contraseña que no esté marcada temporal.

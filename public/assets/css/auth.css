@@ -1,135 +1,777 @@
-/* Define una paleta suave para el fondo y los textos secundarios de autenticación. */
+/* Define los colores y medidas de la pantalla a partir de la interfaz de acceso. */
 :root {
-    --color-fondo-autenticacion: #f7f8fc;
-    /* Mantiene un fondo neutro que centra la atención en la tarjeta. */
-    --color-texto-secundario: #6b7280;
-    /* Asegura contraste legible para las indicaciones auxiliares. */
-    --color-marca: #b4233c;
-    /* Distingue la identidad del sistema con un tono cálido y sobrio. */
-    --color-marca-suave: #fff0f2;
-    /* Resalta el distintivo sin competir con el botón principal. */
+    --login-fondo-panel: #f7f8fc;
+    /* Mantiene un fondo frío y claro para el área de credenciales. */
+    --login-panel-marca: #741c32;
+    /* Identifica el panel de bienvenida con un tono vino cálido. */
+    --login-panel-marca-oscuro: #551426;
+    /* Da profundidad al degradado inferior del panel. */
+    --login-texto: #202534;
+    /* Mantiene contraste alto en títulos y etiquetas. */
+    --login-texto-secundario: #687184;
+    /* Diferencia instrucciones y texto de ayuda. */
+    --login-acento: #b63c55;
+    /* Destaca controles de marca sin competir con la acción primaria. */
+    --login-borde: #dce1eb;
+    /* Delimita las entradas con un borde sutil. */
+    --login-ancho-marca: 43.0556%;
+    /* Equivale a los 620px del panel sobre el lienzo de 1440px. */
+    --login-ancho-tarjeta: 420px;
+    /* Conserva el ancho de la tarjeta especificado en Figma. */
+    --login-relleno-tarjeta: 37px;
+    /* Conserva el margen interior medido en la tarjeta de Figma. */
 }
 
-/* Finaliza la paleta local de la pantalla. */
+/* Finaliza las variables visuales del Login. */
 
-/* Aplica el color base y la familia tipográfica de la pantalla de acceso. */
+/* Establece los estilos base y elimina márgenes externos que alteren las coordenadas del diseño. */
+html,
+body {
+    min-width: 320px;
+    /* Permite conservar el contenido en teléfonos compactos. */
+    min-height: 100%;
+    /* Permite que los paneles ocupen todo el alto visible. */
+    margin: 0;
+    /* Evita el margen predeterminado del navegador. */
+}
+
+/* Finaliza el reinicio geométrico del documento. */
+
+/* Aplica la tipografía, el color principal y el fondo claro de la zona derecha. */
 .pagina-autenticacion {
     min-height: 100vh;
-    /* Ocupa al menos toda la altura visible del navegador. */
-    background: radial-gradient(circle at 14% 12%, #fff 0, var(--color-fondo-autenticacion) 48%, #eef1f8 100%);
-    /* Añade profundidad sutil manteniendo el fondo claro de la guía. */
-    color: #202534;
-    /* Define un color de lectura oscuro para textos principales. */
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    /* Usa fuentes disponibles sin cargar dependencias adicionales. */
+    /* Mantiene la interfaz a la altura de la ventana del navegador. */
+    color: var(--login-texto);
+    /* Usa el tono oscuro definido para las superficies claras. */
+    background-color: var(--login-fondo-panel);
+    /* Evita espacios blancos fuera del layout. */
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Aproxima la tipografía moderna usada en la pantalla de Figma. */
 }
 
-/* Finaliza los estilos del cuerpo de autenticación. */
+/* Finaliza los estilos globales de autenticación. */
 
-/* Limita el ancho de la tarjeta para que permanezca centrada y legible. */
-.tarjeta-autenticacion {
-    width: min(100%, 460px);
-    /* Conserva un ancho responsivo con un máximo adecuado para el formulario. */
-    border-radius: 1.25rem;
-    /* Suaviza las esquinas de la tarjeta principal. */
-    background-color: #fff;
-    /* Mantiene el formulario sobre una superficie de alto contraste. */
+/* Distribuye el panel de marca y el panel de acceso a lo ancho del lienzo. */
+.pantalla-login {
+    display: flex;
+    /* Sitúa los dos paneles en una fila en escritorio. */
+    min-height: 100vh;
+    /* Extiende la composición hasta el alto total del navegador. */
+    overflow: hidden;
+    /* Recorta las decoraciones circulares que sobresalen del panel. */
 }
 
-/* Finaliza las dimensiones y apariencia de la tarjeta. */
+/* Finaliza la estructura principal de la pantalla. */
 
-/* Estiliza el distintivo de marca circular sin requerir un recurso gráfico externo. */
-.marca-autenticacion {
-    width: 3.75rem;
-    /* Fija el ancho del distintivo de identidad. */
-    height: 3.75rem;
-    /* Mantiene la misma altura para conservar la forma circular. */
-    background-color: var(--color-marca-suave);
-    /* Separa el distintivo del fondo blanco de la tarjeta. */
-    color: var(--color-marca);
-    /* Aplica el color de marca al monograma. */
-    font-size: 1.1rem;
-    /* Da legibilidad a las iniciales dentro del círculo. */
-    font-weight: 800;
-    /* Refuerza visualmente las iniciales de la marca. */
-    letter-spacing: 0.04em;
-    /* Mejora la separación visual de las letras. */
+/* Construye el panel de marca de 620px en un lienzo de 1440px como indica Figma. */
+.panel-marca {
+    position: relative;
+    /* Establece el contexto para las decoraciones de fondo. */
+    flex: 0 0 var(--login-ancho-marca);
+    /* Conserva la proporción 620/1440 del panel izquierdo. */
+    min-height: 100vh;
+    /* Ocupa todo el alto del lienzo de escritorio. */
+    padding: 56px 64px 48px;
+    /* Reproduce las distancias de marca y crédito del diseño. */
+    overflow: hidden;
+    /* Oculta los segmentos de decoración que exceden el panel. */
+    color: #fff;
+    /* Mantiene legibles los textos sobre el fondo oscuro. */
+    background: linear-gradient(148deg, var(--login-panel-marca) 0%, #81243b 52%, var(--login-panel-marca-oscuro) 100%);
+    /* Genera una superficie cálida para la zona de bienvenida. */
 }
 
-/* Finaliza los estilos del distintivo de marca. */
+/* Finaliza la superficie principal del panel izquierdo. */
 
-/* Define la jerarquía visual del nombre de sistema sobre el título. */
-.nombre-sistema {
-    color: var(--color-marca);
-    /* Usa el tono de marca para identificar el sistema. */
-    font-size: 0.75rem;
-    /* Mantiene el nombre de marca como texto auxiliar compacto. */
-    letter-spacing: 0.12em;
-    /* Distingue el rótulo mediante espaciado tipográfico. */
+/* Dibuja el círculo decorativo que aparece parcialmente en la esquina inferior derecha. */
+.panel-marca::before {
+    position: absolute;
+    /* Permite colocar la decoración sin alterar el flujo del contenido. */
+    right: -180px;
+    /* Deja parte del círculo fuera del lienzo como en la referencia. */
+    bottom: -120px;
+    /* Recorta el segmento inferior por debajo de la pantalla. */
+    width: 420px;
+    /* Conserva el diámetro medido en el nodo Figma. */
+    height: 420px;
+    /* Mantiene el círculo de 420 por 420 píxeles. */
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    /* Marca el contorno con baja opacidad. */
+    border-radius: 50%;
+    /* Convierte el rectángulo de decoración en un círculo. */
+    background: rgba(255, 255, 255, 0.035);
+    /* Añade un relleno tenue al círculo decorativo. */
+    content: "";
+    /* Crea el pseudo-elemento decorativo sin alterar el HTML. */
 }
 
-/* Finaliza el estilo del nombre de sistema. */
+/* Finaliza el círculo de decoración inferior. */
 
-/* Atenúa los textos de apoyo sin perder legibilidad. */
-.texto-secundario {
-    color: var(--color-texto-secundario);
-    /* Aplica el tono secundario definido para la pantalla. */
+/* Dibuja el anillo grande que se recorta en la parte superior del panel de marca. */
+.panel-marca::after {
+    position: absolute;
+    /* Aísla el anillo del contenido y de su orden de lectura. */
+    top: -90px;
+    /* Coloca el centro del anillo por encima de la pantalla. */
+    right: -110px;
+    /* Desplaza el anillo para recortarlo cerca del borde derecho. */
+    width: 260px;
+    /* Conserva el ancho de la decoración indicada por Figma. */
+    height: 260px;
+    /* Conserva su proporción circular. */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Dibuja un anillo fino y discreto. */
+    border-radius: 50%;
+    /* Convierte el pseudo-elemento en un anillo circular. */
+    content: "";
+    /* Genera el anillo sin añadir elementos de presentación al documento. */
 }
 
-/* Finaliza el estilo para descripciones auxiliares. */
+/* Finaliza el anillo decorativo superior. */
 
-/* Mejora la altura de los campos para facilitar su uso táctil y lectura. */
-.tarjeta-autenticacion .form-control {
-    min-height: 3.25rem;
-    /* Aumenta el área interactiva de cada campo. */
-    border-color: #d9deea;
-    /* Define un borde neutral visible sobre el fondo blanco. */
-    border-radius: 0.75rem;
-    /* Mantiene coherencia con la tarjeta de bordes suaves. */
+/* Coloca la marca en la esquina superior izquierda a 64px por 56px. */
+.marca-tocineria {
+    position: relative;
+    /* Mantiene la marca sobre las decoraciones del panel. */
+    z-index: 1;
+    /* Evita que las formas decorativas cubran el logotipo. */
+    width: 244px;
+    /* Coincide con el ancho del grupo de marca del nodo Figma. */
+    height: 48px;
+    /* Coincide con la altura del grupo de marca del nodo Figma. */
+    gap: 14px;
+    /* Separa el monograma y el nombre con la distancia aproximada de la referencia. */
+    color: #fff;
+    /* Conserva contraste de la marca sobre el panel. */
 }
 
-/* Finaliza los ajustes de los campos de formulario. */
+/* Finaliza el contenedor de marca. */
 
-/* Refuerza el campo activo con un indicador accesible y alineado con Bootstrap. */
-.tarjeta-autenticacion .form-control:focus {
-    border-color: #86a7ff;
-    /* Hace visible el foco del teclado y del puntero. */
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.14);
-    /* Conserva un anillo de foco compatible con el botón primario. */
+/* Renderiza el monograma G dentro del cuadro de 48px indicado en el nodo. */
+.logo-tocineria {
+    flex: 0 0 48px;
+    /* Evita que el icono se comprima en la distribución flex. */
+    width: 48px;
+    /* Conserva el ancho original del componente de logo. */
+    height: 48px;
+    /* Conserva la altura original del componente de logo. */
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    /* Define el contorno claro del distintivo. */
+    border-radius: 14px;
+    /* Suaviza el cuadro del logo según el sistema visual moderno. */
+    background: rgba(255, 255, 255, 0.12);
+    /* Diferencia el bloque de logo del fondo vino. */
+    color: #fff;
+    /* Mantiene la inicial visible. */
+    font-size: 25px;
+    /* Aproxima los 28px de altura tipográfica medidos para la G. */
+    font-weight: 750;
+    /* Da presencia al monograma sin usar una imagen sustituta. */
+    line-height: 1;
+    /* Centra verticalmente el glifo dentro del cuadro. */
 }
 
-/* Finaliza el estilo del foco de campos. */
+/* Finaliza el distintivo de logo. */
 
-/* Da al botón principal una presencia táctil consistente con la guía de pantalla. */
-.boton-acceso {
-    min-height: 3.25rem;
-    /* Amplía la superficie activa del botón Ingresar. */
-    border-radius: 0.75rem;
-    /* Mantiene continuidad visual con los controles. */
+/* Ordena el nombre comercial y descriptor dentro de los 182px del grupo de texto. */
+.texto-marca {
+    width: 182px;
+    /* Coincide con el ancho de la columna de texto del diseño. */
+    min-width: 0;
+    /* Evita que el flex cambie el ancho medido. */
+}
+
+/* Finaliza el bloque tipográfico de la marca. */
+
+/* Estiliza la denominación comercial del panel superior. */
+.nombre-tocineria {
+    font-size: 18px;
+    /* Ajusta el tamaño a la línea de 25px de alto en Figma. */
     font-weight: 700;
-    /* Refuerza la acción principal del formulario. */
+    /* Da jerarquía al nombre frente al descriptor. */
+    line-height: 25px;
+    /* Coincide con la altura de texto indicada por el nodo. */
+    letter-spacing: -0.02em;
+    /* Acerca el carácter visual de títulos de marca. */
 }
 
-/* Finaliza el estilo del botón principal. */
+/* Finaliza la línea de nombre comercial. */
 
-/* Distingue la confirmación de sesión en la misma tarjeta compartida. */
+/* Estiliza el descriptor pequeño ubicado debajo del nombre comercial. */
+.descriptor-tocineria {
+    color: rgba(255, 255, 255, 0.76);
+    /* Separa el descriptor del título con menor intensidad. */
+    font-size: 11px;
+    /* Aproxima la caja tipográfica de 16px de alto. */
+    font-weight: 450;
+    /* Mantiene un peso secundario y legible. */
+    line-height: 16px;
+    /* Coincide con la altura del descriptor Figma. */
+}
+
+/* Finaliza el descriptor de la marca. */
+
+/* Sitúa el mensaje central a 64px del borde y lo centra verticalmente en la composición. */
+.contenido-bienvenida {
+    position: relative;
+    /* Mantiene texto y módulos sobre las decoraciones. */
+    z-index: 1;
+    /* Evita solaparse visualmente con las formas del fondo. */
+    width: 460px;
+    /* Coincide con el ancho del bloque principal del nodo. */
+    max-width: 100%;
+    /* Evita que el texto exceda el panel en escritorio compacto. */
+    margin-top: auto;
+    /* Coloca el bloque en la zona central inferior del panel. */
+    margin-bottom: auto;
+    /* Equilibra la posición vertical del contenido. */
+    transform: translateY(20px);
+    /* Ubica el bloque en y=371.5 como muestra el primer estado del lienzo. */
+}
+
+/* Finaliza el posicionamiento del contenido de bienvenida. */
+
+/* Da al saludo su anchura y ritmo de dos líneas en el diseño original. */
+.titulo-bienvenida {
+    max-width: 460px;
+    /* Conserva el ancho del nodo de texto del diseño. */
+    margin: 0 0 18px;
+    /* Coloca la descripción después del título. */
+    color: #fff;
+    /* Mantiene contraste con el panel oscuro. */
+    font-size: clamp(36px, 3.05vw, 44px);
+    /* Aproxima la escala del título en el lienzo de 1440px. */
+    font-weight: 720;
+    /* Refuerza el mensaje principal de bienvenida. */
+    line-height: 1.08;
+    /* Reproduce una caja de dos líneas cercana a 92px. */
+    letter-spacing: -0.045em;
+    /* Mantiene la apariencia compacta del encabezado. */
+}
+
+/* Finaliza el título de bienvenida. */
+
+/* Presenta la descripción del sistema debajo del saludo principal. */
+.descripcion-bienvenida {
+    max-width: 440px;
+    /* Coincide con el ancho indicado para la línea secundaria. */
+    margin: 0;
+    /* Permite controlar la separación con reglas exactas. */
+    color: rgba(255, 255, 255, 0.78);
+    /* Atenúa el texto secundario conservando contraste. */
+    font-size: 15px;
+    /* Se aproxima a la escala de lectura del diseño. */
+    font-weight: 400;
+    /* Conserva una textura ligera en la descripción. */
+    line-height: 21px;
+    /* Coincide con la altura aproximada de las dos líneas previstas. */
+}
+
+/* Finaliza la descripción del panel de marca. */
+
+/* Organiza las etiquetas de módulos en una fila con espacios medidos. */
+.lista-modulos {
+    gap: 8px;
+    /* Separa las etiquetas de módulo según el espaciado entre chips. */
+    margin-top: 18px;
+    /* Coloca la fila debajo de la descripción. */
+}
+
+/* Finaliza la distribución de los módulos. */
+
+/* Estiliza cada módulo como una etiqueta compacta de 28px de altura. */
+.chip-modulo {
+    display: inline-flex;
+    /* Centra el texto de cada etiqueta sin estilos en línea. */
+    align-items: center;
+    /* Centra verticalmente el texto dentro del chip. */
+    min-height: 28px;
+    /* Coincide con la altura del grupo de módulos del nodo. */
+    padding: 0 12px;
+    /* Reproduce el margen interno visible alrededor de cada palabra. */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Delimita cada categoría con un trazo sutil. */
+    border-radius: 999px;
+    /* Convierte las etiquetas en pastillas redondeadas. */
+    background: rgba(255, 255, 255, 0.1);
+    /* Separa los chips del fondo mediante transparencia. */
+    color: rgba(255, 255, 255, 0.92);
+    /* Conserva la legibilidad del texto del chip. */
+    font-size: 11px;
+    /* Ajusta el texto a la escala compacta del diseño. */
+    font-weight: 550;
+    /* Da claridad a las categorías de módulos. */
+    line-height: 1;
+    /* Mantiene la altura visual centrada. */
+}
+
+/* Finaliza el estilo común de los chips. */
+
+/* Sitúa el crédito cerca de x=64 e y=837 del panel de marca. */
+.credito-marca {
+    position: relative;
+    /* Mantiene el texto sobre las formas de fondo. */
+    z-index: 1;
+    /* Evita que el fondo decorativo cubra el crédito. */
+    color: rgba(255, 255, 255, 0.62);
+    /* Distingue el crédito del contenido funcional. */
+    font-size: 11px;
+    /* Aproxima la caja de texto de 15px de alto. */
+    line-height: 15px;
+    /* Coincide con la altura informada por Figma. */
+}
+
+/* Finaliza el pie del panel de marca. */
+
+/* Construye el área derecha de 820px y centra la tarjeta del Login. */
+.panel-acceso {
+    flex: 1 1 auto;
+    /* Ocupa todo el espacio restante después del panel izquierdo. */
+    min-width: 0;
+    /* Permite que la columna se reduzca sin romper el flex. */
+    min-height: 100vh;
+    /* Mantiene la altura completa del lienzo. */
+    padding: 48px 32px;
+    /* Protege la tarjeta en pantallas de escritorio angostas. */
+    background-color: var(--login-fondo-panel);
+    /* Usa el fondo claro del área de acceso. */
+}
+
+/* Finaliza el panel derecho de acceso. */
+
+/* Fija las dimensiones y la elevación de la tarjeta observada en Figma. */
+.tarjeta-login {
+    width: min(100%, var(--login-ancho-tarjeta));
+    /* Conserva 420px en escritorio y se adapta a móviles. */
+    border: 0;
+    /* Conserva 346px útiles entre los 37px de relleno de la tarjeta. */
+    border-radius: 16px;
+    /* Define esquinas suaves de tarjeta sin exagerar su redondeo. */
+    background-color: #fff;
+    /* Mantiene las entradas y el título sobre una superficie blanca. */
+    box-shadow: 0 24px 70px rgba(35, 42, 62, 0.09), 0 2px 8px rgba(35, 42, 62, 0.035);
+    /* Añade la elevación discreta del formulario. */
+}
+
+/* Finaliza la apariencia exterior de la tarjeta. */
+
+/* Conserva las coordenadas internas medidas para título, campos y pie. */
+.contenido-tarjeta-login {
+    padding: var(--login-relleno-tarjeta);
+    /* Deja el margen de 37px observado en la tarjeta de 420px. */
+}
+
+/* Finaliza el espaciado interno de la tarjeta. */
+
+/* Fija el encabezado a una caja de 58px según el componente del nodo. */
+.encabezado-login {
+    min-height: 58px;
+    /* Conserva la altura combinada del título y la instrucción. */
+    margin-bottom: 22px;
+    /* Alinea el inicio de campos con y=117 en la tarjeta. */
+}
+
+/* Finaliza la separación del encabezado. */
+
+/* Da al título de formulario su caja de 33px de alto. */
+.titulo-login {
+    margin: 0;
+    /* Evita que márgenes predefinidos alteren las coordenadas del componente. */
+    color: #202534;
+    /* Usa un color de título oscuro de alto contraste. */
+    font-size: 28px;
+    /* Coincide con el encabezado de 33px de alto de Figma. */
+    font-weight: 700;
+    /* Destaca la acción de autenticación. */
+    line-height: 33px;
+    /* Mantiene la caja tipográfica medida en el nodo. */
+    letter-spacing: -0.035em;
+    /* Reduce el ancho visual del título de 163px. */
+}
+
+/* Finaliza el título del Login. */
+
+/* Coloca la instrucción en la segunda línea del encabezado. */
+.subtitulo-login {
+    margin-top: 6px;
+    /* Ubica el subtítulo alrededor de y=39 del marco de título. */
+    color: var(--login-texto-secundario);
+    /* Separa visualmente la instrucción del encabezado. */
+    font-size: 13px;
+    /* Aproxima la caja de 19px informada para el texto. */
+    font-weight: 400;
+    /* Conserva el peso normal de la instrucción. */
+    line-height: 19px;
+    /* Coincide con la altura de texto de Figma. */
+}
+
+/* Finaliza el subtítulo del Login. */
+
+/* Posiciona el aviso de credenciales erróneas exactamente sobre los campos. */
+.alerta-login {
+    display: flex;
+    /* Alinea el icono y el texto del mensaje de error. */
+    min-height: 62px;
+    /* Coincide con la altura del componente de alerta del estado de error. */
+    margin: 0 0 22px;
+    /* Mantiene el intervalo entre encabezado, alerta y entradas. */
+    padding: 13px 15px;
+    /* Aproxima las posiciones internas del icono y texto de Figma. */
+    border-radius: 8px;
+    /* Suaviza el componente de alerta del formulario. */
+    font-size: 13px;
+    /* Ajusta el texto del aviso al ancho de 288px. */
+    line-height: 18px;
+    /* Permite un mensaje de error de hasta dos líneas. */
+}
+
+/* Finaliza la alerta asociada al Login. */
+
+/* Distingue los mensajes de error con un rojo suave sin desajustar el resto del formulario. */
+.alerta-login.alert-danger {
+    border-color: #f1c7cd;
+    /* Define el borde de error. */
+    background-color: #fff3f4;
+    /* Separa el aviso del fondo blanco de la tarjeta. */
+    color: #8c2435;
+    /* Mantiene contraste para el mensaje. */
+}
+
+/* Finaliza la paleta de error de autenticación. */
+
+/* Presenta un error técnico controlado con el mismo espacio de alerta del diseño. */
+.alerta-login.alert-warning {
+    border-color: #f0d7a6;
+    /* Identifica visualmente la falla de servicio. */
+    background-color: #fff8e8;
+    /* Conserva una superficie suave para el aviso técnico. */
+    color: #674c16;
+    /* Mantiene legible el mensaje de servicio. */
+}
+
+/* Finaliza la paleta de error técnico. */
+
+/* Encierra la marca tipográfica de error en un icono de tamaño controlado. */
+.icono-alerta {
+    display: inline-flex;
+    /* Permite alinear el glifo en el centro del círculo. */
+    flex: 0 0 18px;
+    /* Conserva el ancho del icono definido en Figma. */
+    align-items: center;
+    /* Centra verticalmente el glifo. */
+    justify-content: center;
+    /* Centra horizontalmente el glifo. */
+    width: 18px;
+    /* Mantiene la dimensión horizontal del icono. */
+    height: 18px;
+    /* Mantiene la dimensión vertical del icono. */
+    margin-right: 10px;
+    /* Deja una separación clara entre icono y texto. */
+    border: 1.5px solid currentColor;
+    /* Usa el tono semántico del mensaje. */
+    border-radius: 50%;
+    /* Convierte el contenedor en círculo. */
+    font-size: 12px;
+    /* Ajusta el glifo al área de icono. */
+    font-weight: 700;
+    /* Refuerza la señal de error. */
+    line-height: 1;
+    /* Centra el signo de exclamación. */
+}
+
+/* Finaliza el icono de alerta. */
+
+/* Agrupa las entradas con los intervalos de 16px mostrados por Figma. */
+.formulario-login {
+    display: flex;
+    /* Permite especificar la secuencia vertical por separación. */
+    flex-direction: column;
+    /* Coloca etiquetas, ayuda y botón en una sola columna. */
+    gap: 16px;
+    /* Reproduce la separación entre las dos cajas de campo. */
+}
+
+/* Finaliza el flujo vertical de los campos. */
+
+/* Define la altura de 70px para cada campo de texto del diseño. */
+.campo-login {
+    min-height: 70px;
+    /* Coincide con la medida de cada instancia de campo. */
+}
+
+/* Finaliza la caja de campo. */
+
+/* Estiliza la etiqueta pequeña que aparece sobre cada caja. */
+.etiqueta-login {
+    display: block;
+    /* Reserva una línea completa para el nombre del campo. */
+    height: 18px;
+    /* Coincide con la altura de texto informada por Figma. */
+    margin: 0 0 6px;
+    /* Sitúa la caja de entrada 24px después del inicio del campo. */
+    color: #293144;
+    /* Mantiene contraste de la etiqueta sobre el fondo blanco. */
+    font-size: 13px;
+    /* Aproxima el tamaño del componente de campo. */
+    font-weight: 600;
+    /* Distingue las etiquetas de los valores de entrada. */
+    line-height: 18px;
+    /* Conserva las medidas verticales del componente. */
+}
+
+/* Finaliza el estilo de etiqueta. */
+
+/* Construye las entradas de usuario y contraseña con altura exacta de 46px. */
+.entrada-login {
+    width: 100%;
+    /* Ocupa el ancho útil de 346px dentro de la tarjeta. */
+    height: 46px;
+    /* Coincide con la altura de las cajas definidas por Figma. */
+    padding: 0 15px;
+    /* Alinea el texto con el inicio interior indicado en el nodo. */
+    border: 1px solid var(--login-borde);
+    /* Delimita la caja mediante un borde neutral. */
+    border-radius: 8px;
+    /* Ajusta las esquinas de los campos al estilo visual. */
+    background-color: #fff;
+    /* Mantiene una superficie de entrada limpia. */
+    color: var(--login-texto);
+    /* Define el color del texto escrito. */
+    font-size: 13px;
+    /* Coincide aproximadamente con el renglón de 19px del diseño. */
+    line-height: 19px;
+    /* Mantiene el valor centrado verticalmente en la caja. */
+    box-shadow: none;
+    /* Evita los estilos de altura adicionales predeterminados de Bootstrap. */
+}
+
+/* Finaliza los estilos base de entrada. */
+
+/* Aclara el texto de ejemplo sin competir con la etiqueta. */
+.entrada-login::placeholder {
+    color: #9aa2b2;
+    /* Diferencia instrucciones de los valores ya ingresados. */
+    opacity: 1;
+    /* Mantiene el mismo contraste en todos los navegadores. */
+}
+
+/* Finaliza el texto de ejemplo de los campos. */
+
+/* Conserva un indicador de foco visible para teclado y puntero. */
+.entrada-login:focus {
+    border-color: #8d9fc8;
+    /* Muestra el campo activo sin cambiar su geometría. */
+    outline: 0;
+    /* Evita duplicar el contorno nativo con el anillo personalizado. */
+    box-shadow: 0 0 0 3px rgba(89, 108, 155, 0.14);
+    /* Expone el foco de forma accesible. */
+}
+
+/* Finaliza el estado de foco. */
+
+/* Reserva el espacio del icono de ojo dentro de la caja de contraseña. */
+.contenedor-contrasenia {
+    position: relative;
+    /* Permite ubicar el símbolo sobre la entrada sin posicionamiento en HTML. */
+}
+
+/* Finaliza el contexto del campo de contraseña. */
+
+/* Dibuja el ojo para reproducir el control visible sin introducir recursos externos. */
+.ojo-contrasenia {
+    position: absolute;
+    /* Sitúa el símbolo dentro del campo en su extremo derecho. */
+    top: 16px;
+    /* Centra verticalmente el icono de 14px dentro de la caja de 46px. */
+    right: 15px;
+    /* Conserva la distancia interior del icono de Figma. */
+    width: 18px;
+    /* Coincide con la anchura de 18px de la instancia ojo. */
+    height: 14px;
+    /* Mantiene un icono horizontal dentro de la entrada. */
+    border: 1.5px solid #8992a3;
+    /* Dibuja el contorno del ojo con un tono secundario. */
+    border-radius: 70% 20%;
+    /* Sugiere una forma de ojo sencilla con CSS nativo. */
+    transform: rotate(45deg);
+    /* Coloca las curvas en la orientación de un ojo. */
+    pointer-events: none;
+    /* Evita que el icono interfiera con selección o captura de la contraseña. */
+}
+
+/* Finaliza el icono decorativo del campo. */
+
+/* Representa la pupila mediante un pseudo-elemento del ojo. */
+.ojo-contrasenia::after {
+    position: absolute;
+    /* Permite centrar la pupila dentro del contorno. */
+    top: 3px;
+    /* Coloca la pupila cerca del centro vertical del ojo. */
+    left: 6px;
+    /* Coloca la pupila cerca del centro horizontal del ojo. */
+    width: 4px;
+    /* Mantiene la pupila compacta. */
+    height: 4px;
+    /* Conserva proporción circular para la pupila. */
+    border-radius: 50%;
+    /* Convierte la pupila en un punto redondo. */
+    background-color: #8992a3;
+    /* Usa el tono del contorno para mantener unidad visual. */
+    content: "";
+    /* Inserta el punto sin añadir un nodo HTML extra. */
+}
+
+/* Finaliza la pupila del icono. */
+
+/* Coloca el renglón de ayuda con la altura de 32px observada en la tarjeta. */
+.ayuda-login {
+    min-height: 32px;
+    /* Conserva el intervalo vertical de la nota de ayuda. */
+    margin-top: 6px;
+    /* Separa la ayuda de los campos antes del espacio de botón. */
+    color: var(--login-texto-secundario);
+    /* Mantiene la ayuda como contenido secundario. */
+    font-size: 12px;
+    /* Conserva legibilidad en el ancho útil del formulario. */
+    line-height: 16px;
+    /* Permite dos líneas si el ancho se reduce. */
+}
+
+/* Finaliza el renglón de ayuda. */
+
+/* Reproduce el botón de 346px de ancho por 46px de alto. */
+.boton-login {
+    min-height: 46px;
+    /* Coincide con la altura del botón del nodo Figma. */
+    margin-top: 6px;
+    /* Ubica el botón en y=349 con la ayuda sobre él. */
+    padding: 0 16px;
+    /* Centra el texto y evita cambios de tamaño por Bootstrap. */
+    border-color: #971f39;
+    /* Usa un tono de marca profundo en el botón primario. */
+    border-radius: 8px;
+    /* Mantiene la forma de esquina del sistema de componentes. */
+    background-color: #971f39;
+    /* Diferencia claramente la acción principal del panel claro. */
+    color: #fff;
+    /* Mantiene contraste del texto sobre el botón. */
+    font-size: 14px;
+    /* Ajusta el rótulo a la caja de texto del componente. */
+    font-weight: 650;
+    /* Da importancia visual a la acción de acceso. */
+    line-height: 20px;
+    /* Centra el rótulo dentro de 46px de altura. */
+}
+
+/* Finaliza el botón de envío. */
+
+/* Mantiene una respuesta visual coherente al pasar el puntero sobre el botón. */
+.boton-login:hover {
+    border-color: #7d1a30;
+    /* Oscurece el borde en el estado interactivo. */
+    background-color: #7d1a30;
+    /* Oscurece la superficie al pasar el puntero. */
+}
+
+/* Finaliza el estado hover del botón. */
+
+/* Coloca el aviso de acceso a 22px del botón con el icono alineado al texto. */
+.aviso-acceso {
+    display: flex;
+    /* Alinea el icono informativo con la frase. */
+    align-items: center;
+    /* Centra ambos elementos en la altura de línea. */
+    min-height: 15px;
+    /* Coincide con la altura del aviso Figma. */
+    margin-top: 22px;
+    /* Reproduce el espacio del pie debajo del botón. */
+    color: #7d8696;
+    /* Distingue el aviso del texto principal de la tarjeta. */
+    font-size: 11px;
+    /* Aproxima la caja de texto de 245px informada en Figma. */
+    line-height: 15px;
+    /* Coincide con la altura del texto auxiliar. */
+}
+
+/* Finaliza el aviso de acceso. */
+
+/* Dibuja un pequeño icono de información en el espacio reservado del aviso. */
+.icono-aviso {
+    display: inline-flex;
+    /* Centra el carácter en el contorno circular. */
+    flex: 0 0 14px;
+    /* Conserva el ancho de 14px de la instancia Figma. */
+    align-items: center;
+    /* Centra el carácter verticalmente. */
+    justify-content: center;
+    /* Centra el carácter horizontalmente. */
+    width: 14px;
+    /* Coincide con el ancho del nodo de icono. */
+    height: 14px;
+    /* Coincide con el alto del nodo de icono. */
+    margin-right: 7px;
+    /* Conserva el espacio entre el icono y el texto. */
+    border: 1px solid currentColor;
+    /* Traza un aro del mismo tono que el aviso. */
+    border-radius: 50%;
+    /* Convierte el contorno en un círculo. */
+    font-size: 9px;
+    /* Mantiene la letra pequeña dentro del icono. */
+    font-weight: 700;
+    /* Refuerza la forma del carácter informativo. */
+}
+
+/* Finaliza el icono del aviso. */
+
+/* Presenta datos de sesión con el mismo ancho interior de la tarjeta. */
 .resumen-sesion {
-    border: 1px solid #badbcc;
-    /* Enmarca el estado exitoso con el color semántico de Bootstrap. */
-    background-color: #f0faf5;
-    /* Resalta el contenido de sesión sin competir con la marca. */
+    min-height: 156px;
+    /* Conserva el espacio principal de contenido en el estado autenticado. */
+    padding: 16px;
+    /* Separa la confirmación de los bordes del contenedor. */
+    border: 1px solid #c9e3d5;
+    /* Enmarca el estado exitoso con un tono verde. */
+    border-radius: 8px;
+    /* Mantiene la forma de los demás componentes. */
+    background-color: #f2faf5;
+    /* Identifica el acceso autorizado sin cambiar la composición. */
+    color: #24543a;
+    /* Mantiene contraste con el fondo verde claro. */
+    font-size: 13px;
+    /* Conserva la escala de texto de la tarjeta. */
 }
 
-/* Finaliza el estilo del resumen de sesión autenticada. */
+/* Finaliza la confirmación de sesión. */
 
-/* Reduce el relleno interior en pantallas pequeñas para conservar el espacio útil. */
-@media (max-width: 420px) {
-    .tarjeta-autenticacion {
-        border-radius: 1rem;
-        /* Ajusta levemente las esquinas de la tarjeta en móviles compactos. */
+/* Garantiza una distribución completa en tabletas y teléfonos. */
+@media (max-width: 991.98px) {
+    .panel-acceso {
+        min-height: 100vh;
+        /* Mantiene la tarjeta centrada verticalmente al ocultarse la marca. */
+        padding: 32px 20px;
+        /* Conserva márgenes laterales para ventanas estrechas. */
     }
 
-    /* Finaliza el ajuste móvil de la tarjeta. */
+    /* Finaliza el ajuste del panel de acceso en pantallas pequeñas. */
 }
 
-/* Finaliza la adaptación a pantallas móviles pequeñas. */
+/* Finaliza el punto de quiebre de una columna. */
+
+/* Reduce el relleno y el título para conservar la tarjeta en móviles compactos. */
+@media (max-width: 420px) {
+    .contenido-tarjeta-login {
+        padding: 28px 24px;
+        /* Asegura espacio de lectura cuando no caben los 37px del escritorio. */
+    }
+
+    /* Finaliza el ajuste interior para pantallas estrechas. */
+
+    .titulo-login {
+        font-size: 26px;
+        /* Conserva el título en una sola línea en móviles pequeños. */
+    }
+
+    /* Finaliza el ajuste de tamaño del título móvil. */
+}
+
+/* Finaliza el punto de quiebre de móviles compactos. */
