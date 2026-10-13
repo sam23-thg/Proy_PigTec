@@ -91,15 +91,14 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         ]); // Finaliza la ejecución parametrizada del UPDATE.
     } // Finaliza la actualización de datos personales.
 
-    // Cambia el hash de contraseña y registra si debe considerarse temporal en el próximo acceso.
-    public function cambiarPassword(int $id, string $hash, bool $esTemporal): bool // Recibe un hash ya calculado y la bandera de temporalidad.
+    // Cambia exclusivamente el hash de contraseña de la cuenta indicada.
+    public function cambiarPassword(int $id, string $hash): bool // Recibe el identificador del empleado y un hash ya calculado.
     { // Inicia la actualización de credenciales.
-        // Prepara la actualización de las dos columnas de credenciales existentes.
-        $consulta = $this->db->prepare('UPDATE empleado SET contrasenia = :contrasenia, es_temporal = :es_temporal WHERE id_empleado = :id_empleado'); // Mantiene sin cambios los demás datos de la cuenta.
-        // Ejecuta la actualización enviando la bandera booleana como entero compatible con MariaDB y MySQL.
+        // Prepara una actualización que modifica solo la columna contrasenia.
+        $consulta = $this->db->prepare('UPDATE empleado SET contrasenia = :contrasenia WHERE id_empleado = :id_empleado'); // Evita referirse a es_temporal porque no existe en la base real.
+        // Ejecuta la actualización mediante parámetros para evitar inyección SQL.
         return $consulta->execute([ // Devuelve si PDO pudo ejecutar la sentencia.
             ':contrasenia' => $hash, // Persiste el hash recibido sin asumir ni almacenar texto plano.
-            ':es_temporal' => $esTemporal ? 1 : 0, // Guarda uno para temporal y cero para definitiva.
             ':id_empleado' => $id, // Identifica la cuenta cuya contraseña se debe cambiar.
         ]); // Finaliza la ejecución parametrizada del cambio de contraseña.
     } // Finaliza la actualización de credenciales.

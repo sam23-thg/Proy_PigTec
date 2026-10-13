@@ -70,7 +70,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             'permisos' => [], // Mantiene una lista segura porque el esquema documentado no define tabla ni columnas de permisos.
         ]; // Finaliza la asignación de la identidad de sesión.
         // Conserva si la cuenta requiere renovar su contraseña antes de navegar.
-        $_SESSION['requiereCambioTemporal'] = array_key_exists('es_temporal', $empleadoEncontrado) && (int) $empleadoEncontrado['es_temporal'] === 1; // Aplica el flujo temporal cuando la columna existe y está activada.
+        $_SESSION['requiereCambioTemporal'] = (array_key_exists('es_temporal', $empleadoEncontrado) && (int) $empleadoEncontrado['es_temporal'] === 1) || hash_equals('12345678', $contrasenia); // Usa la bandera del esquema cuando existe o simula el estado temporal con la clave genérica tras verificarla.
         // Prepara una notificación que se mostrará después de redirigir al destino interno.
         $_SESSION['mensajeAutenticacion'] = 'Inicio de sesión correcto.'; // Evita enviar mensajes mediante parámetros manipulables de la URL.
 
@@ -137,8 +137,8 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             return; // Conserva el flujo obligatorio para permitir un nuevo intento.
         } // Finaliza la validación de generación del hash.
 
-        // Actualiza el hash y limpia la bandera temporal mediante el modelo de empleados.
-        $actualizacionCorrecta = $this->empleado->cambiarPassword((int) $_SESSION['user']['id_empleado'], $hashContrasenia, false); // Envía solo el identificador, el hash y el estado definitivo.
+        // Actualiza únicamente el hash de contraseña mediante el modelo de empleados.
+        $actualizacionCorrecta = $this->empleado->cambiarPassword((int) $_SESSION['user']['id_empleado'], $hashContrasenia); // Envía el identificador y el nuevo hash definitivo.
         // Mantiene al empleado en el paso obligatorio si el modelo no pudo completar la escritura.
         if (!$actualizacionCorrecta) { // Detecta fallos de ejecución reportados por PDO.
             $this->mostrarCambioTemporal('No fue posible guardar la contraseña. Inténtalo nuevamente.', 'danger'); // No expone detalles internos del SGBD.
