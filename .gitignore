@@ -1,4 +1,0 @@
-# Excluye el archivo local con credenciales de conexión a la base de datos.
-/.env
-# Excluye el archivo PHP local que crea la conexión con las credenciales privadas.
-/config/database.php
