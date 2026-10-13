@@ -36,7 +36,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
 
         // Deniega las solicitudes incompletas también cuando el navegador no ejecutó JavaScript.
         if ($usuario === '' || $contrasenia === '') { // Repite en servidor las reglas de obligatoriedad del formulario.
-            $this->mostrarLogin('Usuario o contraseña incorrectos.', 'danger'); // Usa un mensaje uniforme para datos inválidos.
+            $this->mostrarLogin('Usuario o contraseña incorrectos', 'danger'); // Usa un mensaje uniforme para datos inválidos.
             return; // Termina el procesamiento sin consultar la base de datos.
         } // Finaliza la validación de campos obligatorios.
 
@@ -44,7 +44,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         $empleadoEncontrado = $this->empleado->buscarPorUsuario($usuario); // Obtiene null cuando no existe una cuenta coincidente.
         // Comprueba la existencia y el hash antes de crear cualquier dato de sesión.
         if ($empleadoEncontrado === null || !password_verify($contrasenia, (string) $empleadoEncontrado['contrasenia'])) { // Rechaza usuario inexistente o credencial incorrecta.
-            $this->mostrarLogin('Usuario o contraseña incorrectos.', 'danger'); // No revela cuál de los dos datos falló.
+            $this->mostrarLogin('Usuario o contraseña incorrectos', 'danger'); // No revela cuál de los dos datos falló.
             return; // Evita continuar con una identidad no autenticada.
         } // Finaliza la comprobación de credenciales.
 
@@ -63,8 +63,16 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             'rol' => (string) $empleadoEncontrado['rol'], // Almacena el rol validado contra el registro de empleado.
             'permisos' => [], // Mantiene una lista segura porque el esquema documentado no define tabla ni columnas de permisos.
         ]; // Finaliza la asignación de la identidad de sesión.
+        // Conserva si la cuenta requiere renovar su contraseña antes de navegar.
+        $_SESSION['requiereCambioTemporal'] = (int) ($empleadoEncontrado['es_temporal'] ?? 0) === 1; // Lee la bandera es_temporal documentada para empleado.
         // Prepara una notificación que se mostrará después de redirigir al destino interno.
         $_SESSION['mensajeAutenticacion'] = 'Inicio de sesión correcto.'; // Evita enviar mensajes mediante parámetros manipulables de la URL.
+
+        // Obliga a las cuentas con credenciales temporales a completar el cambio antes de entrar a su área.
+        if ($_SESSION['requiereCambioTemporal']) { // Verifica la bandera persistida es_temporal.
+            header('Location: ?accion=cambiar-temporal', true, 303); // Envía al empleado a la pantalla de cambio obligatorio.
+            exit; // Detiene la ejecución para impedir navegación antes de la actualización.
+        } // Finaliza la interceptación de cuentas con contraseña temporal.
 
         // Relaciona cada valor permitido del ENUM de rol con un destino interno fijo.
         $rutasPorRol = [ // Evita utilizar valores enviados por el navegador como destinos de redirección.
@@ -80,4 +88,73 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         header('Location: ?accion=' . rawurlencode($destino), true, 303); // Impide que el refresco repita el envío de credenciales.
         exit; // Finaliza la solicitud después de autenticar y redirigir.
     } // Finaliza el procesamiento del formulario de acceso.
+
+    // Presenta la pantalla de cambio obligatorio solo para una sesión marcada como temporal.
+    public function mostrarCambioTemporal(?string $mensaje = null, string $tipoAlerta = 'danger'): void // Permite re-renderizar el formulario con mensajes controlados.
+    { // Inicia la preparación de la vista temporal.
+        // Verifica que exista una identidad autenticada con cambio pendiente.
+        if (!isset($_SESSION['user']) || empty($_SESSION['requiereCambioTemporal'])) { // Evita mostrar el formulario fuera del flujo autorizado.
+            header('Location: ?accion=login', true, 303); // Devuelve a Login las solicitudes sin cambio pendiente.
+            exit; // Impide que continúe el procesamiento de una vista protegida.
+        } // Finaliza la protección del formulario temporal.
+        // Prepara la notificación para la vista y conserva el modo de acceso obligatorio.
+        $mensaje = $mensaje ?? ''; // Usa una cadena vacía cuando no hay error que presentar.
+        // Carga la vista intermedia de autenticación definida en el MVC.
+        require dirname(__DIR__) . '/views/auth/cambiar_temporal.php'; // Renderiza el formulario sin insertar marcado aquí.
+    } // Finaliza la presentación del formulario de cambio temporal.
+
+    // Valida la contraseña nueva y guarda un hash definitivo en el registro autenticado.
+    public function procesarCambioTemporal(array $datos): void // Recibe la contraseña nueva y su confirmación desde POST.
+    { // Inicia el procesamiento del cambio obligatorio.
+        // Confirma nuevamente que el usuario siga autenticado y marcado para el cambio.
+        if (!isset($_SESSION['user']) || empty($_SESSION['requiereCambioTemporal'])) { // Protege también la llamada directa al método.
+            header('Location: ?accion=login', true, 303); // Envía a Login cualquier sesión que no cumpla la condición.
+            exit; // Detiene el procesamiento de una solicitud no autorizada.
+        } // Finaliza la protección del cambio de contraseña.
+
+        // Obtiene la contraseña nueva conservando los caracteres que eligió el empleado.
+        $contraseniaNueva = (string) ($datos['contrasenia_nueva'] ?? ''); // No modifica espacios que sean parte de la clave.
+        // Obtiene el valor de confirmación para compararlo en el servidor.
+        $confirmacionContrasenia = (string) ($datos['confirmacion_contrasenia'] ?? ''); // Evita depender solo de la validación del navegador.
+
+        // Exige al menos ocho caracteres y valores idénticos en ambos campos.
+        if (strlen($contraseniaNueva) < 8 || $contraseniaNueva !== $confirmacionContrasenia) { // Aplica las reglas de contraseña definitiva del requisito.
+            $this->mostrarCambioTemporal('Las contraseñas deben coincidir y tener al menos 8 caracteres.', 'danger'); // Explica las condiciones sin alterar los campos enviados.
+            return; // Mantiene la sesión en la pantalla obligatoria para corregir los datos.
+        } // Finaliza la validación de longitud y coincidencia.
+
+        // Genera una nueva credencial BCRYPT antes de actualizar la columna contrasenia.
+        $hashContrasenia = password_hash($contraseniaNueva, PASSWORD_BCRYPT); // Nunca guarda la contraseña definitiva en texto plano.
+        // Detiene el proceso si la función de hash no pudo generar una credencial segura.
+        if ($hashContrasenia === false) { // Comprueba explícitamente el resultado antes de persistir.
+            $this->mostrarCambioTemporal('No fue posible guardar la contraseña. Inténtalo nuevamente.', 'danger'); // Presenta un error controlado.
+            return; // Conserva el flujo obligatorio para permitir un nuevo intento.
+        } // Finaliza la validación de generación del hash.
+
+        // Actualiza el hash y limpia la bandera temporal mediante el modelo de empleados.
+        $actualizacionCorrecta = $this->empleado->cambiarPassword((int) $_SESSION['user']['id_empleado'], $hashContrasenia, false); // Envía solo el identificador, el hash y el estado definitivo.
+        // Mantiene al empleado en el paso obligatorio si el modelo no pudo completar la escritura.
+        if (!$actualizacionCorrecta) { // Detecta fallos de ejecución reportados por PDO.
+            $this->mostrarCambioTemporal('No fue posible guardar la contraseña. Inténtalo nuevamente.', 'danger'); // No expone detalles internos del SGBD.
+            return; // Evita habilitar la navegación tras una actualización fallida.
+        } // Finaliza la comprobación de persistencia.
+
+        // Elimina el bloqueo de navegación temporal en la sesión que ya fue actualizada.
+        $_SESSION['requiereCambioTemporal'] = false; // Impide que el Front Controller vuelva a interceptar al empleado.
+        // Prepara el mensaje de éxito para mostrarlo después de la redirección.
+        $_SESSION['mensajeAutenticacion'] = 'Contraseña guardada'; // Confirma el resultado usando el texto especificado en el requisito.
+        // Selecciona una ruta interna según el rol autenticado después de terminar el cambio.
+        $rutasPorRol = [ // Limita los destinos disponibles a los roles reconocidos por la base de datos.
+            'ADMINISTRADOR' => 'panel-administrador', // Define la ruta interna para administrador.
+            'VENTAS' => 'panel-ventas', // Define la ruta interna para ventas.
+            'ALMACEN' => 'panel-almacen', // Define la ruta interna para almacén.
+            'DISTRIBUCION' => 'panel-distribucion', // Define la ruta interna para distribución.
+            'REPARTIDOR' => 'panel-repartidor', // Define la ruta interna para repartidor.
+        ]; // Finaliza el mapeo de destinos posteriores al cambio.
+        // Resuelve el destino a partir del rol guardado en la sesión y conserva un destino seguro alternativo.
+        $destino = $rutasPorRol[(string) ($_SESSION['user']['rol'] ?? '')] ?? 'login'; // No utiliza datos controlados por el formulario.
+        // Redirige al destino de sesión con una solicitud GET nueva.
+        header('Location: ?accion=' . rawurlencode($destino), true, 303); // Muestra el mensaje flash en la pantalla siguiente.
+        exit; // Termina el flujo obligatorio tras guardar la contraseña.
+    } // Finaliza el procesamiento de la contraseña temporal.
 } // Finaliza la definición de AuthController.
