@@ -1,110 +1,182 @@
 <?php
-// Normaliza el mensaje recibido antes de imprimirlo en la página.
-$mensajeVista = isset($mensaje) ? (string) $mensaje : ''; // Evita avisos cuando la vista se incluye sin notificación.
-// Limita el tipo de alerta a las variantes seguras de Bootstrap.
-$tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Evita insertar clases arbitrarias en el documento.
-// Determina si el visitante ya completó la autenticación y está viendo su estado de sesión.
-$sesionIniciadaVista = !empty($modoSesionIniciada); // Permite reutilizar el diseño para confirmar el acceso por rol.
+// Conserva el texto de alerta recibido y usa una cadena vacía cuando no hay mensajes.
+$mensajeVista = isset($mensaje) ? (string) $mensaje : ''; // Prepara un valor seguro para la salida HTML.
+// Permite exclusivamente los estados visuales de éxito y error definidos por Bootstrap.
+$tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Representa fallos técnicos y de credenciales como alertas rojas.
+// Identifica si se está mostrando una confirmación de sesión ya autenticada.
+$sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como destino provisional por rol.
 ?>
-<!-- Declara el documento HTML5 de la pantalla de autenticación. -->
+<!-- Declara el documento de inicio de sesión en HTML5. -->
 <!DOCTYPE html>
-<!-- Establece el idioma español para lectores de pantalla y reglas tipográficas. -->
+<!-- Configura el idioma español para el contenido y tecnologías de asistencia. -->
 <html lang="es">
-<!-- Inicia los metadatos y recursos visuales del documento. -->
+<!-- Inicia los metadatos y recursos externos de la página. -->
 <head>
-    <!-- Define la codificación para caracteres y textos en español. -->
+    <!-- Establece la codificación que permite representar correctamente caracteres en español. -->
     <meta charset="UTF-8">
-    <!-- Adapta el ancho de la interfaz a dispositivos móviles y de escritorio. -->
+    <!-- Hace que la distribución de columnas pueda adaptarse a pantallas móviles. -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Describe el propósito de la pantalla en navegadores y buscadores. -->
-    <meta name="description" content="Acceso al sistema de gestión El Puerquito Digital.">
-    <!-- Define el color de la interfaz para el marco del navegador móvil. -->
-    <meta name="theme-color" content="#f7f8fc">
-    <!-- Asigna el título que aparece en la pestaña del navegador. -->
-    <title>Iniciar sesión | El Puerquito Digital</title>
-    <!-- Carga Bootstrap 5.3.3 desde un CDN con integridad del recurso verificada. -->
+    <!-- Describe el propósito de esta página de acceso. -->
+    <meta name="description" content="Acceso del personal al sistema de gestión de la tocinería El Güero.">
+    <!-- Define el color de la interfaz usado por el navegador en dispositivos móviles. -->
+    <meta name="theme-color" content="#212529">
+    <!-- Define el título de la pestaña del navegador. -->
+    <title>Iniciar sesión | Tocinería El Güero</title>
+    <!-- Carga Bootstrap 5.3.3 desde jsDelivr con control de integridad del recurso. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Carga los estilos propios de autenticación desde un archivo externo. -->
-    <link href="assets/css/auth.css" rel="stylesheet">
-    <!-- Carga el comportamiento de validación y visibilidad de contraseña después del HTML. -->
+    <!-- Carga el comportamiento de validación desde un archivo externo y sin código JavaScript en línea. -->
     <script src="assets/js/auth.js" defer></script>
-<!-- Cierra la sección de metadatos y recursos del documento. -->
+<!-- Finaliza la cabecera del documento. -->
 </head>
-<!-- Inicia el cuerpo visible de la pantalla de acceso. -->
-<body class="pagina-autenticacion">
-    <!-- Mantiene la tarjeta de autenticación centrada en la pantalla en ambos ejes. -->
-    <main class="contenedor-autenticacion container-fluid d-flex align-items-center justify-content-center min-vh-100 px-3 py-5">
-        <!-- Agrupa la identidad del sistema, alertas y formulario en una tarjeta responsiva. -->
-        <section class="tarjeta-autenticacion card border-0 shadow-lg" aria-labelledby="titulo-autenticacion">
-            <!-- Conserva el espaciado interior de la tarjeta sin estilos en línea. -->
-            <div class="card-body p-4 p-md-5">
-                <!-- Centra la marca para mantener la composición de una pantalla de acceso enfocada. -->
-                <header class="encabezado-autenticacion text-center mb-4">
-                    <!-- Representa la marca con un distintivo textual independiente de imágenes externas. -->
-                    <div class="marca-autenticacion d-inline-flex align-items-center justify-content-center rounded-circle mb-3" aria-hidden="true">EP</div>
-                    <!-- Muestra el nombre del sistema sobre el formulario. -->
-                    <p class="nombre-sistema text-uppercase fw-semibold mb-2">El Puerquito Digital</p>
-                    <!-- Presenta el título según se muestre acceso o confirmación de sesión. -->
-                    <h1 class="h3 fw-bold mb-2" id="titulo-autenticacion"><?= $sesionIniciadaVista ? 'Acceso confirmado' : 'Bienvenido' ?></h1>
-                    <!-- Resume la acción necesaria sin distraer del formulario principal. -->
-                    <p class="texto-secundario mb-0"><?= $sesionIniciadaVista ? 'Tu sesión está activa.' : 'Ingresa tus credenciales para continuar.' ?></p>
-                <!-- Cierra el encabezado de identidad de la tarjeta. -->
-                </header>
-
-                <!-- Presenta mensajes de estado controlados por el controlador encima del contenido principal. -->
-                <?php if ($mensajeVista !== ''): ?>
-                    <!-- Escapa el texto y limita la clase de alerta para impedir inyección de marcado. -->
-                    <div class="alert alert-<?= htmlspecialchars($tipoAlertaVista, ENT_QUOTES, 'UTF-8') ?> mb-4" role="alert"><?= htmlspecialchars($mensajeVista, ENT_QUOTES, 'UTF-8') ?></div>
-                <!-- Finaliza la condición de presentación de mensajes. -->
-                <?php endif; ?>
-
-                <!-- Muestra un resumen de la identidad autenticada cuando el Front Controller confirmó la sesión. -->
-                <?php if ($sesionIniciadaVista): ?>
-                    <!-- Agrupa la confirmación para conservar la jerarquía visual de Bootstrap. -->
-                    <div class="resumen-sesion rounded-3 p-3" role="status">
-                        <!-- Muestra el nombre de usuario previamente escapado para evitar interpretar HTML. -->
-                        <p class="mb-2"><span class="fw-semibold">Usuario:</span> <?= htmlspecialchars((string) ($usuarioAutenticado ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
-                        <!-- Muestra el rol autorizado y escapado para confirmar el destino de acceso. -->
-                        <p class="mb-0"><span class="fw-semibold">Área asignada:</span> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
-                    <!-- Cierra el resumen de la sesión validada. -->
+<!-- Inicia el contenido visible de la pantalla. -->
+<body class="bg-light">
+    <!-- Divide la pantalla en presentación de marca y zona de acceso con las columnas responsivas de Bootstrap. -->
+    <main class="container-fluid p-0">
+        <!-- Distribuye los dos paneles en una fila sin separación entre columnas. -->
+        <div class="row g-0 min-vh-100">
+            <!-- Presenta la bienvenida del sistema como panel lateral en escritorio y la oculta en móviles. -->
+            <aside class="col-lg-5 d-none d-lg-flex flex-column bg-dark text-white p-5" aria-label="Presentación del sistema">
+                <!-- Agrupa el logotipo textual y la identificación de la tocinería. -->
+                <a class="d-flex align-items-center gap-3 text-white text-decoration-none" href="index.php?accion=login" aria-label="Tocinería El Güero, inicio">
+                    <!-- Representa el monograma de marca con utilidades de Bootstrap. -->
+                    <span class="d-flex align-items-center justify-content-center rounded-3 border border-secondary bg-secondary text-white fw-bold fs-4 p-2" aria-hidden="true">G</span>
+                    <!-- Agrupa nombre comercial y descriptor en una columna compacta. -->
+                    <span class="d-flex flex-column">
+                        <!-- Muestra el nombre de la tocinería. -->
+                        <span class="fs-5 fw-semibold">El Güero</span>
+                        <!-- Muestra el descriptor del sistema de gestión. -->
+                        <span class="small text-white-50">Tocinería · Sistema de gestión</span>
+                    <!-- Cierra el bloque de identidad de marca. -->
+                    </span>
+                <!-- Cierra el enlace de identidad. -->
+                </a>
+                <!-- Centra el mensaje de bienvenida entre la marca y el pie del panel. -->
+                <section class="my-auto py-5" aria-labelledby="titulo-bienvenida">
+                    <!-- Presenta el mensaje de bienvenida con la escala de títulos de Bootstrap. -->
+                    <h1 class="display-5 fw-bold mb-3" id="titulo-bienvenida">Bienvenido al sistema de la tocinería</h1>
+                    <!-- Resume el propósito general del sistema. -->
+                    <p class="lead text-white-50 mb-4">Administra ventas, inventario, pedidos y entregas desde un solo lugar.</p>
+                    <!-- Agrupa las áreas disponibles con etiquetas redondeadas de Bootstrap. -->
+                    <ul class="d-flex flex-wrap gap-2 list-unstyled mb-0" aria-label="Módulos del sistema">
+                        <!-- Identifica el módulo de ventas. -->
+                        <li><span class="badge rounded-pill text-bg-secondary">Ventas</span></li>
+                        <!-- Identifica el módulo de inventario. -->
+                        <li><span class="badge rounded-pill text-bg-secondary">Inventario</span></li>
+                        <!-- Identifica el módulo de pedidos. -->
+                        <li><span class="badge rounded-pill text-bg-secondary">Pedidos</span></li>
+                        <!-- Identifica el módulo de distribución. -->
+                        <li><span class="badge rounded-pill text-bg-secondary">Distribución</span></li>
+                    <!-- Cierra la lista de módulos. -->
+                    </ul>
+                <!-- Cierra el mensaje de bienvenida. -->
+                </section>
+                <!-- Muestra el crédito de la marca al final del panel lateral. -->
+                <p class="small text-white-50 mb-0">© Tocinería El Güero</p>
+            <!-- Cierra el panel de presentación de marca. -->
+            </aside>
+            <!-- Centra la tarjeta de Login en el espacio restante de la pantalla. -->
+            <section class="col-12 col-lg-7 d-flex align-items-center justify-content-center p-0" aria-label="Área de acceso">
+                <!-- Limita la tarjeta mediante las columnas internas de Bootstrap y la centra horizontalmente. -->
+                <div class="row w-100 justify-content-center g-0">
+                    <!-- Ajusta el ancho de la tarjeta a escritorio y dispositivos pequeños. -->
+                    <div class="col-12 col-md-9 col-xl-6 px-0 ms-xl-2">
+                        <!-- Presenta el formulario en una tarjeta centrada con borde y sombra de Bootstrap. -->
+                        <div class="card border-0 shadow" aria-labelledby="titulo-login">
+                            <!-- Añade el espaciado interior estándar de Bootstrap al contenido. -->
+                            <div class="card-body p-4">
+                                <!-- Centra los elementos internos con la cuadrícula de doce columnas de Bootstrap. -->
+                                <div class="row g-0 justify-content-center">
+                                    <!-- Ajusta el contenido a una anchura interior cercana a los 346px de Figma. -->
+                                    <div class="col-11 ms-2">
+                                <!-- Presenta el título y la instrucción alineados a la izquierda. -->
+                                <header class="mt-3 mb-2">
+                                    <!-- Identifica el propósito de la pantalla o el área de sesión autenticada. -->
+                                    <h2 class="h3 fw-bold mb-2" id="titulo-login"><?= $sesionIniciadaVista ? htmlspecialchars((string) ($tituloPanel ?? 'Acceso autorizado'), ENT_QUOTES, 'UTF-8') : 'Iniciar sesión' ?></h2>
+                                    <!-- Indica al usuario qué debe hacer para continuar. -->
+                                    <p class="text-secondary mb-0"><?= $sesionIniciadaVista ? 'Tu sesión se encuentra activa.' : 'Ingresa tus credenciales para continuar.' ?></p>
+                                <!-- Cierra el encabezado de la tarjeta. -->
+                                </header>
+                                <!-- Muestra los errores técnicos o de credenciales encima de los campos. -->
+                                <?php if ($mensajeVista !== ''): ?>
+                                    <!-- Representa el mensaje en una alerta de éxito o error de Bootstrap y escapa el texto. -->
+                                    <div class="alert alert-<?= htmlspecialchars($tipoAlertaVista, ENT_QUOTES, 'UTF-8') ?> d-flex align-items-center gap-2" role="alert">
+                                        <!-- Muestra un símbolo de atención sin cargar una dependencia adicional. -->
+                                        <span class="fw-bold" aria-hidden="true">!</span>
+                                        <!-- Presenta el mensaje escapado para evitar interpretar HTML externo. -->
+                                        <span><?= htmlspecialchars($mensajeVista, ENT_QUOTES, 'UTF-8') ?></span>
+                                    <!-- Cierra la alerta del formulario. -->
+                                    </div>
+                                <!-- Finaliza la condición que muestra alertas. -->
+                                <?php endif; ?>
+                                <!-- Muestra un resumen cuando el Front Controller confirma una sesión autenticada. -->
+                                <?php if ($sesionIniciadaVista): ?>
+                                    <!-- Agrupa los datos de la sesión dentro de un contenedor de estado. -->
+                                    <div class="alert alert-success mb-0" role="status">
+                                        <!-- Presenta el usuario validado y escapa su contenido. -->
+                                        <p class="mb-2"><strong>Usuario:</strong> <?= htmlspecialchars((string) ($usuarioAutenticado ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
+                                        <!-- Presenta el rol autorizado y escapa su contenido. -->
+                                        <p class="mb-0"><strong>Área:</strong> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
+                                    <!-- Cierra el resumen de sesión. -->
+                                    </div>
+                                <!-- Muestra el formulario si todavía no hay una sesión autenticada. -->
+                                <?php else: ?>
+                                    <!-- Envía las credenciales mediante POST conservando la ruta aprobada del Front Controller. -->
+                                    <form id="formulario-login" action="index.php?accion=login" method="post" data-validacion-cliente novalidate>
+                                        <!-- Agrupa el rótulo, la caja de usuario y su validación. -->
+                                        <div class="mb-3">
+                                            <!-- Asocia el rótulo con el campo de usuario. -->
+                                            <label class="form-label fw-semibold" for="usuario">Usuario <span class="text-danger" aria-hidden="true">(*)</span></label>
+                                            <!-- Captura el nombre de usuario como texto requerido. -->
+                                            <input class="form-control form-control-lg" id="usuario" name="usuario" type="text" autocomplete="username" maxlength="50" placeholder="Ingresa tu usuario" required aria-describedby="error-usuario">
+                                            <!-- Informa el error accesible si el usuario deja el campo vacío. -->
+                                            <div class="invalid-feedback" id="error-usuario">Ingresa tu usuario.</div>
+                                        <!-- Cierra el grupo del nombre de usuario. -->
+                                        </div>
+                                        <!-- Agrupa el rótulo, la caja protegida y su validación. -->
+                                        <div class="mb-4">
+                                            <!-- Asocia el rótulo con el campo de contraseña. -->
+                                            <label class="form-label fw-semibold" for="contrasenia">Contraseña <span class="text-danger" aria-hidden="true">(*)</span></label>
+                                            <!-- Captura la clave con el tipo password para ocultar sus caracteres. -->
+                                            <input class="form-control form-control-lg" id="contrasenia" name="contrasenia" type="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" required aria-describedby="error-contrasenia">
+                                            <!-- Informa el error accesible si el campo de contraseña está vacío. -->
+                                            <div class="invalid-feedback" id="error-contrasenia">Ingresa tu contraseña.</div>
+                                        <!-- Cierra el grupo de contraseña. -->
+                                        </div>
+                                        <!-- Reserva el bloque de ayuda de 32px presente en la tarjeta de Figma. -->
+                                        <p class="small text-secondary py-2 mb-0">¿Olvidaste tu contraseña? Contacta al administrador.</p>
+                                        <!-- Envía el formulario mediante un botón primario a todo lo ancho de la tarjeta. -->
+                                        <button class="btn btn-primary btn-lg w-100" type="submit">Ingresar</button>
+                                    <!-- Cierra el formulario de inicio de sesión. -->
+                                    </form>
+                                <!-- Finaliza la selección entre el formulario y el resumen de sesión. -->
+                                <?php endif; ?>
+                                <!-- Indica que el sistema está reservado para personal autorizado. -->
+                                <p class="small text-secondary d-flex align-items-center gap-2 mt-4 mb-0">
+                                    <!-- Añade un indicador sencillo de información en línea. -->
+                                    <span class="badge rounded-circle text-bg-secondary p-1" aria-hidden="true">i</span>
+                                    <!-- Presenta el aviso de acceso restringido. -->
+                                    <span>Acceso exclusivo para personal autorizado.</span>
+                                <!-- Cierra el aviso informativo. -->
+                                </p>
+                                    <!-- Cierra la columna interior que centra los componentes del formulario. -->
+                                    </div>
+                                <!-- Cierra la fila Bootstrap del contenido de la tarjeta. -->
+                                </div>
+                            <!-- Cierra el contenido de la tarjeta. -->
+                            </div>
+                        <!-- Cierra la tarjeta de inicio de sesión. -->
+                        </div>
+                    <!-- Cierra la columna responsiva de la tarjeta. -->
                     </div>
-                <!-- Muestra el formulario cuando todavía no hay una sesión iniciada. -->
-                <?php else: ?>
-                    <!-- Envía las credenciales al Front Controller mediante POST. -->
-                    <form id="formulario-login" action="index.php?accion=login" method="post" data-validacion-cliente novalidate>
-                        <!-- Agrupa el campo de nombre de usuario y su mensaje de validación accesible. -->
-                        <div class="mb-3">
-                            <!-- Asocia la etiqueta visible con el campo de usuario. -->
-                            <label class="form-label fw-semibold" for="usuario">Usuario <span class="text-danger" aria-hidden="true">(*)</span></label>
-                            <!-- Captura el nombre de usuario como texto y evita autocompletar datos ajenos. -->
-                            <input class="form-control form-control-lg" id="usuario" name="usuario" type="text" autocomplete="username" maxlength="50" required aria-describedby="error-usuario">
-                            <!-- Comunica el error de obligatoriedad cuando la validación detecta el campo vacío. -->
-                            <div class="invalid-feedback" id="error-usuario">Ingresa tu usuario.</div>
-                        <!-- Cierra el grupo del campo de usuario. -->
-                        </div>
-                        <!-- Agrupa el campo de contraseña y su mensaje de validación accesible. -->
-                        <div class="mb-4">
-                            <!-- Asocia la etiqueta visible con el campo de contraseña. -->
-                            <label class="form-label fw-semibold" for="contrasenia">Contraseña <span class="text-danger" aria-hidden="true">(*)</span></label>
-                            <!-- Oculta la contraseña mientras se escribe y permite gestores de credenciales confiables. -->
-                            <input class="form-control form-control-lg" id="contrasenia" name="contrasenia" type="password" autocomplete="current-password" required aria-describedby="error-contrasenia">
-                            <!-- Comunica el error de obligatoriedad cuando la validación detecta el campo vacío. -->
-                            <div class="invalid-feedback" id="error-contrasenia">Ingresa tu contraseña.</div>
-                        <!-- Cierra el grupo del campo de contraseña. -->
-                        </div>
-                        <!-- Envía el formulario completo y ocupa el ancho de la tarjeta según la guía visual. -->
-                        <button class="btn btn-primary btn-lg w-100 boton-acceso" type="submit">Ingresar</button>
-                    <!-- Cierra el formulario de inicio de sesión. -->
-                    </form>
-                <!-- Finaliza la selección entre formulario y estado autenticado. -->
-                <?php endif; ?>
-            <!-- Cierra el contenido interno de la tarjeta. -->
-            </div>
-        <!-- Cierra la tarjeta principal de autenticación. -->
-        </section>
-    <!-- Cierra el contenedor centrado de la pantalla. -->
+                <!-- Cierra la fila de centrado de tarjeta. -->
+                </div>
+            <!-- Cierra el panel del área de acceso. -->
+            </section>
+        <!-- Cierra la fila de paneles. -->
+        </div>
+    <!-- Cierra el contenedor principal. -->
     </main>
-<!-- Cierra el cuerpo visible del documento. -->
+<!-- Cierra el cuerpo del documento. -->
 </body>
 <!-- Finaliza el documento HTML. -->
 </html>
