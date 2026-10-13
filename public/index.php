@@ -20,14 +20,43 @@ if (session_status() !== PHP_SESSION_ACTIVE) { // Evita avisos por inicializar l
 $controladorSolicitado = isset($_GET['c']) ? (string) $_GET['c'] : ''; // Usa un valor vacío cuando la URL no incluye controlador.
 // Obtiene la acción solicitada dentro del controlador indicado.
 $accionSolicitada = isset($_GET['a']) ? (string) $_GET['a'] : ''; // Evita depender de parámetros ausentes.
-// Define alias permitidos para acciones de empleados sin aceptar nombres arbitrarios.
-$rutasEmpleados = ['lista' => 'empleados-lista', 'registro' => 'empleados-registro']; // Limita los alias a la lista y el registro solicitados.
-// Resuelve los enlaces c=empleado&a=... a las acciones internas existentes o usa la ruta accion previa.
-$accion = $controladorSolicitado === 'empleado' && isset($rutasEmpleados[$accionSolicitada]) ? $rutasEmpleados[$accionSolicitada] : (isset($_GET['accion']) ? (string) $_GET['accion'] : 'login'); // Conserva la compatibilidad con las rutas ya implementadas.
+// Define solo las combinaciones permitidas de controlador y acción en la URL.
+$rutasPorControlador = [ // Evita despachar clases o métodos arbitrarios desde parámetros HTTP.
+    'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro'], // Mantiene disponibles las acciones administrativas ya protegidas.
+    'auth' => ['logout' => 'cerrar-sesion'], // Convierte el enlace de salida en una acción interna permitida.
+]; // Finaliza el mapa permitido de alias MVC.
+// Resuelve los alias c=...&a=... o usa la ruta accion existente como alternativa.
+$accion = isset($rutasPorControlador[$controladorSolicitado][$accionSolicitada]) ? $rutasPorControlador[$controladorSolicitado][$accionSolicitada] : (isset($_GET['accion']) ? (string) $_GET['accion'] : 'login'); // Conserva compatibilidad y rechaza combinaciones no incluidas.
 // Obtiene la identidad autenticada de la sesión o null para visitantes sin autenticar.
 $usuarioSesion = $_SESSION['user'] ?? null; // Centraliza la identidad de la sesión definida por AuthController.
 // Obtiene la bandera de cambio obligatorio de contraseña desde el estado de sesión.
 $requiereCambioTemporal = (bool) ($_SESSION['requiereCambioTemporal'] ?? false); // Evita depender de parámetros controlables por la URL.
+
+// Atiende el cierre de sesión antes de cualquier redirección obligatoria de contraseña temporal.
+if ($accion === 'cerrar-sesion') { // Permite que cualquier cuenta finalice una sesión activa.
+    // Vacía todas las variables de sesión antes de destruir su identificador.
+    $_SESSION = []; // Elimina la identidad y las banderas de flujo almacenadas.
+    // Comprueba si PHP mantiene una cookie de sesión para invalidarla también en el navegador.
+    if (ini_get('session.use_cookies')) { // Evita emitir una cookie si la sesión no usa cookies.
+        // Recupera los atributos de seguridad actuales de la cookie de sesión.
+        $parametrosCookie = session_get_cookie_params(); // Reutiliza ruta, dominio, Secure, HttpOnly y SameSite vigentes.
+        // Expira la cookie con los mismos atributos con que fue creada.
+        setcookie(session_name(), '', [ // Invalida en el navegador el identificador de sesión previo.
+            'expires' => time() - 42000, // Sitúa la caducidad en el pasado para eliminar la cookie.
+            'path' => $parametrosCookie['path'], // Conserva la ruta original de la cookie.
+            'domain' => $parametrosCookie['domain'], // Conserva el dominio original de la cookie.
+            'secure' => $parametrosCookie['secure'], // Conserva el requisito HTTPS original.
+            'httponly' => $parametrosCookie['httponly'], // Conserva el acceso restringido a HTTP.
+            'samesite' => $parametrosCookie['samesite'] ?? 'Lax', // Conserva la política entre sitios o aplica el valor predeterminado seguro.
+        ]); // Finaliza la expiración de la cookie de sesión.
+    } // Finaliza la comprobación y eliminación de la cookie.
+    // Destruye en el servidor los datos asociados a la sesión actual.
+    session_destroy(); // Impide reutilizar una identidad que ya cerró su sesión.
+    // Devuelve al visitante a la pantalla de acceso con una redirección posterior a GET.
+    header('Location: ?accion=login', true, 303); // Evita volver al panel con el historial de navegación.
+    // Detiene el procesamiento después de cerrar la sesión.
+    exit; // Impide ejecutar otras rutas con una sesión destruida.
+} // Finaliza el cierre seguro de sesión.
 
 // Define las rutas internas disponibles para cada rol del ENUM documentado.
 $rutasPorRol = [ // Usa destinos fijos para evitar redirecciones externas controladas por el usuario.

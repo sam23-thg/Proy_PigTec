@@ -50,6 +50,18 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                     </span>
                 <!-- Cierra el enlace de identidad. -->
                 </a>
+                <!-- Muestra las opciones de control de personal únicamente en el panel del administrador autenticado. -->
+                <?php if ($sesionIniciadaVista && isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
+                    <!-- Agrupa los accesos administrativos como lista vertical Bootstrap dentro de la barra lateral. -->
+                    <nav class="list-group list-group-flush mt-4" aria-label="Control de personal">
+                        <!-- Enlaza al directorio de usuarios con el controlador y la acción solicitados. -->
+                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=lista">📋 Lista de Usuarios</a>
+                        <!-- Enlaza al formulario de alta de empleados con la ruta MVC solicitada. -->
+                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=registro">➕ Registrar Empleado</a>
+                    <!-- Cierra el menú visible solo para administración. -->
+                    </nav>
+                <!-- Finaliza la condición que restringe el menú de personal al administrador. -->
+                <?php endif; ?>
                 <!-- Centra el mensaje de bienvenida entre la marca y el pie del panel. -->
                 <section class="my-auto py-5" aria-labelledby="titulo-bienvenida">
                     <!-- Presenta el mensaje de bienvenida con la escala de títulos de Bootstrap. -->
@@ -70,6 +82,12 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                     </ul>
                 <!-- Cierra el mensaje de bienvenida. -->
                 </section>
+                <!-- Muestra la acción de salida solo cuando la sesión ya fue autenticada. -->
+                <?php if ($sesionIniciadaVista): ?>
+                    <!-- Proporciona a cualquier usuario autenticado una acción visible para cerrar sesión. -->
+                    <a class="btn btn-outline-light w-100 mb-3" href="index.php?c=auth&amp;a=logout">🚪 Cerrar Sesión</a>
+                <!-- Oculta el cierre de sesión a visitantes que aún no tienen cuenta autenticada. -->
+                <?php endif; ?>
                 <!-- Muestra el crédito de la marca al final del panel lateral. -->
                 <p class="small text-white-50 mb-0">© Tocinería El Güero</p>
             <!-- Cierra el panel de presentación de marca. -->
