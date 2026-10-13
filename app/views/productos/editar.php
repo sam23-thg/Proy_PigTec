@@ -29,7 +29,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
     <!-- Describe el propósito de la página de edición de productos e inventario. -->
     <meta name="description" content="Busca y edita productos del catálogo con sus existencias de inventario en El Güero.">
     <!-- Establece el color de tema para la interfaz móvil. -->
-    <meta name="theme-color" content="#f6f0e6">
+    <meta name="theme-color" content="#fff5f8">
     <!-- Define el título de la pestaña del navegador. -->
     <title>Editar Producto | El Güero</title>
     <!-- Carga Bootstrap 5.3.3 desde CDN oficial con comprobación de integridad. -->
@@ -38,6 +38,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
     <link href="assets/css/empleados.css" rel="stylesheet">
     <!-- Carga los estilos específicos del módulo de productos e inventarios. -->
     <link href="assets/css/productos.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el script externo de validación y buscador con atributo defer. -->
     <script src="assets/js/productos.js" defer></script>
 <!-- Cierra la cabecera del documento HTML. -->
@@ -51,7 +52,6 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
             <!-- Presenta la identidad de marca de la tocinería como enlace. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php" aria-label="El Güero, inicio">
                 <!-- Distintivo circular de marca. -->
-                <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Agrupa el nombre comercial y descriptor. -->
                 <span class="d-flex flex-column">
                     <!-- Nombre comercial. -->
@@ -68,16 +68,12 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                 <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Catálogo e inventario</p>
                 <!-- Enlace a registro de nuevo producto. -->
                 <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo">
-                    <!-- Icono representativo de nuevo producto. -->
-                    <span aria-hidden="true">📦</span>
                     <!-- Texto del enlace a nuevo producto. -->
                     <span>Registrar Producto</span>
                 <!-- Cierra el enlace de nuevo producto. -->
                 </a>
                 <!-- Enlace activo a la vista de edición de productos. -->
                 <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar" aria-current="page">
-                    <!-- Icono representativo de edición. -->
-                    <span aria-hidden="true">📝</span>
                     <!-- Texto del enlace de edición. -->
                     <span>Editar Producto</span>
                 <!-- Cierra el enlace de edición. -->
@@ -88,16 +84,12 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                 <?php if ($rolSesion === 'ADMINISTRADOR'): ?>
                     <!-- Enlace a la lista de usuarios. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
-                        <!-- Icono de lista. -->
-                        <span aria-hidden="true">●</span>
                         <!-- Nombre del enlace a lista. -->
                         <span>Lista de Usuarios</span>
                     <!-- Cierra el enlace a lista. -->
                     </a>
                     <!-- Enlace a registro de nuevo usuario. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
-                        <!-- Icono de agregar usuario. -->
-                        <span aria-hidden="true">＋</span>
                         <!-- Nombre del enlace de alta. -->
                         <span>Agregar Usuario</span>
                     <!-- Cierra el enlace de registro de usuario. -->
@@ -106,8 +98,6 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                 <?php endif; ?>
                 <!-- Enlace al perfil de usuario disponible para cualquier rol. -->
                 <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
-                    <!-- Icono de usuario. -->
-                    <span aria-hidden="true">👤</span>
                     <!-- Nombre del enlace a perfil. -->
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
@@ -119,7 +109,6 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                 <!-- Agrupa el avatar y nombre de sesión. -->
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                     <!-- Avatar con iniciales del usuario activo. -->
-                    <span class="avatar-empleado d-flex align-items-center justify-content-center rounded-circle fw-semibold flex-shrink-0" aria-hidden="true"><?= $escaparHtml(mb_strtoupper(mb_substr((string) ($sesionVista['usuario'] ?? 'U'), 0, 2))) ?></span>
                     <!-- Muestra el usuario y su rol. -->
                     <span class="d-flex flex-column overflow-hidden">
                         <!-- Nombre de usuario. -->
@@ -131,7 +120,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                 <!-- Cierra la identidad de sesión. -->
                 </div>
                 <!-- Botón de salida para cerrar la sesión activa de forma segura. -->
-                <a class="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2" href="index.php?c=auth&amp;a=logout" title="Cerrar sesión" aria-label="Cerrar sesión">🚪</a>
+                <a class="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
             <!-- Cierra el pie del menú lateral. -->
             </div>
         <!-- Cierra la barra lateral. -->
@@ -141,7 +130,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
             <!-- Encabezado de página con miga de pan y título descriptivo. -->
             <header class="encabezado-productos mb-4">
                 <!-- Miga de pan de navegación. -->
-                <p class="miga-pan text-secondary small mb-2">Catálogo e inventario <span aria-hidden="true">›</span> Editar producto</p>
+                <p class="miga-pan text-secondary small mb-2">Catálogo e inventario / Editar producto</p>
                 <!-- Título principal de la pantalla. -->
                 <h1 class="h2 fw-bold mb-2">Editar Producto</h1>
                 <!-- Subtítulo explicativo de la función de búsqueda y edición. -->
@@ -152,8 +141,8 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
             <?php if ($mensajeVista !== ''): ?>
                 <!-- Contenedor de alerta de Bootstrap 5.3. -->
                 <div class="alert alert-<?= $escaparHtml($tipoAlertaVista) ?> d-flex align-items-center gap-2 mb-4" role="alert">
-                    <!-- Icono indicativo según el tipo de alerta. -->
-                    <span class="fw-bold fs-5" aria-hidden="true"><?= $tipoAlertaVista === 'success' ? '✓' : '!' ?></span>
+                    <!-- Identifica con palabras el resultado comunicado por la alerta. -->
+                    <span class="fw-bold"><?= $tipoAlertaVista === 'success' ? 'Correcto:' : 'Aviso:' ?></span>
                     <!-- Mensaje emitido por el controlador de productos. -->
                     <span><?= $escaparHtml($mensajeVista) ?></span>
                 <!-- Cierra la alerta. -->
@@ -174,8 +163,8 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                             <p class="small text-secondary mb-3">Escribe para filtrar o haz clic en un producto para editarlo.</p>
                             <!-- Campo de búsqueda del catálogo con atributo de datos para el script externo. -->
                             <div class="input-group mb-3">
-                                <!-- Prefijo de ícono de búsqueda. -->
-                                <span class="input-group-text"><span aria-hidden="true">🔍</span></span>
+                                <!-- Identifica con texto el campo de búsqueda. -->
+                                <span class="input-group-text">Buscar</span>
                                 <!-- Control de texto del buscador de productos. -->
                                 <input class="form-control" id="buscador-catalogo" type="search" placeholder="Buscar producto..." autocomplete="off" data-buscador-catalogo aria-label="Buscar en el catálogo">
                             <!-- Cierra el grupo de entrada del buscador. -->
@@ -229,8 +218,6 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                             <?php if ($productoVista === null): ?>
                                 <!-- Contenedor de estado vacío de selección. -->
                                 <div class="text-center py-5 text-secondary">
-                                    <!-- Ícono sugerido para indicar que se debe seleccionar un producto. -->
-                                    <span class="fs-1 d-block mb-3" aria-hidden="true">📋</span>
                                     <!-- Instrucción de selección de producto. -->
                                     <h2 class="h5 fw-bold mb-2" id="titulo-formulario-edicion">Selecciona un producto</h2>
                                     <!-- Descripción auxiliar para guiar al usuario. -->
@@ -262,7 +249,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                                             <!-- Control de texto precargado con el nombre actual del producto. -->
                                             <input class="form-control" id="editar-nombre-producto" name="nombre_producto" type="text" maxlength="100" placeholder="Nombre comercial del producto" value="<?= $escaparHtml((string) ($productoVista['nombre_producto'] ?? '')) ?>" required aria-describedby="error-editar-nombre">
                                             <!-- Mensaje de validación si el nombre está vacío. -->
-                                            <div class="invalid-feedback" id="error-editar-nombre">Ingresa el nombre del producto.</div>
+                                            <div class="invalid-feedback" id="error-editar-nombre">Ingresa un nombre de hasta 100 caracteres.</div>
                                         <!-- Cierra la columna del nombre. -->
                                         </div>
                                         <!-- Campo opcional de Tipo de Corte. -->
@@ -271,6 +258,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                                             <label class="form-label" for="editar-tipo-corte">Tipo de Corte <span class="text-secondary small">(Opcional)</span></label>
                                             <!-- Control de texto precargado con el tipo de corte actual. -->
                                             <input class="form-control" id="editar-tipo-corte" name="tipo_corte" type="text" maxlength="50" placeholder="Ej. Rebanado fino, Grueso, Tira" value="<?= $escaparHtml((string) ($productoVista['tipo_corte'] ?? '')) ?>">
+                                            <div class="invalid-feedback">El tipo de corte admite hasta 50 caracteres.</div>
                                         <!-- Cierra la columna del tipo de corte. -->
                                         </div>
                                         <!-- Campo obligatorio de Precio por Kilogramo. -->
@@ -284,7 +272,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                                                 <!-- Control numérico precargado con el precio actual. -->
                                                 <input class="form-control" id="editar-precio-kg" name="precio_kg" type="number" step="0.01" min="0.01" placeholder="0.00" value="<?= $escaparHtml(number_format((float) ($productoVista['precio_kg'] ?? 0), 2, '.', '')) ?>" required aria-describedby="error-editar-precio">
                                                 <!-- Mensaje de validación si falta el precio. -->
-                                                <div class="invalid-feedback" id="error-editar-precio">Ingresa un precio válido mayor a 0.</div>
+                                                <div class="invalid-feedback" id="error-editar-precio">Ingresa un precio positivo con hasta 2 decimales.</div>
                                             <!-- Cierra el grupo de entrada de precio. -->
                                             </div>
                                         <!-- Cierra la columna de precio. -->
@@ -300,7 +288,7 @@ $estadoActivo = $productoVista !== null ? (bool) ($productoVista['estado'] ?? tr
                                                 <!-- Sufijo visual de unidad de kilogramos. -->
                                                 <span class="input-group-text">Kg</span>
                                                 <!-- Mensaje de validación si falta la existencia. -->
-                                                <div class="invalid-feedback" id="error-editar-existencia">Ingresa la cantidad de existencia (mínimo 0).</div>
+                                                <div class="invalid-feedback" id="error-editar-existencia">Ingresa una cantidad no negativa con hasta 3 decimales.</div>
                                             <!-- Cierra el grupo de existencia. -->
                                             </div>
                                         <!-- Cierra la columna de existencia. -->

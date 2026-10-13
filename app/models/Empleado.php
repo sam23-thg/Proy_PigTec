@@ -23,9 +23,9 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         // Obtiene los nombres de columna informados por el servidor MariaDB o MySQL.
         $columnasExistentes = array_column($consultaColumnas->fetchAll(), 'Field'); // No obtiene ni imprime datos de empleados.
         // Define las columnas mínimas conocidas para identificar y validar una cuenta.
-        $columnasConsulta = ['id_empleado', 'nombre', 'apellido_p', 'usuario', 'contrasenia', 'rol', 'estado']; // Incluye el estado requerido para validar la activación de la cuenta.
+        $columnasConsulta = ['id_empleado', 'nombre', 'apellido_p', 'usuario', 'contrasenia', 'rol']; // Incluye los campos obligatorios para validar la cuenta.
         // Define los campos adicionales documentados que pueden faltar en el esquema actualmente desplegado.
-        $columnasOpcionales = ['curp', 'seg_nombre', 'apellido_m', 'genero', 'telefono', 'es_temporal']; // Mantiene opcionales solo los campos que pueden faltar en el esquema.
+        $columnasOpcionales = ['curp', 'seg_nombre', 'apellido_m', 'genero', 'telefono', 'estado', 'es_temporal']; // Incluye estado y marca temporal solo si existen en el esquema.
         // Añade a la consulta solo campos opcionales que realmente existan en empleado.
         foreach ($columnasOpcionales as $columnaOpcional) { // Recorre una lista fija de identificadores confiables.
             // Comprueba el nombre de columna contra los metadatos obtenidos del servidor.
@@ -60,8 +60,22 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
     // Busca un empleado por su identificador primario y devuelve sus columnas para el perfil.
     public function buscarPorId(int $id): ?array // Facilita la carga de datos del perfil por identificador de sesión.
     { // Inicia la búsqueda de un empleado por su clave primaria.
-        // Prepara la consulta parametrizada que selecciona los datos del empleado activo.
-        $consulta = $this->db->prepare('SELECT id_empleado, curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, rol, estado FROM empleado WHERE id_empleado = :id_empleado LIMIT 1'); // Excluye contrasenia por seguridad.
+        // Consulta los metadatos para no solicitar campos ausentes en esquemas existentes.
+        $consultaColumnas = $this->db->query('SHOW COLUMNS FROM empleado'); // Lee la definición actual sin modificar tablas.
+        // Conserva los nombres de las columnas informadas por MariaDB o MySQL.
+        $columnasExistentes = array_column($consultaColumnas->fetchAll(), 'Field'); // No consulta datos personales en esta etapa.
+        // Define los campos necesarios para identificar y mostrar el perfil del empleado.
+        $columnasPerfil = ['id_empleado', 'nombre', 'apellido_p', 'usuario', 'rol']; // Mantiene obligatorios los campos base del perfil.
+        // Añade únicamente campos personales que pueden variar entre versiones del esquema.
+        foreach (['curp', 'seg_nombre', 'apellido_m', 'genero', 'telefono', 'estado', 'fecha_creacion'] as $columnaOpcional) { // Usa solo nombres de columna predefinidos.
+            // Comprueba que la columna opcional exista antes de incluirla en la consulta.
+            if (in_array($columnaOpcional, $columnasExistentes, true)) { // Evita errores por diferencias del esquema desplegado.
+                // Agrega el campo disponible para presentarlo en el perfil.
+                $columnasPerfil[] = $columnaOpcional; // Mantiene fuera del SQL cualquier identificador externo.
+            } // Finaliza la comprobación de la columna opcional.
+        } // Finaliza la detección de columnas del perfil.
+        // Prepara la consulta de perfil usando exclusivamente columnas conocidas.
+        $consulta = $this->db->prepare('SELECT ' . implode(', ', $columnasPerfil) . ' FROM empleado WHERE id_empleado = :id_empleado LIMIT 1'); // Excluye contrasenia por seguridad.
         // Asocia el identificador numérico al parámetro nombrado con tipo entero.
         $consulta->bindValue(':id_empleado', $id, PDO::PARAM_INT); // Evita inyección SQL mediante enlace tipificado.
         // Ejecuta la consulta de lectura preparada en la tabla empleado.
@@ -108,15 +122,16 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
     } // Finaliza la actualización de datos personales.
 
     // Cambia exclusivamente el hash de contraseña de la cuenta indicada.
-    public function cambiarPassword(int $id, string $hash): bool // Recibe el identificador del empleado y un hash ya calculado.
+    public function cambiarPassword(int $id, string $hash, bool $temporal = false): bool // Recibe el identificador, un hash y si debe forzarse su renovación.
     { // Inicia la actualización de credenciales.
         // Prepara una actualización que modifica solo la columna contrasenia.
         $consulta = $this->db->prepare('UPDATE empleado SET contrasenia = :contrasenia WHERE id_empleado = :id_empleado'); // Evita referirse a es_temporal porque no existe en la base real.
         // Ejecuta la actualización mediante parámetros para evitar inyección SQL.
-        return $consulta->execute([ // Devuelve si PDO pudo ejecutar la sentencia.
-            ':contrasenia' => $hash, // Persiste el hash recibido sin asumir ni almacenar texto plano.
+        $consulta->execute([ // Ejecuta el cambio mediante parámetros y comprueba el resultado.
+            ':contrasenia' => ($temporal ? 'TEMP$' : '') . $hash, // Marca hashes temporales sin guardar contraseñas en texto plano ni cambiar el esquema.
             ':id_empleado' => $id, // Identifica la cuenta cuya contraseña se debe cambiar.
         ]); // Finaliza la ejecución parametrizada del cambio de contraseña.
+        return $consulta->rowCount() === 1; // Solo confirma éxito cuando se actualizó la cuenta objetivo.
     } // Finaliza la actualización de credenciales.
 
     // Devuelve el listado de empleados sin exponer hashes de contraseñas.

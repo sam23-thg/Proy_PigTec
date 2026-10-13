@@ -34,9 +34,9 @@
 /* Conserva un indicador de foco visible para teclado y puntero. */
 .tarjeta-registro .form-control:focus,
 .tarjeta-registro .form-select:focus {
-    border-color: #9aa990;
+    border-color: #df82a5;
     /* Destaca el control activo con el tono de acento del menú. */
-    box-shadow: 0 0 0 0.2rem rgba(109, 127, 105, 0.16);
+    box-shadow: 0 0 0 0.2rem rgba(190, 24, 93, 0.18);
     /* Presenta un anillo de foco perceptible sin desplazar el diseño. */
 }
 
@@ -46,9 +46,9 @@
 .permiso-opcion {
     min-height: 100%;
     /* Alinea las casillas en filas de altura uniforme. */
-    border: 1px solid #eee8df;
+    border: 1px solid #f5dce5;
     /* Separa cada permiso mediante un borde cálido discreto. */
-    background-color: #fbfaf7;
+    background-color: #fff7fa;
     /* Distingue las opciones de la superficie blanca de la tarjeta. */
     cursor: pointer;
     /* Indica que la etiqueta activa su casilla correspondiente. */
@@ -72,7 +72,7 @@
     /* Separa la nota de los bordes de la tarjeta. */
     border-left: 3px solid var(--empleados-acento);
     /* Identifica la nota como información y no como error. */
-    background-color: #f7f8f4;
+    background-color: #fff7fa;
     /* Mantiene un fondo secundario de bajo contraste. */
     line-height: 1.45;
     /* Mejora la lectura cuando el texto ocupa varias líneas. */

@@ -22,7 +22,7 @@ $controladorSolicitado = isset($_GET['c']) ? (string) $_GET['c'] : ''; // Usa un
 $accionSolicitada = isset($_GET['a']) ? (string) $_GET['a'] : ''; // Evita depender de parámetros ausentes.
 // Define solo las combinaciones permitidas de controlador y acción en la URL.
 $rutasPorControlador = [ // Evita despachar clases o métodos arbitrarios desde parámetros HTTP.
-    'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro', 'perfil' => 'empleados-perfil'], // Mantiene disponibles las acciones de empleados y perfil.
+    'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro', 'perfil' => 'empleados-perfil', 'ver' => 'empleados-ver', 'restablecer' => 'empleados-restablecer'], // Mantiene las rutas de consulta y administración de empleados.
     'producto' => ['nuevo' => 'productos-nuevo', 'editar' => 'productos-editar'], // Registra las acciones del módulo de catálogo e inventarios.
     'auth' => ['logout' => 'cerrar-sesion'], // Convierte el enlace de salida en una acción interna permitida.
 ]; // Finaliza el mapa permitido de alias MVC.
@@ -135,6 +135,18 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
             $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Comparte el modelo construido con la conexión PDO actual.
             $controladorEmpleado->registro(); // Procesa el POST o presenta el formulario de registro.
             break; // Finaliza el enrutamiento del alta de empleados.
+
+        case 'empleados-ver': // Atiende la ficha individual de un empleado.
+            require_once dirname(__DIR__) . '/app/controllers/EmpleadoController.php'; // Carga el controlador que restringe esta acción a administradores.
+            $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Inyecta el modelo de empleados.
+            $controladorEmpleado->ver(); // Consulta y renderiza la información solicitada.
+            break; // Finaliza el enrutamiento de la ficha.
+
+        case 'empleados-restablecer': // Atiende el cambio administrativo de contraseña por POST.
+            require_once dirname(__DIR__) . '/app/controllers/EmpleadoController.php'; // Carga el controlador con protección de rol.
+            $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Inyecta el modelo de empleados.
+            $controladorEmpleado->restablecer(); // Genera una clave temporal y exige que se cambie.
+            break; // Finaliza el enrutamiento de restablecimiento.
 
         case 'perfil': // Permite invocar el perfil mediante el alias directo de acción.
         case 'empleados-perfil': // Atiende la visualización y edición del perfil de cualquier empleado autenticado.

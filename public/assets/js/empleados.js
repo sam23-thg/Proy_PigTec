@@ -1,5 +1,15 @@
 // Espera a que el documento esté listo antes de enlazar los controles de la tabla.
 document.addEventListener('DOMContentLoaded', () => { // Evita consultar elementos antes de que la vista exista.
+    // Solicita confirmación antes de reemplazar la contraseña de una cuenta.
+    document.querySelectorAll('[data-confirmar-restablecimiento]').forEach((formulario) => { // Atiende cada formulario de restablecimiento de la lista.
+        formulario.addEventListener('submit', (evento) => { // Intercepta únicamente el envío del formulario marcado.
+            // Cancela la operación si el administrador no confirma el cambio.
+            if (!window.confirm('¿Deseas restablecer la contraseña de este usuario?')) { // Evita cambios accidentales en la cuenta seleccionada.
+                evento.preventDefault(); // Mantiene la contraseña actual cuando se cancela.
+            } // Finaliza la comprobación de confirmación.
+        }); // Finaliza el manejador del formulario.
+    }); // Finaliza el enlace de confirmación a los formularios.
+
     // Localiza el campo de búsqueda definido por la plantilla de empleados.
     const campoBusqueda = document.querySelector('[data-busqueda-empleados]'); // Mantiene desacoplados el comportamiento y el HTML.
     // Obtiene las filas reales que contienen registros de empleados.

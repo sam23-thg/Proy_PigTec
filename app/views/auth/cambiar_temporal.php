@@ -15,13 +15,14 @@ $tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' :
     <!-- Adapta el diseño responsivo a la pantalla disponible. -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Comunica a navegadores móviles el tono claro de la interfaz de acceso. -->
-    <meta name="theme-color" content="#f7f8fc">
+    <meta name="theme-color" content="#fff5f8">
     <!-- Define un título específico para el paso obligatorio de credenciales. -->
     <title>Cambiar contraseña | El Puerquito Digital</title>
     <!-- Carga el framework Bootstrap 5.3.3 con verificación de integridad del recurso. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Comparte la paleta y distribución de la pantalla de autenticación. -->
     <link href="assets/css/auth.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el comportamiento de validación y mostrar contraseña sin JavaScript en línea. -->
     <script src="assets/js/auth.js" defer></script>
 <!-- Cierra los metadatos y recursos de la página. -->
@@ -37,7 +38,6 @@ $tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' :
                 <!-- Identifica el propósito del paso antes de solicitar la nueva credencial. -->
                 <header class="encabezado-autenticacion text-center mb-4">
                     <!-- Marca visual textual consistente con la vista Login. -->
-                    <div class="marca-autenticacion d-inline-flex align-items-center justify-content-center rounded-circle mb-3" aria-hidden="true">EP</div>
                     <!-- Indica al usuario que el cambio es parte del sistema de acceso. -->
                     <p class="nombre-sistema text-uppercase fw-semibold mb-2">El Puerquito Digital</p>
                     <!-- Explica claramente la acción obligatoria de esta pantalla. -->
@@ -63,15 +63,15 @@ $tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' :
                         <!-- Agrupa la entrada y el control de visibilidad usando componentes Bootstrap. -->
                         <div class="input-group">
                             <!-- Oculta la clave, aplica longitud mínima y activa el control externo de coincidencia. -->
-                            <input class="form-control" id="contrasenia-nueva" name="contrasenia_nueva" type="password" autocomplete="new-password" minlength="8" required data-contrasenia-nueva aria-describedby="ayuda-contrasenia error-contrasenia-nueva">
+                            <input class="form-control" id="contrasenia-nueva" name="contrasenia_nueva" type="password" autocomplete="new-password" minlength="8" maxlength="72" required data-contrasenia-nueva aria-describedby="ayuda-contrasenia error-contrasenia-nueva">
                             <!-- Permite ver la nueva contraseña con un control accesible y sin evento en línea. -->
-                            <button class="btn btn-outline-secondary" type="button" data-alternar-contrasenia="contrasenia-nueva" aria-label="Mostrar contraseña" aria-pressed="false">👁</button>
+                            <button class="btn btn-outline-secondary" type="button" data-alternar-contrasenia="contrasenia-nueva" aria-label="Mostrar contraseña" aria-pressed="false">Mostrar</button>
                         <!-- Cierra el grupo de entrada y visibilidad. -->
                         </div>
                         <!-- Explica la longitud mínima para orientar al usuario antes del envío. -->
-                        <div class="form-text" id="ayuda-contrasenia">Utiliza al menos 8 caracteres.</div>
+                        <div class="form-text" id="ayuda-contrasenia">Utiliza al menos 8 caracteres; el límite de almacenamiento es 72 bytes.</div>
                         <!-- Comunica cuando la nueva contraseña está vacía o no alcanza la longitud mínima. -->
-                        <div class="invalid-feedback" id="error-contrasenia-nueva">La contraseña debe tener al menos 8 caracteres.</div>
+                        <div class="invalid-feedback" id="error-contrasenia-nueva">La contraseña debe tener al menos 8 caracteres y no superar 72 bytes.</div>
                     <!-- Cierra el grupo de la nueva contraseña. -->
                     </div>
                     <!-- Agrupa la confirmación para que el usuario repita la clave definitiva. -->
@@ -79,7 +79,7 @@ $tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' :
                         <!-- Asocia la etiqueta del campo de confirmación con su identificador. -->
                         <label class="form-label fw-semibold" for="confirmacion-contrasenia">Confirmar contraseña <span class="text-danger" aria-hidden="true">(*)</span></label>
                         <!-- Oculta la confirmación y permite que el JavaScript compare ambos valores. -->
-                        <input class="form-control form-control-lg" id="confirmacion-contrasenia" name="confirmacion_contrasenia" type="password" autocomplete="new-password" minlength="8" required data-confirmar-contrasenia aria-describedby="error-confirmacion">
+                        <input class="form-control form-control-lg" id="confirmacion-contrasenia" name="confirmacion_contrasenia" type="password" autocomplete="new-password" minlength="8" maxlength="72" required data-confirmar-contrasenia aria-describedby="error-confirmacion">
                         <!-- Comunica al usuario cuando la confirmación no coincide con el campo anterior. -->
                         <div class="invalid-feedback" id="error-confirmacion">Las contraseñas deben coincidir.</div>
                     <!-- Cierra el grupo de confirmación. -->

@@ -1,0 +1,96 @@
+:root {
+    --bs-primary: #be185d;
+    --bs-primary-rgb: 190, 24, 93;
+    --bs-success: #9d174d;
+    --bs-success-rgb: 157, 23, 77;
+    --bs-dark-rgb: 76, 20, 43;
+    --bs-light-rgb: 255, 245, 248;
+    --bs-link-color: #a31550;
+    --bs-link-hover-color: #7d123f;
+    --login-fondo-panel: #fff5f8;
+    --login-panel-marca: #9d174d;
+    --login-panel-marca-oscuro: #70143d;
+    --login-texto: #3b1727;
+    --login-texto-secundario: #765766;
+    --login-acento: #be185d;
+    --login-borde: #f0cbd8;
+}
+
+.btn-primary,
+.btn-success,
+.btn-outline-success:hover,
+.btn-outline-success:focus {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #be185d;
+    --bs-btn-border-color: #be185d;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #a31550;
+    --bs-btn-hover-border-color: #a31550;
+    --bs-btn-active-bg: #861344;
+    --bs-btn-active-border-color: #861344;
+    --bs-btn-disabled-bg: #be185d;
+    --bs-btn-disabled-border-color: #be185d;
+}
+
+.btn-outline-primary,
+.btn-outline-success {
+    --bs-btn-color: #a31550;
+    --bs-btn-border-color: #d66b94;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #a31550;
+    --bs-btn-hover-border-color: #a31550;
+}
+
+.text-success {
+    color: #9d174d !important;
+}
+
+.bg-success-subtle,
+.alert-success,
+.resumen-sesion {
+    border-color: #f3bfd1 !important;
+    background-color: #fff0f5 !important;
+    color: #831843 !important;
+}
+
+.badge.bg-success-subtle {
+    color: #831843 !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: #df82a5;
+    box-shadow: 0 0 0 0.25rem rgba(190, 24, 93, 0.18);
+}
+
+.form-check-input:checked,
+.form-range::-webkit-slider-thumb {
+    border-color: #be185d;
+    background-color: #be185d;
+}
+
+.panel-marca {
+    background: linear-gradient(148deg, #9d174d 0%, #c02666 52%, #70143d 100%);
+}
+
+.boton-login,
+.boton-login:hover {
+    border-color: #be185d;
+    background-color: #be185d;
+}
+
+.etiqueta-total,
+.etiqueta-rol,
+.insignia-almacen {
+    background-color: #fce7ef;
+    color: #831843;
+}
+
+.avatar-empleado,
+.avatar-perfil-grande,
+.distintivo-marca {
+    border-color: #f3bfd1;
+    background-color: #fce7ef;
+    color: #9d174d;
+}

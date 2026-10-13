@@ -1,16 +1,16 @@
 /* Define los tonos cálidos extraídos de la pantalla administrativa del diseño Figma. */
 :root {
-    --empleados-fondo: #f6f0e6;
+    --empleados-fondo: #fff5f8;
     /* Reproduce el fondo marfil de la pantalla HU4. */
     --empleados-superficie: #ffffff;
     /* Mantiene las tarjetas y el menú en blanco. */
-    --empleados-borde: #e5dacb;
+    --empleados-borde: #f0cbd8;
     /* Usa el borde beige visible entre paneles. */
-    --empleados-texto: #1f2a26;
+    --empleados-texto: #3b1727;
     /* Mantiene un tono verde-neutro oscuro para títulos. */
-    --empleados-secundario: #5c6661;
+    --empleados-secundario: #765766;
     /* Atenúa títulos auxiliares y metadatos. */
-    --empleados-acento: #6d7f69;
+    --empleados-acento: #be185d;
     /* Destaca la navegación activa con un verde suave. */
 }
 
@@ -66,7 +66,7 @@
     /* Coincide con el tamaño del círculo de marca del marco Figma. */
     height: 56px;
     /* Conserva la forma circular del distintivo. */
-    background-color: #e9eee5;
+    background-color: #fce7ef;
     /* Usa un verde grisáceo suave complementario del panel marfil. */
     color: var(--empleados-acento);
     /* Destaca la inicial sin alterar la paleta general. */
@@ -98,9 +98,9 @@
 
 /* Resalta la opción activa sin perder el contraste sobre el fondo claro. */
 .enlace-navegacion.activo {
-    background-color: #edf1e9;
+    background-color: #fce7ef;
     /* Aplica un relleno verde muy pálido para el estado activo. */
-    color: #344b39;
+    color: #831843;
     /* Refuerza el contraste del enlace seleccionado. */
     font-weight: 600;
     /* Señala la página actual dentro del menú. */
@@ -126,9 +126,9 @@
     /* Coincide con las dimensiones del avatar Figma. */
     height: 36px;
     /* Conserva la proporción cuadrada previa al redondeo. */
-    background-color: #e9eee5;
+    background-color: #fce7ef;
     /* Asocia el avatar a la paleta suave de la marca. */
-    color: #344b39;
+    color: #831843;
     /* Mantiene legibles las iniciales. */
     font-size: 0.75rem;
     /* Ajusta las iniciales al tamaño del círculo. */
@@ -180,7 +180,7 @@
 .busqueda-empleados .input-group-text {
     border-color: var(--empleados-borde);
     /* Unifica el contorno del icono y del campo. */
-    background-color: #fbfaf7;
+    background-color: #fff7fa;
     /* Mantiene el extremo del input en una superficie clara. */
     color: var(--empleados-secundario);
     /* Usa contraste secundario para el símbolo. */
@@ -198,9 +198,9 @@
 
 /* Define una superficie discreta para el contador de usuarios. */
 .etiqueta-total {
-    background-color: #edf1e9;
+    background-color: #fce7ef;
     /* Diferencia el contador mediante un relleno verde tenue. */
-    color: #344b39;
+    color: #831843;
     /* Conserva alto contraste para la cantidad. */
     font-weight: 600;
     /* Refuerza la lectura del indicador numérico. */
@@ -212,7 +212,7 @@
 .tabla-empleados {
     --bs-table-bg: transparent;
     /* Deja visible el fondo blanco de la tarjeta. */
-    --bs-table-border-color: #eee8df;
+    --bs-table-border-color: #f5dce5;
     /* Usa divisores suaves entre los registros. */
     font-size: 0.9rem;
     /* Mantiene densidad legible para una tabla administrativa. */
@@ -256,7 +256,7 @@
 
 /* Usa una tinta diferente para nombres de usuario con formato de cuenta. */
 .texto-usuario {
-    color: #52665a;
+    color: #9d174d;
     /* Distingue el usuario sin usar un color de enlace. */
     font-weight: 600;
     /* Hace reconocible el identificador de inicio de sesión. */
@@ -266,9 +266,9 @@
 
 /* Mantiene las etiquetas de rol en armonía con el panel de marca. */
 .etiqueta-rol {
-    background-color: #f1eee7;
+    background-color: #fce7ef;
     /* Usa un gris cálido neutral para todas las categorías. */
-    color: #4d5852;
+    color: #831843;
     /* Conserva legibilidad en el distintivo. */
     font-weight: 600;
     /* Marca la categoría sin competir con el nombre. */

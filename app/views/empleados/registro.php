@@ -40,7 +40,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
     <!-- Describe la pantalla de alta de cuentas de personal. -->
     <meta name="description" content="Registro administrativo de usuarios del sistema El Güero.">
     <!-- Define el color de fondo cálido para la barra del navegador móvil. -->
-    <meta name="theme-color" content="#f6f0e6">
+    <meta name="theme-color" content="#fff5f8">
     <!-- Define el título que aparece en la pestaña del navegador. -->
     <title>Registrar usuarios | El Güero</title>
     <!-- Carga Bootstrap 5.3.3 con integridad del recurso remoto. -->
@@ -49,6 +49,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
     <link href="assets/css/empleados.css" rel="stylesheet">
     <!-- Carga los ajustes visuales específicos del formulario sin estilos en línea. -->
     <link href="assets/css/registro-empleados.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga la validación y selección de permisos desde un archivo JavaScript externo. -->
     <script src="assets/js/registro-empleados.js" defer></script>
 <!-- Cierra la cabecera y sus recursos externos. -->
@@ -62,7 +63,6 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
             <!-- Agrupa el distintivo y nombre de marca en la zona superior del menú. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-label="El Güero, lista de usuarios">
                 <!-- Representa el distintivo de marca con una inicial accesible como decoración. -->
-                <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Apila el nombre de la tocinería y el descriptor de su sistema. -->
                 <span class="d-flex flex-column">
                     <!-- Muestra el nombre comercial. -->
@@ -82,7 +82,6 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                     <!-- Enlaza a la lista de usuarios con el controlador y acción solicitados. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
                         <!-- Representa el acceso a la lista con un indicador visual sencillo. -->
-                        <span aria-hidden="true">●</span>
                         <!-- Identifica claramente la lista de cuentas. -->
                         <span>Lista de Usuarios</span>
                     <!-- Cierra el enlace a la lista. -->
@@ -90,7 +89,6 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                     <!-- Indica la sección actual de registro con el estado activo. -->
                     <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro" aria-current="page">
                         <!-- Representa el acceso de alta mediante un signo más. -->
-                        <span aria-hidden="true">＋</span>
                         <!-- Nombra el formulario actual de incorporación. -->
                         <span>Agregar Usuario</span>
                     <!-- Cierra el enlace al formulario de registro. -->
@@ -100,7 +98,6 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                 <!-- Enlaza al perfil del usuario autenticado disponible para cualquier rol. -->
                 <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
                     <!-- Representa la acción de perfil con un símbolo descriptivo. -->
-                    <span aria-hidden="true">👤</span>
                     <!-- Identifica el acceso al perfil personal. -->
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
@@ -110,7 +107,6 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
             <!-- Presenta la identidad del administrador en el borde inferior del menú. -->
             <div class="sesion-empleado d-flex align-items-center gap-2 mt-auto pt-3">
                 <!-- Muestra las iniciales de la cuenta autenticada. -->
-                <span class="avatar-empleado d-flex align-items-center justify-content-center rounded-circle fw-semibold" aria-hidden="true">AD</span>
                 <!-- Muestra el usuario autenticado y el rol que pasó la verificación del controlador. -->
                 <span class="d-flex flex-column overflow-hidden">
                     <!-- Imprime el usuario escapado recibido desde la sesión. -->
@@ -128,7 +124,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
             <!-- Presenta la ruta administrativa y el título del formulario. -->
             <header class="encabezado-pagina mb-4">
                 <!-- Indica la ubicación de la pantalla en la navegación. -->
-                <p class="miga-pan text-secondary small mb-2">Seguridad y acceso <span aria-hidden="true">›</span> Usuarios</p>
+                <p class="miga-pan text-secondary small mb-2">Seguridad y acceso / Usuarios</p>
                 <!-- Muestra el título inspirado en el nodo de registro de Figma. -->
                 <h1 class="h2 fw-bold mb-2">Registrar usuarios</h1>
                 <!-- Resume los pasos y datos necesarios para el alta. -->
@@ -166,9 +162,9 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo con el campo requerido de nombre. -->
                                         <label class="form-label fw-semibold" for="nombre">Nombre <span class="text-danger">(*)</span></label>
                                         <!-- Captura el nombre con longitud igual al límite del esquema. -->
-                                        <input class="form-control" id="nombre" name="nombre" type="text" maxlength="100" autocomplete="given-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['nombre'] ?? '')) ?>" required aria-describedby="error-nombre">
+                                        <input class="form-control" id="nombre" name="nombre" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]+" autocomplete="given-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['nombre'] ?? '')) ?>" required aria-describedby="error-nombre">
                                         <!-- Muestra la ayuda de validación si falta el nombre. -->
-                                        <div class="invalid-feedback" id="error-nombre">Ingresa el nombre del empleado.</div>
+                                        <div class="invalid-feedback" id="error-nombre">Ingresa un nombre con letras y separadores habituales, sin números.</div>
                                     <!-- Cierra la columna del nombre. -->
                                     </div>
                                     <!-- Aloja el apellido paterno obligatorio dentro de media columna. -->
@@ -176,9 +172,9 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo con el campo requerido de apellido paterno. -->
                                         <label class="form-label fw-semibold" for="apellido-p">Apellido paterno <span class="text-danger">(*)</span></label>
                                         <!-- Captura el apellido paterno con longitud compatible con la columna. -->
-                                        <input class="form-control" id="apellido-p" name="apellido_p" type="text" maxlength="100" autocomplete="family-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['apellido_p'] ?? '')) ?>" required aria-describedby="error-apellido-p">
+                                        <input class="form-control" id="apellido-p" name="apellido_p" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]+" autocomplete="family-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['apellido_p'] ?? '')) ?>" required aria-describedby="error-apellido-p">
                                         <!-- Muestra la ayuda de validación si falta el apellido paterno. -->
-                                        <div class="invalid-feedback" id="error-apellido-p">Ingresa el apellido paterno.</div>
+                                        <div class="invalid-feedback" id="error-apellido-p">Ingresa un apellido con letras y separadores habituales, sin números.</div>
                                     <!-- Cierra la columna del apellido paterno. -->
                                     </div>
                                     <!-- Aloja el usuario de inicio de sesión a todo el ancho de la columna principal. -->
@@ -186,9 +182,9 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo con el campo requerido de usuario. -->
                                         <label class="form-label fw-semibold" for="usuario">Usuario <span class="text-danger">(*)</span></label>
                                         <!-- Captura un nombre de usuario dentro del tamaño definido por la base. -->
-                                        <input class="form-control" id="usuario" name="usuario" type="text" maxlength="50" autocomplete="username" value="<?= $escaparRegistro((string) ($datosRegistroVista['usuario'] ?? '')) ?>" required aria-describedby="error-usuario">
+                                        <input class="form-control" id="usuario" name="usuario" type="text" minlength="3" maxlength="50" pattern="[A-Za-z0-9._-]{3,50}" autocomplete="username" value="<?= $escaparRegistro((string) ($datosRegistroVista['usuario'] ?? '')) ?>" required aria-describedby="error-usuario">
                                         <!-- Muestra la ayuda de validación si falta el usuario. -->
-                                        <div class="invalid-feedback" id="error-usuario">Ingresa un nombre de usuario.</div>
+                                        <div class="invalid-feedback" id="error-usuario">Usa de 3 a 50 letras, números, puntos, guiones o guiones bajos.</div>
                                     <!-- Cierra la columna del usuario. -->
                                     </div>
                                     <!-- Aloja el campo de contraseña obligatorio y siempre oculto. -->
@@ -196,9 +192,9 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo con el campo requerido de contraseña. -->
                                         <label class="form-label fw-semibold" for="contrasenia">Contraseña <span class="text-danger">(*)</span></label>
                                         <!-- Captura la contraseña como campo protegido con autocompletado de alta. -->
-                                        <input class="form-control" id="contrasenia" name="contrasenia" type="password" autocomplete="new-password" required aria-describedby="error-contrasenia">
+                                        <input class="form-control" id="contrasenia" name="contrasenia" type="password" minlength="8" maxlength="72" autocomplete="new-password" required aria-describedby="error-contrasenia">
                                         <!-- Informa que el navegador requiere este campo. -->
-                                        <div class="invalid-feedback" id="error-contrasenia">Ingresa la contraseña inicial.</div>
+                                        <div class="invalid-feedback" id="error-contrasenia">La contraseña debe tener al menos 8 caracteres y no superar 72 bytes.</div>
                                     <!-- Cierra la columna de contraseña. -->
                                     </div>
                                     <!-- Aloja el CURP obligatorio y limitado a 18 caracteres. -->
@@ -206,9 +202,9 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo con el campo requerido de CURP. -->
                                         <label class="form-label fw-semibold" for="curp">CURP <span class="text-danger">(*)</span></label>
                                         <!-- Captura la clave de identidad con longitud establecida en el diccionario. -->
-                                        <input class="form-control text-uppercase" id="curp" name="curp" type="text" maxlength="18" autocomplete="off" value="<?= $escaparRegistro((string) ($datosRegistroVista['curp'] ?? '')) ?>" required aria-describedby="error-curp">
+                                        <input class="form-control text-uppercase" id="curp" name="curp" type="text" minlength="18" maxlength="18" pattern="[A-Za-z][AaEeIiOoUuXx][A-Za-z]{2}[0-9]{6}[HhMm][A-Za-z]{2}[B-DF-HJ-NP-TV-Zb-df-hj-np-tv-z]{3}[A-Za-z0-9][0-9]" autocomplete="off" value="<?= $escaparRegistro((string) ($datosRegistroVista['curp'] ?? '')) ?>" required aria-describedby="error-curp">
                                         <!-- Muestra la ayuda de validación si falta el CURP. -->
-                                        <div class="invalid-feedback" id="error-curp">Ingresa el CURP.</div>
+                                        <div class="invalid-feedback" id="error-curp">La CURP debe tener exactamente 18 caracteres y un formato válido.</div>
                                     <!-- Cierra la columna del CURP. -->
                                     </div>
                                     <!-- Aloja el teléfono obligatorio y preserva ceros iniciales. -->
@@ -216,9 +212,9 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo con el campo requerido de teléfono. -->
                                         <label class="form-label fw-semibold" for="telefono">Teléfono <span class="text-danger">(*)</span></label>
                                         <!-- Captura el teléfono como texto con la longitud disponible en la tabla. -->
-                                        <input class="form-control" id="telefono" name="telefono" type="tel" maxlength="15" autocomplete="tel" value="<?= $escaparRegistro((string) ($datosRegistroVista['telefono'] ?? '')) ?>" required aria-describedby="error-telefono">
+                                        <input class="form-control" id="telefono" name="telefono" type="tel" minlength="10" maxlength="15" pattern="[0-9]{10,15}" inputmode="numeric" autocomplete="tel" value="<?= $escaparRegistro((string) ($datosRegistroVista['telefono'] ?? '')) ?>" required aria-describedby="error-telefono">
                                         <!-- Muestra la ayuda de validación si falta el teléfono. -->
-                                        <div class="invalid-feedback" id="error-telefono">Ingresa el teléfono.</div>
+                                        <div class="invalid-feedback" id="error-telefono">Ingresa de 10 a 15 dígitos, sin espacios ni signos.</div>
                                     <!-- Cierra la columna del teléfono. -->
                                     </div>
                                     <!-- Aloja el rol obligatorio con las opciones exactas del ENUM. -->
@@ -266,7 +262,8 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo del segundo nombre con su control. -->
                                         <label class="form-label" for="seg-nombre">Segundo nombre</label>
                                         <!-- Permite omitir el segundo nombre. -->
-                                        <input class="form-control" id="seg-nombre" name="seg_nombre" type="text" maxlength="100" autocomplete="additional-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['seg_nombre'] ?? '')) ?>">
+                                        <input class="form-control" id="seg-nombre" name="seg_nombre" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]*" autocomplete="additional-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['seg_nombre'] ?? '')) ?>">
+                                        <div class="invalid-feedback">Usa solo letras, espacios, apóstrofos, puntos o guiones.</div>
                                     <!-- Cierra el campo de segundo nombre. -->
                                     </div>
                                     <!-- Captura el apellido materno opcional. -->
@@ -274,16 +271,22 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                                         <!-- Asocia el rótulo de apellido materno con su control. -->
                                         <label class="form-label" for="apellido-m">Apellido materno</label>
                                         <!-- Permite omitir el apellido materno. -->
-                                        <input class="form-control" id="apellido-m" name="apellido_m" type="text" maxlength="100" autocomplete="additional-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['apellido_m'] ?? '')) ?>">
+                                        <input class="form-control" id="apellido-m" name="apellido_m" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]*" autocomplete="additional-name" value="<?= $escaparRegistro((string) ($datosRegistroVista['apellido_m'] ?? '')) ?>">
+                                        <div class="invalid-feedback">Usa solo letras, espacios, apóstrofos, puntos o guiones.</div>
                                     <!-- Cierra el campo de apellido materno. -->
                                     </div>
-                                    <!-- Captura el género opcional como texto del dominio del proyecto. -->
+                                    <!-- Permite elegir un valor de género conocido sin aceptar texto arbitrario. -->
                                     <div class="col-12">
-                                        <!-- Asocia el rótulo de género con su control. -->
+                                        <!-- Asocia el rótulo de género con el selector opcional. -->
                                         <label class="form-label" for="genero">Género</label>
-                                        <!-- Permite guardar un género opcional dentro del límite de la columna. -->
-                                        <input class="form-control" id="genero" name="genero" type="text" maxlength="20" value="<?= $escaparRegistro((string) ($datosRegistroVista['genero'] ?? '')) ?>">
-                                    <!-- Cierra el campo opcional de género. -->
+                                        <!-- Restringe la selección a opciones compartidas con el perfil. -->
+                                        <select class="form-select" id="genero" name="genero">
+                                            <option value="">Selecciona una opción</option>
+                                            <option value="Masculino" <?= (($datosRegistroVista['genero'] ?? '') === 'Masculino') ? 'selected' : '' ?>>Masculino</option>
+                                            <option value="Femenino" <?= (($datosRegistroVista['genero'] ?? '') === 'Femenino') ? 'selected' : '' ?>>Femenino</option>
+                                            <option value="Otro" <?= (($datosRegistroVista['genero'] ?? '') === 'Otro') ? 'selected' : '' ?>>Otro</option>
+                                        </select>
+                                        <!-- Cierra el campo opcional de género. -->
                                     </div>
                                 <!-- Cierra la cuadrícula de datos opcionales. -->
                                 </div>

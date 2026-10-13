@@ -2,6 +2,9 @@
 // Activa la comprobación estricta de tipos para los métodos del controlador.
 declare(strict_types=1); // Evita conversiones implícitas en las operaciones futuras de empleados.
 
+// Carga las reglas comunes que no deben depender de la validación del navegador.
+require_once dirname(__DIR__) . '/helpers/ValidacionFormulario.php'; // Comparte límites y patrones en todas las acciones de empleado.
+
 // Declara el controlador encargado de coordinar las operaciones de gestión de empleados.
 class EmpleadoController // Mantiene juntas las acciones protegidas del rol administrador.
 { // Inicia la definición de la clase EmpleadoController.
@@ -64,25 +67,25 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
         // Comprueba el método HTTP para procesar solo envíos POST del formulario.
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') { // Evita insertar empleados al consultar la página.
             // Recupera los datos obligatorios como texto y quita espacios externos de campos no secretos.
-            $datosFormulario['nombre'] = trim((string) ($_POST['nombre'] ?? '')); // Valida el nombre sin conservar espacios periféricos.
+            $datosFormulario['nombre'] = trim(ValidacionFormulario::texto($_POST['nombre'] ?? null)); // Valida el nombre sin conservar espacios periféricos.
             // Recupera el apellido paterno obligatorio desde el formulario.
-            $datosFormulario['apellido_p'] = trim((string) ($_POST['apellido_p'] ?? '')); // Normaliza el dato antes de comprobarlo.
+            $datosFormulario['apellido_p'] = trim(ValidacionFormulario::texto($_POST['apellido_p'] ?? null)); // Normaliza el dato antes de comprobarlo.
             // Recupera el usuario obligatorio usado para iniciar sesión.
-            $datosFormulario['usuario'] = trim((string) ($_POST['usuario'] ?? '')); // Evita espacios externos en el identificador.
+            $datosFormulario['usuario'] = trim(ValidacionFormulario::texto($_POST['usuario'] ?? null)); // Evita espacios externos en el identificador.
             // Recupera el CURP obligatorio para validar su unicidad.
-            $datosFormulario['curp'] = strtoupper(trim((string) ($_POST['curp'] ?? ''))); // Normaliza el CURP para compararlo con el registro existente.
+            $datosFormulario['curp'] = strtoupper(trim(ValidacionFormulario::texto($_POST['curp'] ?? null))); // Normaliza el CURP para compararlo con el registro existente.
             // Recupera el teléfono obligatorio como texto para conservar ceros iniciales.
-            $datosFormulario['telefono'] = trim((string) ($_POST['telefono'] ?? '')); // Evita convertir el teléfono a un tipo numérico.
+            $datosFormulario['telefono'] = trim(ValidacionFormulario::texto($_POST['telefono'] ?? null)); // Evita convertir el teléfono a un tipo numérico.
             // Conserva exactamente la contraseña escrita para aplicar password_hash sin alterarla.
-            $contrasenia = (string) ($_POST['contrasenia'] ?? ''); // No recorta espacios que puedan formar parte de la clave.
+            $contrasenia = ValidacionFormulario::texto($_POST['contrasenia'] ?? null); // No recorta espacios que puedan formar parte de la clave.
             // Recupera el rol seleccionado para comprobarlo contra el ENUM admitido.
-            $datosFormulario['rol'] = trim((string) ($_POST['rol'] ?? '')); // No confía en las opciones enviadas por el navegador.
+            $datosFormulario['rol'] = trim(ValidacionFormulario::texto($_POST['rol'] ?? null)); // No confía en las opciones enviadas por el navegador.
             // Recupera los campos opcionales y los normaliza como cadenas.
-            $datosFormulario['seg_nombre'] = trim((string) ($_POST['seg_nombre'] ?? '')); // Permite dejar vacío el segundo nombre.
+            $datosFormulario['seg_nombre'] = trim(ValidacionFormulario::texto($_POST['seg_nombre'] ?? null)); // Permite dejar vacío el segundo nombre.
             // Recupera el apellido materno opcional.
-            $datosFormulario['apellido_m'] = trim((string) ($_POST['apellido_m'] ?? '')); // Permite dejar vacío el apellido materno.
+            $datosFormulario['apellido_m'] = trim(ValidacionFormulario::texto($_POST['apellido_m'] ?? null)); // Permite dejar vacío el apellido materno.
             // Recupera el género opcional.
-            $datosFormulario['genero'] = trim((string) ($_POST['genero'] ?? '')); // Permite dejar el género sin seleccionar.
+            $datosFormulario['genero'] = trim(ValidacionFormulario::texto($_POST['genero'] ?? null)); // Permite dejar el género sin seleccionar.
             // Acepta permisos solo si el navegador envió una lista y descarta valores de otro formato.
             $permisosEnviados = isset($_POST['permisos']) && is_array($_POST['permisos']) ? $_POST['permisos'] : []; // Evita operar sobre datos POST con estructura inesperada.
             // Descarta elementos que no sean cadenas antes de comparar las claves de permisos.
@@ -93,6 +96,24 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
             if (!$camposObligatoriosCompletos) { // Detiene el flujo antes de consultar o insertar registros.
                 $mensaje = 'Error: datos faltantes'; // Usa el mensaje requerido para campos obligatorios vacíos.
                 $tipoAlerta = 'danger'; // Indica el problema con una alerta roja Bootstrap.
+            } elseif (!ValidacionFormulario::nombrePersona($datosFormulario['nombre']) || !ValidacionFormulario::nombrePersona($datosFormulario['apellido_p']) || !ValidacionFormulario::nombrePersona($datosFormulario['seg_nombre'], false) || !ValidacionFormulario::nombrePersona($datosFormulario['apellido_m'], false)) { // Rechaza dígitos, símbolos no permitidos y textos demasiado largos en nombres.
+                $mensaje = 'Los nombres solo pueden contener letras, espacios, apóstrofos, puntos o guiones y tener hasta 100 caracteres.'; // Explica las reglas de los campos personales.
+                $tipoAlerta = 'danger'; // Presenta el error antes de consultar duplicados.
+            } elseif (!preg_match('/^[A-Za-z0-9._-]{3,50}$/D', $datosFormulario['usuario'])) { // Acepta solo caracteres previstos para el identificador de acceso.
+                $mensaje = 'El usuario debe tener entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo.'; // Informa la longitud y caracteres permitidos.
+                $tipoAlerta = 'danger'; // Evita procesar un identificador inválido.
+            } elseif (!ValidacionFormulario::curp($datosFormulario['curp'])) { // Requiere una CURP de 18 caracteres con formato correcto.
+                $mensaje = 'La CURP debe tener exactamente 18 caracteres y un formato válido.'; // Explica la regla de longitud y estructura.
+                $tipoAlerta = 'danger'; // Detiene el alta antes de consultar duplicados.
+            } elseif (!ValidacionFormulario::telefono($datosFormulario['telefono'])) { // Restringe el teléfono a dígitos y longitud admitida.
+                $mensaje = 'El teléfono debe contener entre 10 y 15 dígitos, sin espacios ni signos.'; // Informa la entrada válida.
+                $tipoAlerta = 'danger'; // Evita guardar valores no telefónicos.
+            } elseif (strlen($contrasenia) < 8 || strlen($contrasenia) > 72) { // Impide claves débiles o que BCRYPT truncaría.
+                $mensaje = 'La contraseña debe tener entre 8 y 72 bytes.'; // Informa el límite compatible con BCRYPT.
+                $tipoAlerta = 'danger'; // Evita guardar una clave insegura o truncada.
+            } elseif ($datosFormulario['genero'] !== '' && !in_array($datosFormulario['genero'], ['Masculino', 'Femenino', 'Otro'], true)) { // Acepta solo las opciones previstas en el perfil.
+                $mensaje = 'La opción de género seleccionada no es válida.'; // Rechaza valores manipulados.
+                $tipoAlerta = 'danger'; // Protege el catálogo de género.
             // Comprueba que el rol enviado corresponda exactamente a una opción del ENUM de empleado.
             } elseif (!array_key_exists($datosFormulario['rol'], $permisosPorRol)) { // Rechaza valores inventados o alterados en la petición.
                 $mensaje = 'El rol seleccionado no es válido.'; // Informa el error sin exponer detalles de la base de datos.
@@ -157,26 +178,104 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
         require dirname(__DIR__) . '/views/empleados/registro.php'; // Mantiene el marcado HTML separado de la lógica de negocio.
     } // Finaliza la acción de registro de empleados.
 
-    // Reserva la acción de listado de empleados para su implementación posterior.
+    // Recupera los empleados y notificaciones para la pantalla administrativa.
     public function lista(): void // Define el punto de entrada para listar y buscar personal.
     { // Inicia la acción de listado de empleados autorizada.
         // Comprueba que la sesión activa cuente con el rol ADMINISTRADOR.
         $this->verificarRolAdministrador(); // Protege la lista para uso exclusivo de administradores.
+        // Inicializa un token de sesión para proteger los formularios de restablecimiento.
+        if (!isset($_SESSION['tokenRestablecimiento']) || !is_string($_SESSION['tokenRestablecimiento'])) { // Reutiliza el token durante la navegación actual.
+            $_SESSION['tokenRestablecimiento'] = bin2hex(random_bytes(32)); // Genera un valor impredecible y lo conserva en la sesión.
+        } // Finaliza la inicialización del token administrativo.
         // Obtiene los datos de la tabla empleado a través del método PDO preparado del modelo.
         $usuarios = $this->empleado->listarTodos(); // No accede directamente a la base de datos desde el controlador.
+        // Recupera un único aviso después de que la consulta de la lista se completó correctamente.
+        $avisoAdministrativo = $_SESSION['avisoAdministrativo'] ?? null; // Conserva el aviso si la consulta lanza una excepción.
+        // Consume el aviso para que la contraseña temporal no vuelva a presentarse al recargar.
+        unset($_SESSION['avisoAdministrativo']); // Elimina el contenido temporal después de recuperarlo.
         // Carga el usuario administrador para mostrar el encabezado de sesión de la vista.
         $usuarioSesion = $_SESSION['user']; // La identidad ya fue validada por el constructor.
         // Renderiza la vista de lista usando la ruta MVC correspondiente.
         require dirname(__DIR__) . '/views/empleados/lista.php'; // Entrega la colección consultada al archivo de presentación.
     } // Finaliza la acción de listado de empleados.
 
-    // Reserva la acción de restablecimiento de contraseña para su implementación posterior.
+    // Restablece la contraseña de una cuenta desde una solicitud administrativa protegida.
     public function restablecer(): void // Define el punto de entrada para el restablecimiento administrativo.
-    { // Inicia la acción de restablecimiento todavía sin lógica, según el alcance solicitado.
+    { // Inicia la acción de restablecimiento administrativo.
         // Comprueba que la sesión activa cuente con el rol ADMINISTRADOR.
         $this->verificarRolAdministrador(); // Protege el restablecimiento para uso exclusivo de administradores.
-        // Mantiene este método vacío hasta desarrollar su tarea correspondiente.
+        // Rechaza solicitudes que no provengan del envío del formulario.
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') { // Evita modificar contraseñas mediante enlaces GET.
+            http_response_code(405); // Informa que la ruta requiere una petición POST.
+            exit('Método no permitido.'); // Detiene el proceso sin alterar ninguna cuenta.
+        } // Finaliza la validación del método HTTP.
+        // Recupera el token enviado para verificar el origen de la solicitud.
+        $tokenEnviado = ValidacionFormulario::texto($_POST['token_restauracion'] ?? null); // Rechaza arreglos o valores de tipo inesperado.
+        // Exige coincidencia entre el token del formulario y el de la sesión administrativa.
+        if (!isset($_SESSION['tokenRestablecimiento']) || !hash_equals((string) $_SESSION['tokenRestablecimiento'], $tokenEnviado)) { // Mitiga solicitudes de otros sitios.
+            http_response_code(403); // Informa que la solicitud no está autorizada.
+            exit('La solicitud no es válida. Actualiza la lista e inténtalo nuevamente.'); // No procesa un token inválido.
+        } // Finaliza la validación del token de formulario.
+        // Comprueba que el identificador recibido sea un entero positivo.
+        $idEmpleado = filter_var($_POST['id_empleado'] ?? null, FILTER_VALIDATE_INT); // Evita identificadores ambiguos.
+        // Busca el empleado solo cuando el identificador cumple el formato esperado.
+        $empleadoObjetivo = is_int($idEmpleado) && $idEmpleado > 0 ? $this->empleado->buscarPorId($idEmpleado) : null; // Usa el método parametrizado del modelo.
+        // Prepara un mensaje genérico para los casos en los que el proceso no se complete.
+        $avisoAdministrativo = ['tipo' => 'danger', 'mensaje' => 'No fue posible restablecer la contraseña.', 'usuario' => '', 'contraseniaTemporal' => '']; // No incluye datos sensibles en errores.
+        // Evita cambios para identificadores inválidos o cuentas inexistentes.
+        if ($empleadoObjetivo === null) { // No se debe modificar un registro que no fue encontrado.
+            $avisoAdministrativo['mensaje'] = 'No se encontró el usuario seleccionado.'; // Indica el motivo de forma segura.
+        // Impide invalidar la sesión del administrador que ejecuta esta operación.
+        } elseif ($idEmpleado === (int) ($_SESSION['user']['id_empleado'] ?? 0)) { // El administrador no se restablece desde la lista.
+            $avisoAdministrativo['mensaje'] = 'No puedes restablecer tu propia contraseña desde esta pantalla.'; // Conserva disponible la sesión activa.
+        } else { // Genera una contraseña temporal únicamente para una cuenta existente y distinta.
+            try { // Controla fallos de generación aleatoria, hash o base de datos.
+                // Genera una clave temporal aleatoria y fácil de copiar, distinta para cada operación.
+                $contraseniaTemporal = rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '='); // No reutiliza una contraseña compartida.
+                // Calcula el hash BCRYPT que se guardará en la base de datos.
+                $hashContrasenia = password_hash($contraseniaTemporal, PASSWORD_BCRYPT); // Nunca almacena la clave temporal en texto plano.
+                // Comprueba que el hash se haya generado antes de persistirlo.
+                if ($hashContrasenia === false) { // Evita almacenar un resultado de hash inválido.
+                    throw new RuntimeException('No fue posible generar el hash temporal.'); // Inicia el manejo de error controlado.
+                } // Finaliza la comprobación del hash.
+                // Guarda el hash con un marcador para exigir un cambio en el siguiente inicio de sesión.
+                $actualizacionCorrecta = $this->empleado->cambiarPassword($idEmpleado, $hashContrasenia, true); // No necesita agregar columnas a la tabla.
+                // Evita mostrar éxito si el modelo no completó la actualización.
+                if (!$actualizacionCorrecta) { // Confirma que PDO aceptó la operación.
+                    throw new RuntimeException('No se pudo actualizar la contraseña.'); // Activa el aviso seguro de error.
+                } // Finaliza la comprobación de la actualización.
+                // Prepara un mensaje de una sola lectura con la credencial destinada al empleado.
+                $avisoAdministrativo = ['tipo' => 'success', 'mensaje' => 'Contraseña restablecida. Entrega esta clave temporal al usuario; deberá cambiarla al iniciar sesión.', 'usuario' => (string) $empleadoObjetivo['usuario'], 'contraseniaTemporal' => $contraseniaTemporal]; // La clave solo vive en el aviso flash de sesión.
+            } catch (Throwable $excepcion) { // No revela excepciones técnicas ni contraseñas en la respuesta.
+                error_log('Falló el restablecimiento administrativo de una contraseña.'); // Registra un mensaje que no contiene credenciales.
+            } // Finaliza el manejo de errores del restablecimiento.
+        } // Finaliza la selección del resultado administrativo.
+        // Guarda el aviso para mostrarlo en la siguiente respuesta de la lista.
+        $_SESSION['avisoAdministrativo'] = $avisoAdministrativo; // El aviso se consume una sola vez en lista().
+        // Redirige mediante GET para que actualizar la página no repita el restablecimiento.
+        header('Location: ?accion=empleados-lista', true, 303); // Aplica el patrón POST/Redirect/GET.
+        exit; // Detiene la solicitud después de iniciar la redirección.
     } // Finaliza la acción de restablecimiento.
+
+    // Muestra a un administrador la ficha de una cuenta sin revelar credenciales.
+    public function ver(): void // Define la acción administrativa de consulta de empleado.
+    { // Inicia la búsqueda individual del empleado.
+        // Restringe la ficha de otros usuarios al rol administrador.
+        $this->verificarRolAdministrador(); // Reutiliza el control de acceso administrativo.
+        // Valida que el identificador recibido sea un entero positivo.
+        $idEmpleado = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT); // No acepta identificadores mal formados.
+        // Consulta el registro únicamente si el identificador cumple la validación.
+        $empleadoDetalle = is_int($idEmpleado) && $idEmpleado > 0 ? $this->empleado->buscarPorId($idEmpleado) : null; // La consulta está parametrizada en el modelo.
+        // Devuelve un estado 404 cuando no existe el empleado solicitado.
+        if ($empleadoDetalle === null) { // Evita representar datos de una cuenta inexistente.
+            http_response_code(404); // Informa que no se encontró el recurso.
+            exit('No se encontró el usuario solicitado.'); // Detiene el renderizado sin filtrar información técnica.
+        } // Finaliza la validación de existencia.
+        // Pasa la identidad administrativa al menú lateral de la vista.
+        $usuarioSesion = $_SESSION['user']; // Usa exclusivamente la identidad autenticada.
+        // Renderiza una ficha de datos personales sin incluir la contraseña.
+        require dirname(__DIR__) . '/views/empleados/detalle.php'; // Mantiene la presentación separada del controlador.
+    } // Finaliza la acción de consulta individual.
 
     // Carga los datos del perfil activo y procesa la actualización por el método POST.
     public function perfil(): void // Define el punto de entrada para que cualquier empleado autenticado gestione su perfil.
@@ -220,17 +319,17 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
         // Comprueba si la solicitud corresponde a un envío de formulario mediante POST.
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') { // Evita procesar cambios durante peticiones de lectura GET.
             // Extrae y normaliza el campo obligatorio de nombre eliminando espacios en blanco.
-            $nombre = trim((string) ($_POST['nombre'] ?? '')); // Sanitiza la entrada de nombre.
+            $nombre = trim(ValidacionFormulario::texto($_POST['nombre'] ?? null)); // Normaliza la entrada del nombre.
             // Extrae y normaliza el campo obligatorio de apellido paterno.
-            $apellidoP = trim((string) ($_POST['apellido_p'] ?? '')); // Sanitiza la entrada de apellido paterno.
+            $apellidoP = trim(ValidacionFormulario::texto($_POST['apellido_p'] ?? null)); // Normaliza la entrada del apellido paterno.
             // Extrae y normaliza el campo obligatorio de teléfono de contacto.
-            $telefono = trim((string) ($_POST['telefono'] ?? '')); // Sanitiza la entrada de teléfono.
+            $telefono = trim(ValidacionFormulario::texto($_POST['telefono'] ?? null)); // Normaliza la entrada del teléfono.
             // Extrae y normaliza el campo opcional de segundo nombre.
-            $segNombre = trim((string) ($_POST['seg_nombre'] ?? '')); // Sanitiza la entrada de segundo nombre.
+            $segNombre = trim(ValidacionFormulario::texto($_POST['seg_nombre'] ?? null)); // Normaliza la entrada del segundo nombre.
             // Extrae y normaliza el campo opcional de apellido materno.
-            $apellidoM = trim((string) ($_POST['apellido_m'] ?? '')); // Sanitiza la entrada de apellido materno.
+            $apellidoM = trim(ValidacionFormulario::texto($_POST['apellido_m'] ?? null)); // Normaliza la entrada del apellido materno.
             // Extrae y normaliza el campo opcional de género.
-            $genero = trim((string) ($_POST['genero'] ?? '')); // Sanitiza la selección de género.
+            $genero = trim(ValidacionFormulario::texto($_POST['genero'] ?? null)); // Normaliza la selección de género.
             // Repuebla los campos modificables en el arreglo para no perder lo ingresado ante errores.
             $datosEmpleado['nombre'] = $nombre; // Conserva el nombre capturado.
             // Repuebla el apellido paterno capturado.
@@ -243,6 +342,10 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
             $datosEmpleado['apellido_m'] = $apellidoM; // Conserva el apellido materno.
             // Repuebla el género capturado.
             $datosEmpleado['genero'] = $genero; // Conserva el género.
+            // Comprueba los nombres personales, el teléfono y el género antes de persistir el perfil.
+            $nombresValidos = ValidacionFormulario::nombrePersona($nombre) && ValidacionFormulario::nombrePersona($segNombre, false) && ValidacionFormulario::nombrePersona($apellidoP) && ValidacionFormulario::nombrePersona($apellidoM, false); // Mantiene la misma regla que el alta administrativa.
+            $telefonoValido = ValidacionFormulario::telefono($telefono); // Exige únicamente dígitos y una longitud de 10 a 15.
+            $generoValido = $genero === '' || in_array($genero, ['Masculino', 'Femenino', 'Otro'], true); // Acepta solo valores mostrados por el selector.
             // Verifica que los tres campos obligatorios no se encuentren vacíos.
             $camposObligatoriosValidos = $nombre !== '' && $apellidoP !== '' && $telefono !== ''; // Exige obligatoriedad en nombre, apellido paterno y teléfono.
             // Rechaza la actualización si falta alguno de los campos obligatorios.
@@ -251,6 +354,15 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
                 $mensaje = 'Error: datos faltantes'; // Comunica la falta de información requerida.
                 // Asigna el estilo de alerta de peligro en rojo de Bootstrap.
                 $tipoAlerta = 'danger'; // Muestra la alerta visual correspondiente.
+            } elseif (!$nombresValidos) { // Rechaza nombres con números, símbolos inválidos o más de 100 caracteres.
+                $mensaje = 'Los nombres solo pueden contener letras, espacios, apóstrofos, puntos o guiones y tener hasta 100 caracteres.'; // Detalla la regla para corregir los campos.
+                $tipoAlerta = 'danger'; // Comunica el error sin intentar guardar cambios.
+            } elseif (!$telefonoValido) { // Rechaza teléfonos con caracteres distintos de dígitos.
+                $mensaje = 'El teléfono debe contener entre 10 y 15 dígitos, sin espacios ni signos.'; // Informa el formato aceptado.
+                $tipoAlerta = 'danger'; // Señala la entrada que debe corregirse.
+            } elseif (!$generoValido) { // Rechaza un género enviado fuera del conjunto permitido.
+                $mensaje = 'La opción de género seleccionada no es válida.'; // Explica por qué no se acepta el valor.
+                $tipoAlerta = 'danger'; // Impide persistir valores manipulados.
             } else { // Procede con la persistencia cuando la validación es satisfactoria.
                 // Prepara el conjunto de datos autorizados para la actualización en el modelo.
                 $datosActualizar = [ // Excluye estrictamente usuario, curp y rol.

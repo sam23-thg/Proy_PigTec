@@ -31,7 +31,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
     <!-- Describe el propósito de la página de registro de productos e inventario. -->
     <meta name="description" content="Registro unificado de productos comerciales y existencias de inventario en El Güero.">
     <!-- Establece el color de tema para la interfaz móvil. -->
-    <meta name="theme-color" content="#f6f0e6">
+    <meta name="theme-color" content="#fff5f8">
     <!-- Define el título de la pestaña del navegador. -->
     <title>Registrar Producto | El Güero</title>
     <!-- Carga Bootstrap 5.3.3 desde CDN oficial con comprobación de integridad. -->
@@ -40,6 +40,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
     <link href="assets/css/empleados.css" rel="stylesheet">
     <!-- Carga los estilos específicos para formularios de productos. -->
     <link href="assets/css/productos.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el script de validación externa con el atributo defer. -->
     <script src="assets/js/productos.js" defer></script>
 <!-- Cierra la cabecera del documento HTML. -->
@@ -53,7 +54,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
             <!-- Presenta la identidad de marca de la tocinería como enlace. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php" aria-label="El Güero, inicio">
                 <!-- Distintivo circular de marca. -->
-                <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Agrupa el nombre comercial y descriptor. -->
                 <span class="d-flex flex-column">
                     <!-- Nombre comercial. -->
@@ -71,7 +71,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Enlace activo a registro de producto. -->
                 <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo" aria-current="page">
                     <!-- Icono representativo de nuevo producto. -->
-                    <span aria-hidden="true">📦</span>
                     <!-- Texto de la opción de nuevo producto. -->
                     <span>Registrar Producto</span>
                 <!-- Cierra el enlace de nuevo producto. -->
@@ -79,7 +78,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Enlace a la vista de edición y catálogo de productos. -->
                 <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar">
                     <!-- Icono representativo de edición. -->
-                    <span aria-hidden="true">📝</span>
                     <!-- Texto de la opción de edición. -->
                     <span>Editar Producto</span>
                 <!-- Cierra el enlace de edición. -->
@@ -91,7 +89,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                     <!-- Enlace a la lista de usuarios. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
                         <!-- Icono de lista. -->
-                        <span aria-hidden="true">●</span>
                         <!-- Nombre del enlace a lista. -->
                         <span>Lista de Usuarios</span>
                     <!-- Cierra el enlace a lista. -->
@@ -99,7 +96,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                     <!-- Enlace a registro de nuevo usuario. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
                         <!-- Icono de agregar usuario. -->
-                        <span aria-hidden="true">＋</span>
                         <!-- Nombre del enlace de alta. -->
                         <span>Agregar Usuario</span>
                     <!-- Cierra el enlace de registro de usuario. -->
@@ -109,7 +105,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Enlace al perfil de usuario disponible para cualquier rol. -->
                 <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
                     <!-- Icono de usuario. -->
-                    <span aria-hidden="true">👤</span>
                     <!-- Nombre del enlace a perfil. -->
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
@@ -121,7 +116,6 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Agrupa el avatar y nombre de sesión. -->
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                     <!-- Avatar con iniciales o rol. -->
-                    <span class="avatar-empleado d-flex align-items-center justify-content-center rounded-circle fw-semibold flex-shrink-0" aria-hidden="true"><?= $escaparHtml(mb_strtoupper(mb_substr((string) ($sesionVista['usuario'] ?? 'U'), 0, 2))) ?></span>
                     <!-- Muestra el usuario y su rol. -->
                     <span class="d-flex flex-column overflow-hidden">
                         <!-- Nombre de usuario. -->
@@ -133,7 +127,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Cierra la identidad de sesión. -->
                 </div>
                 <!-- Botón de salida para cerrar la sesión. -->
-                <a class="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2" href="index.php?c=auth&amp;a=logout" title="Cerrar sesión" aria-label="Cerrar sesión">🚪</a>
+                <a class="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
             <!-- Cierra el pie del menú lateral. -->
             </div>
         <!-- Cierra la barra lateral. -->
@@ -143,7 +137,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
             <!-- Encabezado de página con miga de pan y título descriptivo. -->
             <header class="encabezado-productos mb-4">
                 <!-- Miga de pan de navegación. -->
-                <p class="miga-pan text-secondary small mb-2">Catálogo e inventario <span aria-hidden="true">›</span> Registrar producto</p>
+                <p class="miga-pan text-secondary small mb-2">Catálogo e inventario / Registrar producto</p>
                 <!-- Título principal de la pantalla. -->
                 <h1 class="h2 fw-bold mb-2">Registrar Producto</h1>
                 <!-- Subtítulo explicativo del proceso unificado. -->
@@ -155,7 +149,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Contenedor de alerta de Bootstrap 5.3. -->
                 <div class="alert alert-<?= $escaparHtml($tipoAlertaVista) ?> d-flex align-items-center gap-2 mb-4" role="alert">
                     <!-- Icono indicativo según el tipo de alerta. -->
-                    <span class="fw-bold fs-5" aria-hidden="true"><?= $tipoAlertaVista === 'success' ? '✓' : '!' ?></span>
+                    <span class="fw-bold"><?= $tipoAlertaVista === 'success' ? 'Correcto:' : 'Aviso:' ?></span>
                     <!-- Mensaje emitido por el controlador de productos. -->
                     <span><?= $escaparHtml($mensajeVista) ?></span>
                 <!-- Cierra la alerta. -->
@@ -185,7 +179,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                                 <!-- Control de texto para el nombre comercial. -->
                                 <input class="form-control" id="nombre-producto" name="nombre_producto" type="text" maxlength="100" placeholder="Ej. Tocino Ahumado Rebanado" value="<?= $escaparHtml((string) ($datosVista['nombre_producto'] ?? '')) ?>" required aria-describedby="error-nombre-producto">
                                 <!-- Mensaje de validación nativo si falta el nombre. -->
-                                <div class="invalid-feedback" id="error-nombre-producto">Ingresa el nombre del producto.</div>
+                                <div class="invalid-feedback" id="error-nombre-producto">Ingresa un nombre de hasta 100 caracteres.</div>
                             <!-- Cierra la columna del nombre. -->
                             </div>
                             <!-- Campo obligatorio de Categoría con menú desplegable. -->
@@ -232,6 +226,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                                 <label class="form-label" for="tipo-corte">Tipo de Corte <span class="text-secondary small">(Opcional)</span></label>
                                 <!-- Control de texto para el corte o especificación cárnica. -->
                                 <input class="form-control" id="tipo-corte" name="tipo_corte" type="text" maxlength="50" placeholder="Ej. Rebanado fino, Grueso, Tira" value="<?= $escaparHtml((string) ($datosVista['tipo_corte'] ?? '')) ?>">
+                                <div class="invalid-feedback">El tipo de corte admite hasta 50 caracteres.</div>
                             <!-- Cierra la columna de tipo de corte. -->
                             </div>
                             <!-- Campo obligatorio de Precio por Kilogramo con prefijo monetario. -->
@@ -245,7 +240,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                                     <!-- Control numérico de precio con dos decimales permitidos. -->
                                     <input class="form-control" id="precio-kg" name="precio_kg" type="number" step="0.01" min="0.01" placeholder="0.00" value="<?= $escaparHtml((string) ($datosVista['precio_kg'] ?? '')) ?>" required aria-describedby="error-precio-kg">
                                     <!-- Mensaje de validación si falta el precio. -->
-                                    <div class="invalid-feedback" id="error-precio-kg">Ingresa un precio válido mayor a 0.</div>
+                                    <div class="invalid-feedback" id="error-precio-kg">Ingresa un precio positivo con hasta 2 decimales.</div>
                                 <!-- Cierra el grupo de entrada de precio. -->
                                 </div>
                             <!-- Cierra la columna de precio. -->
@@ -281,7 +276,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                                         <!-- Sufijo visual de kilogramos. -->
                                         <span class="input-group-text">Kg</span>
                                         <!-- Mensaje de validación si falta la existencia. -->
-                                        <div class="invalid-feedback" id="error-existencia-inicial">Ingresa la cantidad de existencia inicial (mínimo 0).</div>
+                                        <div class="invalid-feedback" id="error-existencia-inicial">Ingresa una cantidad no negativa con hasta 3 decimales.</div>
                                     <!-- Cierra el grupo de existencia. -->
                                     </div>
                                 <!-- Cierra la columna de existencia inicial. -->

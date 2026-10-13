@@ -48,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => { // Evita buscar elementos 
                 const estaOculto = campo.type === 'password'; // Usa el tipo HTML actual como fuente del estado.
                 // Muestra u oculta el texto sin modificar el valor de la contraseña.
                 campo.type = estaOculto ? 'text' : 'password'; // Alterna entre visibilidad y protección visual.
+                // Actualiza el texto visible para que siempre describa la acción disponible.
+                boton.textContent = estaOculto ? 'Ocultar' : 'Mostrar'; // Mantiene el control comprensible sin iconos.
                 // Actualiza el nombre accesible del botón según la acción disponible.
                 boton.setAttribute('aria-label', estaOculto ? 'Ocultar contraseña' : 'Mostrar contraseña'); // Ayuda a tecnologías de asistencia.
                 // Comunica el estado actual del control a los lectores de pantalla.

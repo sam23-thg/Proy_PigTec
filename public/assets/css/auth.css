@@ -1,18 +1,18 @@
 /* Define los colores y medidas de la pantalla a partir de la interfaz de acceso. */
 :root {
-    --login-fondo-panel: #f7f8fc;
+    --login-fondo-panel: #fff5f8;
     /* Mantiene un fondo frío y claro para el área de credenciales. */
-    --login-panel-marca: #741c32;
+    --login-panel-marca: #9d174d;
     /* Identifica el panel de bienvenida con un tono vino cálido. */
-    --login-panel-marca-oscuro: #551426;
+    --login-panel-marca-oscuro: #70143d;
     /* Da profundidad al degradado inferior del panel. */
-    --login-texto: #202534;
+    --login-texto: #3b1727;
     /* Mantiene contraste alto en títulos y etiquetas. */
-    --login-texto-secundario: #687184;
+    --login-texto-secundario: #765766;
     /* Diferencia instrucciones y texto de ayuda. */
-    --login-acento: #b63c55;
+    --login-acento: #be185d;
     /* Destaca controles de marca sin competir con la acción primaria. */
-    --login-borde: #dce1eb;
+    --login-borde: #f0cbd8;
     /* Delimita las entradas con un borde sutil. */
     --login-ancho-marca: 43.0556%;
     /* Equivale a los 620px del panel sobre el lienzo de 1440px. */
@@ -77,7 +77,7 @@ body {
     /* Oculta los segmentos de decoración que exceden el panel. */
     color: #fff;
     /* Mantiene legibles los textos sobre el fondo oscuro. */
-    background: linear-gradient(148deg, var(--login-panel-marca) 0%, #81243b 52%, var(--login-panel-marca-oscuro) 100%);
+    background: linear-gradient(148deg, var(--login-panel-marca) 0%, #c02666 52%, var(--login-panel-marca-oscuro) 100%);
     /* Genera una superficie cálida para la zona de bienvenida. */
 }
 
@@ -559,11 +559,11 @@ body {
 
 /* Conserva un indicador de foco visible para teclado y puntero. */
 .entrada-login:focus {
-    border-color: #8d9fc8;
+    border-color: #df82a5;
     /* Muestra el campo activo sin cambiar su geometría. */
     outline: 0;
     /* Evita duplicar el contorno nativo con el anillo personalizado. */
-    box-shadow: 0 0 0 3px rgba(89, 108, 155, 0.14);
+    box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.18);
     /* Expone el foco de forma accesible. */
 }
 
@@ -647,11 +647,11 @@ body {
     /* Ubica el botón en y=349 con la ayuda sobre él. */
     padding: 0 16px;
     /* Centra el texto y evita cambios de tamaño por Bootstrap. */
-    border-color: #971f39;
+    border-color: #be185d;
     /* Usa un tono de marca profundo en el botón primario. */
     border-radius: 8px;
     /* Mantiene la forma de esquina del sistema de componentes. */
-    background-color: #971f39;
+    background-color: #be185d;
     /* Diferencia claramente la acción principal del panel claro. */
     color: #fff;
     /* Mantiene contraste del texto sobre el botón. */
@@ -667,9 +667,9 @@ body {
 
 /* Mantiene una respuesta visual coherente al pasar el puntero sobre el botón. */
 .boton-login:hover {
-    border-color: #7d1a30;
+    border-color: #a31550;
     /* Oscurece el borde en el estado interactivo. */
-    background-color: #7d1a30;
+    background-color: #a31550;
     /* Oscurece la superficie al pasar el puntero. */
 }
 
@@ -729,13 +729,13 @@ body {
     /* Conserva el espacio principal de contenido en el estado autenticado. */
     padding: 16px;
     /* Separa la confirmación de los bordes del contenedor. */
-    border: 1px solid #c9e3d5;
+    border: 1px solid #f3bfd1;
     /* Enmarca el estado exitoso con un tono verde. */
     border-radius: 8px;
     /* Mantiene la forma de los demás componentes. */
-    background-color: #f2faf5;
+    background-color: #fff0f5;
     /* Identifica el acceso autorizado sin cambiar la composición. */
-    color: #24543a;
+    color: #831843;
     /* Mantiene contraste con el fondo verde claro. */
     font-size: 13px;
     /* Conserva la escala de texto de la tarjeta. */

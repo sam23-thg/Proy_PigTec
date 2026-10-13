@@ -2,6 +2,9 @@
 // Activa el modo estricto de tipos para asegurar la integridad de datos del controlador de productos.
 declare(strict_types=1); // Evita conversiones implícitas en precios, existencias e identificadores.
 
+// Carga reglas comunes para límites de texto y precisión numérica del servidor.
+require_once dirname(__DIR__) . '/helpers/ValidacionFormulario.php'; // Impide depender únicamente de los atributos HTML.
+
 // Declara el controlador encargado de coordinar el catálogo comercial y los inventarios unificados.
 class ProductoController // Coordina las operaciones protegidas para los roles ALMACEN y ADMINISTRADOR.
 { // Inicia la definición de la clase ProductoController.
@@ -48,29 +51,36 @@ class ProductoController // Coordina las operaciones protegidas para los roles A
         // Comprueba si la solicitud corresponde al envío del formulario mediante POST.
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') { // Evita procesar altas durante consultas GET.
             // Recupera y limpia el nombre del producto de espacios externos.
-            $datosFormulario['nombre_producto'] = trim((string) ($_POST['nombre_producto'] ?? '')); // Normaliza el nombre.
+            $datosFormulario['nombre_producto'] = trim(ValidacionFormulario::texto($_POST['nombre_producto'] ?? null)); // Normaliza el nombre.
             // Recupera y limpia la categoría seleccionada en el formulario.
-            $datosFormulario['categoria'] = trim((string) ($_POST['categoria'] ?? '')); // Normaliza la categoría.
+            $datosFormulario['categoria'] = trim(ValidacionFormulario::texto($_POST['categoria'] ?? null)); // Normaliza la categoría.
             // Recupera y limpia la unidad seleccionada.
-            $datosFormulario['unidad'] = trim((string) ($_POST['unidad'] ?? '')); // Normaliza la unidad de medida.
+            $datosFormulario['unidad'] = trim(ValidacionFormulario::texto($_POST['unidad'] ?? null)); // Normaliza la unidad de medida.
             // Recupera y limpia el tipo de corte opcional.
-            $datosFormulario['tipo_corte'] = trim((string) ($_POST['tipo_corte'] ?? '')); // Normaliza el tipo de corte.
+            $datosFormulario['tipo_corte'] = trim(ValidacionFormulario::texto($_POST['tipo_corte'] ?? null)); // Normaliza el tipo de corte.
             // Recupera el precio por kilogramo como cadena para su validación numérica.
-            $datosFormulario['precio_kg'] = trim((string) ($_POST['precio_kg'] ?? '')); // Conserva la cadena de precio.
+            $datosFormulario['precio_kg'] = trim(ValidacionFormulario::texto($_POST['precio_kg'] ?? null)); // Conserva la cadena de precio.
             // Recupera la existencia inicial como cadena para validación numérica.
-            $datosFormulario['existencia_inicial'] = trim((string) ($_POST['existencia_inicial'] ?? '')); // Conserva la existencia ingresada.
+            $datosFormulario['existencia_inicial'] = trim(ValidacionFormulario::texto($_POST['existencia_inicial'] ?? null)); // Conserva la existencia ingresada.
 
+            // Define los valores comerciales que el formulario ofrece como opciones cerradas.
+            $categoriasPermitidas = ['Cortes de Cerdo', 'Tocinería', 'Embutidos', 'Ahumados', 'Especialidades']; // Rechaza categorías manipuladas en la solicitud.
+            $unidadesPermitidas = ['Kg', 'Pza']; // Conserva las unidades que presenta la vista.
             // Valida que los campos obligatorios marcados con asterisco no estén vacíos.
             $camposObligatoriosLlenos = $datosFormulario['nombre_producto'] !== '' && $datosFormulario['categoria'] !== '' && $datosFormulario['unidad'] !== '' && $datosFormulario['precio_kg'] !== '' && $datosFormulario['existencia_inicial'] !== ''; // Exige presencia de todos los campos obligatorios.
-            // Valida que el precio sea numérico y estrictamente mayor a cero.
-            $precioValido = is_numeric($datosFormulario['precio_kg']) && ((float) $datosFormulario['precio_kg']) > 0; // Exige valor monetario positivo.
-            // Valida que la existencia inicial sea numérica y no negativa.
-            $existenciaValida = is_numeric($datosFormulario['existencia_inicial']) && ((float) $datosFormulario['existencia_inicial']) >= 0; // Exige existencia igual o superior a cero.
+            // Valida el nombre comercial y el corte opcional con los límites de sus columnas.
+            $textoProductoValido = ValidacionFormulario::textoLibre($datosFormulario['nombre_producto'], 100, true) && ValidacionFormulario::textoLibre($datosFormulario['tipo_corte'], 50); // Rechaza controles y cadenas excesivas.
+            // Valida que las selecciones recibidas formen parte de los catálogos visibles.
+            $catalogosValidos = in_array($datosFormulario['categoria'], $categoriasPermitidas, true) && in_array($datosFormulario['unidad'], $unidadesPermitidas, true); // No acepta opciones inventadas por el cliente.
+            // Exige precio positivo y hasta dos posiciones decimales.
+            $precioValido = ValidacionFormulario::decimal($datosFormulario['precio_kg'], 2, 0.01); // Rechaza cantidades negativas, formato exponencial y decimales de más.
+            // Permite inventario igual a cero y hasta tres posiciones decimales.
+            $existenciaValida = ValidacionFormulario::decimal($datosFormulario['existencia_inicial'], 3, 0.0); // Rechaza cantidades negativas o con precisión no soportada.
 
             // Comprueba si falta algún campo obligatorio o si los valores numéricos son incorrectos.
-            if (!$camposObligatoriosLlenos || !$precioValido || !$existenciaValida) { // Detiene la inserción si hay datos incompletos.
+            if (!$camposObligatoriosLlenos || !$textoProductoValido || !$catalogosValidos || !$precioValido || !$existenciaValida) { // Detiene el alta ante cualquier campo inválido.
                 // Asigna el mensaje de error estándar para datos faltantes o inválidos.
-                $mensaje = 'Error: datos faltantes'; // Comunica el problema al usuario de almacén.
+                $mensaje = 'Revisa los campos: precio mayor que cero con hasta 2 decimales e inventario no negativo con hasta 3 decimales.'; // Indica las reglas numéricas principales.
                 // Asigna la variante roja de peligro de Bootstrap.
                 $tipoAlerta = 'danger'; // Muestra la notificación en color rojo.
             } else { // Procede con la comprobación de unicidad cuando los campos son válidos.
@@ -131,7 +141,9 @@ class ProductoController // Coordina las operaciones protegidas para los roles A
         $productoSeleccionado = null; // Se poblará cuando se indique un ID válido o tras una búsqueda.
 
         // Detecta el identificador del producto solicitado por parámetro GET o POST.
-        $idSolicitado = isset($_GET['id']) ? (int) $_GET['id'] : (isset($_POST['id_producto']) ? (int) $_POST['id_producto'] : 0); // Lee el ID de forma segura.
+        $idRecibido = $_GET['id'] ?? $_POST['id_producto'] ?? null; // Prioriza el ID de URL y permite el valor POST de la edición.
+        $idValidado = filter_var($idRecibido, FILTER_VALIDATE_INT); // Rechaza arreglos, decimales y texto añadido al identificador.
+        $idSolicitado = is_int($idValidado) && $idValidado > 0 ? $idValidado : 0; // Permite consultar únicamente IDs positivos.
 
         // Si se recibió un identificador, intenta cargar el producto correspondiente desde la base de datos.
         if ($idSolicitado > 0) { // Evalúa si hay una selección activa de producto.
@@ -149,22 +161,24 @@ class ProductoController // Coordina las operaciones protegidas para los roles A
         // Procesa la actualización de datos comerciales e inventario cuando la petición sea POST.
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['accion_guardar'])) { // Atiende solo envíos del formulario de edición.
             // Recupera el identificador del producto que se intenta modificar.
-            $idProducto = (int) ($_POST['id_producto'] ?? 0); // Identifica el registro a actualizar.
+            $idProductoValidado = filter_var($_POST['id_producto'] ?? null, FILTER_VALIDATE_INT); // Rechaza valores manipulados o no enteros.
+            $idProducto = is_int($idProductoValidado) && $idProductoValidado > 0 ? $idProductoValidado : 0; // Solo admite identificadores positivos.
             // Recupera y limpia el nombre del producto.
-            $nombreProducto = trim((string) ($_POST['nombre_producto'] ?? '')); // Normaliza el nombre.
+            $nombreProducto = trim(ValidacionFormulario::texto($_POST['nombre_producto'] ?? null)); // Normaliza el nombre.
             // Recupera y limpia el tipo de corte opcional.
-            $tipoCorte = trim((string) ($_POST['tipo_corte'] ?? '')); // Normaliza el corte.
+            $tipoCorte = trim(ValidacionFormulario::texto($_POST['tipo_corte'] ?? null)); // Normaliza el corte.
             // Recupera el precio por kilogramo.
-            $precioKgTexto = trim((string) ($_POST['precio_kg'] ?? '')); // Normaliza el texto de precio.
+            $precioKgTexto = trim(ValidacionFormulario::texto($_POST['precio_kg'] ?? null)); // Normaliza el texto de precio.
             // Recupera la cantidad de existencia física actual en inventario.
-            $cantidadExistenciaTexto = trim((string) ($_POST['cantidad_existencia'] ?? '')); // Normaliza la existencia.
+            $cantidadExistenciaTexto = trim(ValidacionFormulario::texto($_POST['cantidad_existencia'] ?? null)); // Normaliza la existencia.
             // Determina el estado del producto (1 para activo, 0 para inactivo) a partir del interruptor visual.
-            $estado = isset($_POST['estado']) && ($_POST['estado'] === '1' || $_POST['estado'] === 'on') ? 1 : 0; // Lee el toggle de estado.
+            $estadoValido = !isset($_POST['estado']) || (is_string($_POST['estado']) && in_array($_POST['estado'], ['1', 'on'], true)); // Acepta únicamente el valor estándar de la casilla.
+            $estado = isset($_POST['estado']) && $estadoValido ? 1 : 0; // Interpreta ausencia como inactivo y valor reconocido como activo.
 
             // Comprueba que el producto objetivo realmente exista antes de intentar actualizarlo.
             $productoActual = $this->producto->buscarPorId($idProducto); // Verifica la existencia previa.
             // Rechaza la actualización si el producto no existe en el sistema.
-            if ($productoActual === null) { // Detecta colisión o intento sobre producto inexistente.
+            if ($idProducto <= 0 || $productoActual === null) { // Detecta identificadores inválidos o productos inexistentes.
                 // Establece el mensaje de producto no encontrado.
                 $mensaje = 'Producto no encontrado'; // Informa la ausencia del producto.
                 // Asigna la alerta roja.
@@ -172,13 +186,15 @@ class ProductoController // Coordina las operaciones protegidas para los roles A
             } else { // Continúa con la validación de campos cuando el producto existe.
                 // Valida que el nombre, el precio y la existencia no estén vacíos.
                 $camposCompletos = $nombreProducto !== '' && $precioKgTexto !== '' && $cantidadExistenciaTexto !== ''; // Revisa campos requeridos.
-                // Valida que el precio sea numérico y estrictamente positivo.
-                $precioValido = is_numeric($precioKgTexto) && ((float) $precioKgTexto) > 0; // Comprueba formato de precio.
-                // Valida que la existencia sea numérica y no negativa.
-                $existenciaValida = is_numeric($cantidadExistenciaTexto) && ((float) $cantidadExistenciaTexto) >= 0; // Comprueba formato de cantidad.
+                // Valida el nombre del producto y el tipo de corte opcional.
+                $textosValidos = ValidacionFormulario::textoLibre($nombreProducto, 100, true) && ValidacionFormulario::textoLibre($tipoCorte, 50); // Rechaza controles y límites excedidos.
+                // Valida que el precio sea positivo y tenga hasta dos decimales.
+                $precioValido = ValidacionFormulario::decimal($precioKgTexto, 2, 0.01); // Rechaza negativos, notación exponencial y precisión excesiva.
+                // Valida que el inventario sea no negativo y tenga hasta tres decimales.
+                $existenciaValida = ValidacionFormulario::decimal($cantidadExistenciaTexto, 3, 0.0); // Permite cero y rechaza valores mal formados.
 
                 // Si falta algún dato o los números no son válidos, cancela la actualización.
-                if (!$camposCompletos || !$precioValido || !$existenciaValida) { // Revisa reglas de validación.
+                if (!$camposCompletos || !$textosValidos || !$precioValido || !$existenciaValida || !$estadoValido) { // Revisa todas las reglas antes de guardar.
                     // Establece el mensaje de error de datos faltantes.
                     $mensaje = 'Error: datos faltantes'; // Comunica los campos incompletos.
                     // Asigna el estilo de peligro.

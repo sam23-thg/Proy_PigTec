@@ -31,13 +31,13 @@
     /* Establece la anchura del avatar. */
     height: 72px;
     /* Establece la altura proporcional para conservar forma circular. */
-    background-color: #e9eee5;
+    background-color: #fce7ef;
     /* Utiliza un tono verde claro suave armónico con la marca. */
     color: var(--empleados-acento);
     /* Aplica el verde acento para destacar las iniciales del empleado. */
     font-size: 1.75rem;
     /* Ajusta la tipografía de las iniciales para alta legibilidad. */
-    border: 2px solid #d5dfd0;
+    border: 2px solid #f3bfd1;
     /* Añade un borde sutil para definir el contorno sobre fondos claros. */
 }
 
@@ -57,9 +57,9 @@
 /* Define el estado de foco para campos interactivos con el color verde acento del sistema. */
 .tarjeta-perfil .form-control:focus,
 .tarjeta-perfil .form-select:focus {
-    border-color: #9aa990;
+    border-color: #df82a5;
     /* Resalta el borde del campo activo con verde acento. */
-    box-shadow: 0 0 0 0.2rem rgba(109, 127, 105, 0.16);
+    box-shadow: 0 0 0 0.2rem rgba(190, 24, 93, 0.18);
     /* Dibuja un aro de resplandor sutil para indicar foco del usuario. */
 }
 
@@ -68,11 +68,11 @@
 /* Estiliza los controles estrictamente de solo lectura y deshabilitados para indicar bloqueo. */
 .campo-solo-lectura:disabled,
 .campo-solo-lectura[readonly] {
-    background-color: #f7f5f0 !important;
+    background-color: #fff0f5 !important;
     /* Aplica un fondo grisáceo cálido para transmitir que no es editable. */
     color: var(--empleados-secundario) !important;
     /* Atenúa el color del texto para reforzar el estado bloqueado. */
-    border-color: #e0d5c5 !important;
+    border-color: #f0cbd8 !important;
     /* Mantiene un borde atenuado y discreto. */
     cursor: not-allowed;
     /* Cambia el cursor del puntero a símbolo de no permitido. */
@@ -86,7 +86,7 @@
     /* Aplica separación interior para que el texto respire cómodamente. */
     border-left: 3px solid var(--empleados-acento);
     /* Dibuja una franja verde a la izquierda como guía de atención. */
-    background-color: #f7f8f4;
+    background-color: #fff7fa;
     /* Aplica fondo neutro suave de bajo contraste. */
     line-height: 1.5;
     /* Facilita la lectura de párrafos explicativos multilínea. */
@@ -98,9 +98,9 @@
 
 /* Define la insignia visual de estado de cuenta activa. */
 .insignia-estado-activo {
-    background-color: #eaf5ea;
+    background-color: #fff0f5;
     /* Aplica fondo verde pálido para el indicador de actividad. */
-    color: #276727;
+    color: #831843;
     /* Emplea un verde oscuro con alto contraste para el texto. */
     font-weight: 600;
     /* Enfatiza la legibilidad del estado de la cuenta. */

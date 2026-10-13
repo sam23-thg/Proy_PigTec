@@ -2,6 +2,9 @@
 // Activa la comprobación estricta de tipos para los datos y resultados del controlador.
 declare(strict_types=1); // Reduce conversiones implícitas durante la autenticación.
 
+// Carga el lector seguro de campos enviados por formularios.
+require_once dirname(__DIR__) . '/helpers/ValidacionFormulario.php'; // Evita conversiones de arreglos enviados maliciosamente.
+
 // Declara el controlador que coordina las vistas y la autenticación de empleados.
 class AuthController // Mantiene el procesamiento de credenciales fuera de las vistas.
 { // Inicia la definición de AuthController.
@@ -30,9 +33,9 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
     public function procesarInicioSesion(array $datos): void // Recibe los campos enviados mediante POST.
     { // Inicia el procesamiento del formulario de acceso.
         // Elimina espacios externos del nombre de usuario sin modificar la contraseña.
-        $usuario = trim((string) ($datos['usuario'] ?? '')); // Normaliza el identificador para buscarlo.
+        $usuario = trim(ValidacionFormulario::texto($datos['usuario'] ?? null)); // Normaliza el identificador para buscarlo.
         // Conserva exactamente la contraseña recibida para que password_verify pueda validarla.
-        $contrasenia = (string) ($datos['contrasenia'] ?? ''); // Evita alterar espacios que formen parte de la credencial.
+        $contrasenia = ValidacionFormulario::texto($datos['contrasenia'] ?? null); // Evita alterar espacios que formen parte de la credencial.
         // Deniega las solicitudes incompletas también cuando el navegador no ejecutó JavaScript.
         if ($usuario === '' || $contrasenia === '') { // Repite en servidor las reglas de obligatoriedad del formulario.
             $this->mostrarLogin('Usuario o contraseña incorrectos', 'danger'); // Usa un mensaje uniforme para datos inválidos.
@@ -48,8 +51,14 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             $this->mostrarLogin('No fue posible conectar con el sistema. Inténtalo nuevamente más tarde.', 'warning'); // Expone un error de servicio, no detalles del servidor.
             return; // Finaliza el proceso sin crear sesión ni aceptar la contraseña.
         } // Finaliza el manejo controlado de errores PDO.
+        // Detecta el marcador temporal sin modificar el hash BCRYPT que valida password_verify.
+        $hashGuardado = (string) ($empleadoEncontrado['contrasenia'] ?? ''); // Conserva el valor persistido para validar credenciales.
+        // Determina si el administrador marcó esta credencial para renovación obligatoria.
+        $contraseniaTemporal = str_starts_with($hashGuardado, 'TEMP$'); // Reconoce restablecimientos sin requerir una columna adicional.
+        // Extrae el hash BCRYPT almacenado después del marcador temporal opcional.
+        $hashVerificacion = $contraseniaTemporal ? substr($hashGuardado, 5) : $hashGuardado; // Entrega a password_verify un hash BCRYPT completo.
         // Comprueba la existencia y el hash antes de crear cualquier dato de sesión.
-        if ($empleadoEncontrado === null || !password_verify($contrasenia, (string) $empleadoEncontrado['contrasenia'])) { // Rechaza usuario inexistente o credencial incorrecta.
+        if ($empleadoEncontrado === null || !password_verify($contrasenia, $hashVerificacion)) { // Rechaza usuario inexistente o credencial incorrecta.
             $this->mostrarLogin('Usuario o contraseña incorrectos', 'danger'); // No revela cuál de los dos datos falló.
             return; // Evita continuar con una identidad no autenticada.
         } // Finaliza la comprobación de credenciales.
@@ -67,8 +76,8 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         // Obtiene los permisos correspondientes o no concede capacidades a roles no reconocidos.
         $permisosEmpleado = $permisosPorRol[$rolEmpleado] ?? []; // Aplica el principio de mínimo privilegio a roles desconocidos.
 
-        // Deniega la cuenta si su estado no confirma explícitamente que está activa.
-        if ((int) ($empleadoEncontrado['estado'] ?? 0) !== 1) { // Trata cero y la ausencia inesperada del estado como desactivados por seguridad.
+        // Deniega la cuenta inactiva cuando el esquema dispone de una columna de estado.
+        if (array_key_exists('estado', $empleadoEncontrado) && (int) $empleadoEncontrado['estado'] !== 1) { // Conserva el bloqueo para esquemas con estado y acepta el esquema actual sin esa columna.
             $this->mostrarLogin('Cuenta desactivada. Contacte al administrador.', 'danger'); // Presenta el mensaje controlado requerido para cuentas inactivas.
             return; // No crea sesión para una cuenta inactiva.
         } // Finaliza la validación de estado de la cuenta.
@@ -83,7 +92,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             'permisos' => $permisosEmpleado, // Almacena los permisos estáticos definidos para el rol autenticado.
         ]; // Finaliza la asignación de la identidad de sesión.
         // Conserva si la cuenta requiere renovar su contraseña antes de navegar.
-        $_SESSION['requiereCambioTemporal'] = (array_key_exists('es_temporal', $empleadoEncontrado) && (int) $empleadoEncontrado['es_temporal'] === 1) || hash_equals('12345678', $contrasenia); // Usa la bandera del esquema cuando existe o simula el estado temporal con la clave genérica tras verificarla.
+        $_SESSION['requiereCambioTemporal'] = $contraseniaTemporal || (array_key_exists('es_temporal', $empleadoEncontrado) && (int) $empleadoEncontrado['es_temporal'] === 1) || hash_equals('12345678', $contrasenia); // Respeta el marcador temporal, el esquema opcional y la contraseña de prueba heredada.
         // Prepara una notificación que se mostrará después de redirigir al destino interno.
         $_SESSION['mensajeAutenticacion'] = 'Inicio de sesión correcto.'; // Evita enviar mensajes mediante parámetros manipulables de la URL.
 
@@ -132,13 +141,13 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         } // Finaliza la protección del cambio de contraseña.
 
         // Obtiene la contraseña nueva conservando los caracteres que eligió el empleado.
-        $contraseniaNueva = (string) ($datos['contrasenia_nueva'] ?? ''); // No modifica espacios que sean parte de la clave.
+        $contraseniaNueva = ValidacionFormulario::texto($datos['contrasenia_nueva'] ?? null); // No modifica espacios que sean parte de la clave.
         // Obtiene el valor de confirmación para compararlo en el servidor.
-        $confirmacionContrasenia = (string) ($datos['confirmacion_contrasenia'] ?? ''); // Evita depender solo de la validación del navegador.
+        $confirmacionContrasenia = ValidacionFormulario::texto($datos['confirmacion_contrasenia'] ?? null); // Evita depender solo de la validación del navegador.
 
         // Exige al menos ocho caracteres y valores idénticos en ambos campos.
-        if (strlen($contraseniaNueva) < 8 || $contraseniaNueva !== $confirmacionContrasenia) { // Aplica las reglas de contraseña definitiva del requisito.
-            $this->mostrarCambioTemporal('Las contraseñas deben coincidir y tener al menos 8 caracteres.', 'danger'); // Explica las condiciones sin alterar los campos enviados.
+        if (strlen($contraseniaNueva) < 8 || strlen($contraseniaNueva) > 72 || $contraseniaNueva !== $confirmacionContrasenia) { // Evita claves débiles, truncadas por BCRYPT o sin confirmación idéntica.
+            $this->mostrarCambioTemporal('Las contraseñas deben coincidir y tener entre 8 y 72 bytes.', 'danger'); // Explica las condiciones sin alterar los campos enviados.
             return; // Mantiene la sesión en la pantalla obligatoria para corregir los datos.
         } // Finaliza la validación de longitud y coincidencia.
 

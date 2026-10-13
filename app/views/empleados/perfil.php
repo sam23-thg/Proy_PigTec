@@ -45,7 +45,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
     <!-- Describe el propósito de la página de gestión de información personal. -->
     <meta name="description" content="Consulta y actualiza tu información personal en el sistema de El Güero.">
     <!-- Establece el color de tema para la barra de estado en navegadores móviles. -->
-    <meta name="theme-color" content="#f6f0e6">
+    <meta name="theme-color" content="#fff5f8">
     <!-- Define el título de la pestaña del navegador. -->
     <title>Mi Perfil | El Güero</title>
     <!-- Carga Bootstrap 5.3.3 desde CDN oficial con comprobación de integridad. -->
@@ -54,6 +54,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
     <link href="assets/css/empleados.css" rel="stylesheet">
     <!-- Carga los estilos particulares de la vista de perfil sin estilos en línea. -->
     <link href="assets/css/perfil.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el script de validación externa con el atributo defer para ejecución diferida. -->
     <script src="assets/js/perfil.js" defer></script>
 <!-- Cierra la cabecera del documento HTML. -->
@@ -67,7 +68,6 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
             <!-- Presenta la identidad de marca de la tocinería como enlace. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php" aria-label="El Güero, inicio">
                 <!-- Muestra el distintivo circular con la letra G de la marca. -->
-                <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Agrupa el nombre comercial y descriptor en bloque vertical. -->
                 <span class="d-flex flex-column">
                     <!-- Nombre visible de la tocinería. -->
@@ -80,14 +80,34 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
             </a>
             <!-- Agrupa las opciones de navegación accesibles según el rol. -->
             <nav class="mt-4" aria-label="Opciones de cuenta y navegación">
+                <?php if (isset($sesionVista['rol']) && in_array($sesionVista['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
+                    <!-- Identifica las opciones de productos e inventario accesibles para estos roles. -->
+                    <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Catálogo e inventario</p>
+                    <!-- Enlaza al registro unificado de producto y existencia inicial. -->
+                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo">
+                        <!-- Icono representativo del alta de producto. -->
+                        <!-- Nombre del acceso al alta de producto. -->
+                        <span>Registrar Producto</span>
+                    <!-- Cierra el enlace al alta de producto. -->
+                    </a>
+                    <!-- Enlaza al catálogo de productos y la gestión de existencias. -->
+                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar">
+                        <!-- Icono representativo de catálogo e inventario. -->
+                        <!-- Nombre del acceso al catálogo. -->
+                        <span>Productos e Inventario</span>
+                    <!-- Cierra el enlace al catálogo e inventario. -->
+                    </a>
+                    <!-- Separa las opciones del módulo de las opciones de cuenta. -->
+                    <p class="titulo-navegacion small fw-semibold text-uppercase mt-3 mb-2">Seguridad y acceso</p>
+                <?php else: ?>
                 <!-- Muestra el título de categoría para la navegación. -->
                 <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Seguridad y acceso</p>
+                <?php endif; ?>
                 <!-- Renderiza accesos administrativos únicamente para usuarios con rol ADMINISTRADOR. -->
                 <?php if (isset($sesionVista['rol']) && $sesionVista['rol'] === 'ADMINISTRADOR'): ?>
                     <!-- Enlace directo al directorio de usuarios. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
                         <!-- Icono o viñeta de la lista. -->
-                        <span aria-hidden="true">●</span>
                         <!-- Nombre del enlace a la lista. -->
                         <span>Lista de Usuarios</span>
                     <!-- Cierra el enlace a lista. -->
@@ -95,7 +115,6 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                     <!-- Enlace directo al formulario de alta de usuarios. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
                         <!-- Signo de adición para el formulario de alta. -->
-                        <span aria-hidden="true">＋</span>
                         <!-- Nombre del enlace de alta. -->
                         <span>Agregar Usuario</span>
                     <!-- Cierra el enlace de registro. -->
@@ -105,7 +124,6 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                 <!-- Enlace al perfil de usuario activo marcado con la clase activo. -->
                 <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil" aria-current="page">
                     <!-- Icono representativo del perfil de usuario. -->
-                    <span aria-hidden="true">👤</span>
                     <!-- Título de la opción de perfil. -->
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace de perfil. -->
@@ -117,7 +135,6 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                 <!-- Agrupa el avatar y nombres de la sesión. -->
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                     <!-- Avatar con las iniciales calculadas del usuario. -->
-                    <span class="avatar-empleado d-flex align-items-center justify-content-center rounded-circle fw-semibold flex-shrink-0" aria-hidden="true"><?= $escaparHtml($inicialesAvatar) ?></span>
                     <!-- Nombre de usuario y rol en dos líneas compactas. -->
                     <span class="d-flex flex-column overflow-hidden">
                         <!-- Nombre de usuario de acceso. -->
@@ -129,7 +146,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                 <!-- Cierra la agrupación de identidad. -->
                 </div>
                 <!-- Botón de salida para cerrar la sesión activa de forma segura. -->
-                <a class="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2" href="index.php?c=auth&amp;a=logout" title="Cerrar sesión" aria-label="Cerrar sesión">🚪</a>
+                <a class="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
             <!-- Cierra el pie de la barra lateral. -->
             </div>
         <!-- Cierra la barra lateral. -->
@@ -139,7 +156,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
             <!-- Encabezado con miga de pan, título y descripción de la vista. -->
             <header class="encabezado-perfil mb-4">
                 <!-- Ruta de navegación accesible con miga de pan. -->
-                <p class="miga-pan text-secondary small mb-2">Seguridad y acceso <span aria-hidden="true">›</span> Mi perfil</p>
+                <p class="miga-pan text-secondary small mb-2">Seguridad y acceso / Mi perfil</p>
                 <!-- Título principal de la pantalla de perfil. -->
                 <h1 class="h2 fw-bold mb-2">Mi Perfil</h1>
                 <!-- Subtítulo explicativo del propósito de la interfaz. -->
@@ -151,7 +168,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                 <!-- Contenedor de alerta con componente estándar de Bootstrap 5.3. -->
                 <div class="alert alert-<?= $escaparHtml($tipoAlertaVista) ?> d-flex align-items-center gap-2 mb-4" role="alert">
                     <!-- Icono o glifo indicativo según el tipo de resultado. -->
-                    <span class="fw-bold fs-5" aria-hidden="true"><?= $tipoAlertaVista === 'success' ? '✓' : '!' ?></span>
+                    <span class="fw-bold"><?= $tipoAlertaVista === 'success' ? 'Correcto:' : 'Aviso:' ?></span>
                     <!-- Mensaje emitido por el controlador (Datos actualizados, Error: datos faltantes o Error de registro). -->
                     <span><?= $escaparHtml($mensajeVista) ?></span>
                 <!-- Cierra el contenedor de alerta. -->
@@ -165,11 +182,6 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                     <!-- Distribuye el avatar grande y los metadatos principales del empleado. -->
                     <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
                         <!-- Avatar circular de gran formato con las iniciales del empleado. -->
-                        <div class="avatar-perfil-grande d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">
-                            <!-- Iniciales calculadas a partir del nombre y apellido paterno. -->
-                            <?= $escaparHtml($inicialesAvatar) ?>
-                        <!-- Cierra el contenedor de avatar. -->
-                        </div>
                         <!-- Información textual y etiquetas de rol y estado. -->
                         <div class="d-flex flex-column">
                             <!-- Nombre completo compuesto del empleado con énfasis tipográfico. -->
@@ -213,9 +225,9 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                         <!-- Etiqueta del nombre con asterisco rojo de obligatoriedad. -->
                                         <label class="form-label fw-semibold" for="nombre">Nombre <span class="text-danger">(*)</span></label>
                                         <!-- Control de entrada para el nombre de pila. -->
-                                        <input class="form-control" id="nombre" name="nombre" type="text" maxlength="100" autocomplete="given-name" value="<?= $escaparHtml((string) ($datosPerfilVista['nombre'] ?? '')) ?>" required aria-describedby="error-nombre">
+                                        <input class="form-control" id="nombre" name="nombre" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]+" autocomplete="given-name" value="<?= $escaparHtml((string) ($datosPerfilVista['nombre'] ?? '')) ?>" required aria-describedby="error-nombre">
                                         <!-- Mensaje de retroalimentación nativo cuando el nombre está vacío. -->
-                                        <div class="invalid-feedback" id="error-nombre">Por favor ingresa tu nombre.</div>
+                                        <div class="invalid-feedback" id="error-nombre">Ingresa un nombre con letras y separadores habituales, sin números.</div>
                                     <!-- Cierra la columna de nombre. -->
                                     </div>
                                     <!-- Campo opcional de segundo nombre. -->
@@ -223,7 +235,8 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                         <!-- Etiqueta del segundo nombre sin asterisco. -->
                                         <label class="form-label" for="seg-nombre">Segundo nombre</label>
                                         <!-- Control de entrada para el segundo nombre. -->
-                                        <input class="form-control" id="seg-nombre" name="seg_nombre" type="text" maxlength="100" autocomplete="additional-name" value="<?= $escaparHtml((string) ($datosPerfilVista['seg_nombre'] ?? '')) ?>">
+                                        <input class="form-control" id="seg-nombre" name="seg_nombre" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]*" autocomplete="additional-name" value="<?= $escaparHtml((string) ($datosPerfilVista['seg_nombre'] ?? '')) ?>">
+                                        <div class="invalid-feedback">Usa solo letras, espacios, apóstrofos, puntos o guiones.</div>
                                     <!-- Cierra la columna de segundo nombre. -->
                                     </div>
                                     <!-- Campo de apellido paterno requerido. -->
@@ -231,9 +244,9 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                         <!-- Etiqueta del apellido paterno con asterisco rojo de obligatoriedad. -->
                                         <label class="form-label fw-semibold" for="apellido-p">Apellido paterno <span class="text-danger">(*)</span></label>
                                         <!-- Control de entrada para el apellido paterno. -->
-                                        <input class="form-control" id="apellido-p" name="apellido_p" type="text" maxlength="100" autocomplete="family-name" value="<?= $escaparHtml((string) ($datosPerfilVista['apellido_p'] ?? '')) ?>" required aria-describedby="error-apellido-p">
+                                        <input class="form-control" id="apellido-p" name="apellido_p" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]+" autocomplete="family-name" value="<?= $escaparHtml((string) ($datosPerfilVista['apellido_p'] ?? '')) ?>" required aria-describedby="error-apellido-p">
                                         <!-- Mensaje de retroalimentación si falta el apellido paterno. -->
-                                        <div class="invalid-feedback" id="error-apellido-p">Por favor ingresa tu apellido paterno.</div>
+                                        <div class="invalid-feedback" id="error-apellido-p">Ingresa un apellido con letras y separadores habituales, sin números.</div>
                                     <!-- Cierra la columna de apellido paterno. -->
                                     </div>
                                     <!-- Campo opcional de apellido materno. -->
@@ -241,7 +254,8 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                         <!-- Etiqueta del apellido materno sin asterisco. -->
                                         <label class="form-label" for="apellido-m">Apellido materno</label>
                                         <!-- Control de entrada para el apellido materno. -->
-                                        <input class="form-control" id="apellido-m" name="apellido_m" type="text" maxlength="100" autocomplete="family-name" value="<?= $escaparHtml((string) ($datosPerfilVista['apellido_m'] ?? '')) ?>">
+                                        <input class="form-control" id="apellido-m" name="apellido_m" type="text" maxlength="100" pattern="[\p{L}\p{M} .’'\-]*" autocomplete="family-name" value="<?= $escaparHtml((string) ($datosPerfilVista['apellido_m'] ?? '')) ?>">
+                                        <div class="invalid-feedback">Usa solo letras, espacios, apóstrofos, puntos o guiones.</div>
                                     <!-- Cierra la columna de apellido materno. -->
                                     </div>
                                     <!-- Campo de teléfono requerido para contacto. -->
@@ -249,9 +263,9 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                         <!-- Etiqueta del teléfono con asterisco rojo de obligatoriedad. -->
                                         <label class="form-label fw-semibold" for="telefono">Teléfono <span class="text-danger">(*)</span></label>
                                         <!-- Control de entrada para el número telefónico de contacto. -->
-                                        <input class="form-control" id="telefono" name="telefono" type="tel" maxlength="15" autocomplete="tel" value="<?= $escaparHtml((string) ($datosPerfilVista['telefono'] ?? '')) ?>" required aria-describedby="error-telefono">
+                                        <input class="form-control" id="telefono" name="telefono" type="tel" minlength="10" maxlength="15" pattern="[0-9]{10,15}" inputmode="numeric" autocomplete="tel" value="<?= $escaparHtml((string) ($datosPerfilVista['telefono'] ?? '')) ?>" required aria-describedby="error-telefono">
                                         <!-- Mensaje de retroalimentación si falta el teléfono. -->
-                                        <div class="invalid-feedback" id="error-telefono">Por favor ingresa tu número de teléfono.</div>
+                                        <div class="invalid-feedback" id="error-telefono">Ingresa de 10 a 15 dígitos, sin espacios ni signos.</div>
                                     <!-- Cierra la columna de teléfono. -->
                                     </div>
                                     <!-- Campo de género opcional. -->
@@ -295,7 +309,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                     <!-- Campo de nombre de usuario en solo lectura estricta. -->
                                     <div class="col-12">
                                         <!-- Etiqueta con indicador de candado para identificar campo bloqueado. -->
-                                        <label class="form-label text-secondary" for="usuario">Usuario <span class="small" aria-hidden="true">🔒</span></label>
+                                        <label class="form-label text-secondary" for="usuario">Usuario (solo lectura)</label>
                                         <!-- Control de entrada renderizado como readonly y disabled para impedir alteración. -->
                                         <input class="form-control campo-solo-lectura" id="usuario" name="usuario" type="text" value="<?= $escaparHtml((string) ($datosPerfilVista['usuario'] ?? '')) ?>" readonly disabled aria-label="Usuario no modificable">
                                     <!-- Cierra el campo de usuario. -->
@@ -303,7 +317,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                     <!-- Campo de CURP en solo lectura estricta. -->
                                     <div class="col-12">
                                         <!-- Etiqueta de CURP con indicador de candado. -->
-                                        <label class="form-label text-secondary" for="curp">CURP <span class="small" aria-hidden="true">🔒</span></label>
+                                        <label class="form-label text-secondary" for="curp">CURP (solo lectura)</label>
                                         <!-- Control de entrada renderizado como readonly y disabled con texto en mayúsculas. -->
                                         <input class="form-control campo-solo-lectura text-uppercase" id="curp" name="curp" type="text" value="<?= $escaparHtml((string) ($datosPerfilVista['curp'] ?? '')) ?>" readonly disabled aria-label="CURP no modificable">
                                     <!-- Cierra el campo de CURP. -->
@@ -311,7 +325,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                     <!-- Campo de Rol asignado en solo lectura estricta. -->
                                     <div class="col-12">
                                         <!-- Etiqueta de Rol con indicador de candado. -->
-                                        <label class="form-label text-secondary" for="rol">Rol asignado <span class="small" aria-hidden="true">🔒</span></label>
+                                        <label class="form-label text-secondary" for="rol">Rol asignado (solo lectura)</label>
                                         <!-- Control de entrada renderizado como readonly y disabled con el rol visible. -->
                                         <input class="form-control campo-solo-lectura" id="rol" name="rol" type="text" value="<?= $escaparHtml($rolVisible) ?>" readonly disabled aria-label="Rol no modificable">
                                     <!-- Cierra el campo de rol. -->
@@ -321,7 +335,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                                 <!-- Bloque informativo de seguridad para explicar la restricción de los tres campos. -->
                                 <div class="aviso-seguridad-perfil small text-secondary mt-auto pt-3">
                                     <!-- Icono de protección y texto explicativo de la política de identidad. -->
-                                    <span class="fw-semibold text-dark">🔒 Restricción de identidad:</span> Los campos de usuario, CURP y rol solo pueden ser gestionados por un administrador para preservar la integridad del sistema.
+                                    <span class="fw-semibold text-dark">Restricción de identidad:</span> Los campos de usuario, CURP y rol solo pueden ser gestionados por un administrador para preservar la integridad del sistema.
                                 <!-- Cierra el bloque informativo de seguridad. -->
                                 </div>
                             <!-- Cierra el cuerpo de la tarjeta de cuenta. -->

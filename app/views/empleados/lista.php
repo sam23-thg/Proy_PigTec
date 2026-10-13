@@ -27,13 +27,14 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
     <!-- Describe el contenido principal de esta pantalla administrativa. -->
     <meta name="description" content="Consulta y administra las cuentas de empleados de la tocinería.">
     <!-- Define el color de la interfaz mostrado por el marco del navegador móvil. -->
-    <meta name="theme-color" content="#f6f0e6">
+    <meta name="theme-color" content="#fff5f8">
     <!-- Define el título de la pestaña del navegador. -->
     <title>Usuarios registrados | El Güero</title>
     <!-- Carga Bootstrap 5.3.3 con integridad del recurso desde jsDelivr. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Carga los ajustes de color y geometría que complementan las utilidades de Bootstrap. -->
     <link href="assets/css/empleados.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga desde un archivo externo la búsqueda interactiva de filas de la tabla. -->
     <script src="assets/js/empleados.js" defer></script>
 <!-- Finaliza la cabecera del documento. -->
@@ -47,7 +48,6 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
             <!-- Agrupa el distintivo y el nombre de la tocinería en la cabecera lateral. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-label="El Güero, lista de usuarios">
                 <!-- Representa el distintivo circular de la marca con la inicial de la tocinería. -->
-                <span class="distintivo-marca d-flex align-items-center justify-content-center rounded-circle fw-bold" aria-hidden="true">G</span>
                 <!-- Presenta el nombre comercial y su descriptor como dos líneas. -->
                 <span class="d-flex flex-column">
                     <!-- Muestra el nombre de la tocinería. -->
@@ -67,7 +67,6 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                     <!-- Enlaza a la lista de usuarios usando el controlador y la acción solicitados. -->
                     <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-current="page">
                         <!-- Muestra un indicador visual para la lista de usuarios. -->
-                        <span aria-hidden="true">●</span>
                         <!-- Nombra de forma explícita la lista de usuarios. -->
                         <span>Lista de Usuarios</span>
                     <!-- Cierra el enlace a la lista administrativa. -->
@@ -75,7 +74,6 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                     <!-- Enlaza al formulario de alta mediante el controlador y acción especificados. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
                         <!-- Representa la acción de alta con un signo más. -->
-                        <span aria-hidden="true">＋</span>
                         <!-- Nombra claramente la acción de agregar un usuario. -->
                         <span>Agregar Usuario</span>
                     <!-- Cierra el enlace al formulario de registro. -->
@@ -85,7 +83,6 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                 <!-- Enlaza al perfil del usuario autenticado disponible para cualquier rol. -->
                 <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
                     <!-- Representa la acción de perfil con un símbolo descriptivo. -->
-                    <span aria-hidden="true">👤</span>
                     <!-- Identifica el acceso al perfil personal. -->
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
@@ -95,7 +92,6 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
             <!-- Mantiene la identificación de sesión anclada al borde inferior del menú. -->
             <div class="sesion-empleado d-flex align-items-center gap-2 mt-auto pt-3">
                 <!-- Presenta las iniciales de la cuenta administrativa autenticada. -->
-                <span class="avatar-empleado d-flex align-items-center justify-content-center rounded-circle fw-semibold" aria-hidden="true">AD</span>
                 <!-- Muestra el nombre de usuario y su rol activo escapados para seguridad. -->
                 <span class="d-flex flex-column overflow-hidden">
                     <!-- Identifica el usuario que inició sesión. -->
@@ -113,7 +109,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
             <!-- Presenta la ruta de navegación y el título de la pantalla de usuarios. -->
             <header class="encabezado-pagina mb-4">
                 <!-- Indica la ubicación de esta pantalla dentro del módulo administrativo. -->
-                <p class="miga-pan text-secondary small mb-2">Seguridad y acceso <span aria-hidden="true">›</span> Usuarios</p>
+                <p class="miga-pan text-secondary small mb-2">Seguridad y acceso / Usuarios</p>
                 <!-- Alinea el título descriptivo y el acceso al formulario de alta. -->
                 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                     <!-- Agrupa el título y la descripción de la lista. -->
@@ -130,6 +126,16 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                 </div>
             <!-- Cierra el encabezado de la pantalla. -->
             </header>
+            <?php if (isset($avisoAdministrativo) && is_array($avisoAdministrativo)): ?>
+                <!-- Comunica el resultado de la acción administrativa que acaba de completarse. -->
+                <div class="alert alert-<?= $escaparHtml((string) ($avisoAdministrativo['tipo'] ?? 'danger')) ?>" role="status">
+                    <p class="mb-1"><?= $escaparHtml((string) ($avisoAdministrativo['mensaje'] ?? '')) ?></p>
+                    <?php if (!empty($avisoAdministrativo['contraseniaTemporal'])): ?>
+                        <!-- Muestra por única vez al administrador la credencial que debe entregar al empleado. -->
+                        <p class="mb-0"><strong>Usuario:</strong> <?= $escaparHtml((string) ($avisoAdministrativo['usuario'] ?? '')) ?> · <strong>Contraseña temporal:</strong> <code><?= $escaparHtml((string) $avisoAdministrativo['contraseniaTemporal']) ?></code></p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
             <!-- Agrupa la búsqueda, el total de empleados y la tabla en una tarjeta blanca. -->
             <section class="tarjeta-lista card border-0" aria-labelledby="titulo-lista-empleados">
                 <!-- Aplica espaciado responsivo al encabezado de la tarjeta. -->
@@ -151,7 +157,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                             <!-- Captura el término usado para filtrar nombre, usuario, rol y teléfono. -->
                             <input class="form-control" id="buscar-empleado" type="search" placeholder="Buscar por nombre o usuario" autocomplete="off" data-busqueda-empleados>
                             <!-- Identifica visualmente la acción de búsqueda. -->
-                            <span class="input-group-text" aria-hidden="true">⌕</span>
+                            <span class="input-group-text">Buscar</span>
                         <!-- Cierra el grupo de búsqueda. -->
                         </div>
                     <!-- Cierra el encabezado interno de la tarjeta. -->
@@ -206,10 +212,17 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                                         <td class="text-end">
                                             <!-- Agrupa los botones de fila sin mezclar JavaScript en el marcado. -->
                                             <div class="d-inline-flex flex-wrap justify-content-end gap-2">
-                                                <!-- Ofrece un control de lectura visual con el identificador del empleado. -->
-                                                <button class="btn btn-sm btn-outline-secondary" type="button" aria-label="Ver empleado <?= $idEmpleadoVista ?>" data-accion-empleado="ver" data-id-empleado="<?= $idEmpleadoVista ?>">Ver</button>
-                                                <!-- Presenta la acción administrativa de restablecimiento para la implementación de su flujo. -->
-                                                <button class="btn btn-sm btn-outline-primary" type="button" aria-label="Restablecer contraseña de <?= $escaparHtml((string) ($empleadoVista['usuario'] ?? '')) ?>" data-accion-empleado="restablecer" data-id-empleado="<?= $idEmpleadoVista ?>">Restablecer</button>
+                                                <!-- Abre la ficha con los datos personales no secretos del empleado. -->
+                                                <a class="btn btn-sm btn-outline-secondary" href="index.php?c=empleado&amp;a=ver&amp;id=<?= $idEmpleadoVista ?>">Ver</a>
+                                                <!-- Envía el restablecimiento mediante un formulario POST. -->
+                                                <form action="index.php?c=empleado&amp;a=restablecer" method="post" class="d-inline" data-confirmar-restablecimiento>
+                                                    <!-- Identifica la cuenta seleccionada sin tomar datos desde la URL. -->
+                                                    <input type="hidden" name="id_empleado" value="<?= $idEmpleadoVista ?>">
+                                                    <!-- Protege el cambio de contraseña con el token de la sesión del administrador. -->
+                                                    <input type="hidden" name="token_restauracion" value="<?= $escaparHtml((string) ($_SESSION['tokenRestablecimiento'] ?? '')) ?>">
+                                                    <!-- Describe con texto la acción destructiva del formulario. -->
+                                                    <button class="btn btn-sm btn-outline-primary" type="submit">Restablecer contraseña</button>
+                                                </form>
                                             <!-- Cierra el grupo de acciones de la fila. -->
                                             </div>
                                         <!-- Cierra la celda de acciones. -->

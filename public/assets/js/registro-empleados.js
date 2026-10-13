@@ -8,6 +8,15 @@ document.addEventListener('DOMContentLoaded', () => { // Evita enlazar controles
     const ayudaPermisos = document.querySelector('[data-ayuda-permisos]'); // Permite informar el estado actual del grupo de casillas.
     // Localiza el formulario que envía los datos de alta al Front Controller.
     const formularioRegistro = document.querySelector('[data-validacion-registro]'); // Evita buscar controles globales fuera de esta pantalla.
+    // Localiza el campo CURP para mantener la captura en mayúsculas.
+    const campoCurp = document.querySelector('[name="curp"]'); // Aplica la normalización solo al formulario de alta.
+
+    // Convierte cada letra de la CURP mientras se escribe para cumplir el formato oficial.
+    if (campoCurp) { // Omite este comportamiento en páginas que no tienen CURP editable.
+        campoCurp.addEventListener('input', () => { // Actualiza el valor sin alterar su longitud.
+            campoCurp.value = campoCurp.value.toUpperCase(); // Facilita la validación visual y la comparación de unicidad.
+        }); // Finaliza el manejo del valor de CURP.
+    } // Finaliza la comprobación del campo de CURP.
 
     // Detiene la inicialización cuando la vista actual no contiene el selector de rol.
     if (!selectorRol) { // Permite compartir el archivo sin provocar errores en páginas distintas.

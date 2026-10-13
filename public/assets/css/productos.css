@@ -37,9 +37,9 @@
 /* Estiliza el estado de foco en controles activos con el tono verde de acento. */
 .tarjeta-producto .form-control:focus,
 .tarjeta-producto .form-select:focus {
-    border-color: #9aa990;
+    border-color: #df82a5;
     /* Resalta el contorno con el tono verde cálido. */
-    box-shadow: 0 0 0 0.2rem rgba(109, 127, 105, 0.16);
+    box-shadow: 0 0 0 0.2rem rgba(190, 24, 93, 0.18);
     /* Dibuja un aro de resplandor sutil para indicar foco del usuario. */
 }
 
@@ -49,7 +49,7 @@
 .tarjeta-producto .input-group-text {
     border-color: var(--empleados-borde);
     /* Aplica el borde suave al prefijo o sufijo. */
-    background-color: #f7f5f0;
+    background-color: #fff0f5;
     /* Fondo neutro suave que armoniza con la paleta. */
     color: var(--empleados-secundario);
     /* Texto secundario de buen contraste. */
@@ -63,11 +63,11 @@
 .seccion-almacen {
     padding: 1.25rem;
     /* Separa los controles del borde del contenedor. */
-    border: 1px solid #e0d5c3;
+    border: 1px solid #f0cbd8;
     /* Borde destacado ligeramente más cálido. */
     border-radius: 0.5rem;
     /* Esquinas suaves para el bloque de almacén. */
-    background-color: #fbf9f4;
+    background-color: #fff7fa;
     /* Fondo marfil suave que destaca sobre la tarjeta blanca. */
 }
 
@@ -75,7 +75,7 @@
 
 /* Diseña la insignia de la sección de almacén para jerarquía visual. */
 .insignia-almacen {
-    background-color: #e9eee5;
+    background-color: #fce7ef;
     /* Fondo verde claro distintivo. */
     color: var(--empleados-acento);
     /* Texto verde acento con alto contraste. */
@@ -107,7 +107,7 @@
     /* Indica que el elemento es seleccionable con clic. */
     transition: background-color 0.15s ease-in-out;
     /* Suaviza el cambio de color al pasar el cursor. */
-    border-bottom: 1px solid #f0e9df;
+    border-bottom: 1px solid #f5dce5;
     /* Separa los elementos del listado. */
 }
 
@@ -115,7 +115,7 @@
 
 /* Efecto hover al pasar el cursor sobre un producto en el buscador. */
 .item-catalogo-buscador:hover {
-    background-color: #f6f2ea;
+    background-color: #fff0f5;
     /* Resalta la fila con un fondo cálido sutil. */
 }
 
@@ -123,7 +123,7 @@
 
 /* Fila activa del producto actualmente seleccionado para edición. */
 .item-catalogo-buscador.seleccionado {
-    background-color: #edf2eb;
+    background-color: #fce7ef;
     /* Fondo verde muy suave indicativo de selección. */
     border-left: 3px solid var(--empleados-acento);
     /* Franja verde lateral que confirma el producto activo. */

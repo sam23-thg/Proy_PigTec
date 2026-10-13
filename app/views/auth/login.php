@@ -19,11 +19,12 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
     <!-- Describe el propósito de esta página de acceso. -->
     <meta name="description" content="Acceso del personal al sistema de gestión de la tocinería El Güero.">
     <!-- Define el color de la interfaz usado por el navegador en dispositivos móviles. -->
-    <meta name="theme-color" content="#212529">
+    <meta name="theme-color" content="#4c142b">
     <!-- Define el título de la pestaña del navegador. -->
     <title>Iniciar sesión | Tocinería El Güero</title>
     <!-- Carga Bootstrap 5.3.3 desde jsDelivr con control de integridad del recurso. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el comportamiento de validación desde un archivo externo y sin código JavaScript en línea. -->
     <script src="assets/js/auth.js" defer></script>
 <!-- Finaliza la cabecera del documento. -->
@@ -39,7 +40,6 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                 <!-- Agrupa el logotipo textual y la identificación de la tocinería. -->
                 <a class="d-flex align-items-center gap-3 text-white text-decoration-none" href="index.php?accion=login" aria-label="Tocinería El Güero, inicio">
                     <!-- Representa el monograma de marca con utilidades de Bootstrap. -->
-                    <span class="d-flex align-items-center justify-content-center rounded-3 border border-secondary bg-secondary text-white fw-bold fs-4 p-2" aria-hidden="true">G</span>
                     <!-- Agrupa nombre comercial y descriptor en una columna compacta. -->
                     <span class="d-flex flex-column">
                         <!-- Muestra el nombre de la tocinería. -->
@@ -54,14 +54,22 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                 <?php if ($sesionIniciadaVista): ?>
                     <!-- Agrupa los accesos como lista vertical Bootstrap dentro de la barra lateral. -->
                     <nav class="list-group list-group-flush mt-4" aria-label="Control y navegación">
+                        <?php if (isset($_SESSION['user']['rol']) && in_array($_SESSION['user']['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
+                            <!-- Agrupa las opciones de catálogo e inventario disponibles para administración y almacén. -->
+                            <p class="small fw-semibold text-uppercase text-white-50 mt-2 mb-2">Catálogo e inventario</p>
+                            <!-- Enlaza al registro unificado de producto y existencia inicial. -->
+                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=producto&amp;a=nuevo">Registrar Producto</a>
+                            <!-- Enlaza a la búsqueda, edición y consulta de existencias del catálogo. -->
+                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=producto&amp;a=editar">Productos e Inventario</a>
+                        <?php endif; ?>
                         <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
                             <!-- Enlaza al directorio de usuarios con el controlador y la acción solicitados. -->
-                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=lista">📋 Lista de Usuarios</a>
+                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=lista">Lista de Usuarios</a>
                             <!-- Enlaza al formulario de alta de empleados con la ruta MVC solicitada. -->
-                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=registro">➕ Registrar Empleado</a>
+                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=registro">Registrar Empleado</a>
                         <?php endif; ?>
                         <!-- Enlaza al perfil del usuario autenticado para cualquier rol. -->
-                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=perfil">👤 Mi Perfil</a>
+                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=perfil">Mi Perfil</a>
                     <!-- Cierra el menú visible. -->
                     </nav>
                 <!-- Finaliza la condición que restringe el menú a la sesión iniciada. -->
@@ -89,11 +97,11 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                 <!-- Muestra la acción de salida solo cuando la sesión ya fue autenticada. -->
                 <?php if ($sesionIniciadaVista): ?>
                     <!-- Proporciona a cualquier usuario autenticado una acción visible para cerrar sesión. -->
-                    <a class="btn btn-outline-light w-100 mb-3" href="index.php?c=auth&amp;a=logout">🚪 Cerrar Sesión</a>
+                    <a class="btn btn-outline-light w-100 mb-3" href="index.php?c=auth&amp;a=logout">Cerrar Sesión</a>
                 <!-- Oculta el cierre de sesión a visitantes que aún no tienen cuenta autenticada. -->
                 <?php endif; ?>
                 <!-- Muestra el crédito de la marca al final del panel lateral. -->
-                <p class="small text-white-50 mb-0">© Tocinería El Güero</p>
+                <p class="small text-white-50 mb-0">Todos los derechos reservados. Tocinería El Güero</p>
             <!-- Cierra el panel de presentación de marca. -->
             </aside>
             <!-- Centra la tarjeta de Login en el espacio restante de la pantalla. -->
@@ -123,7 +131,7 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                                     <!-- Representa el mensaje en una alerta de éxito o error de Bootstrap y escapa el texto. -->
                                     <div class="alert alert-<?= htmlspecialchars($tipoAlertaVista, ENT_QUOTES, 'UTF-8') ?> d-flex align-items-center gap-2" role="alert">
                                         <!-- Muestra un símbolo de atención sin cargar una dependencia adicional. -->
-                                        <span class="fw-bold" aria-hidden="true">!</span>
+                                        <span class="fw-bold">Aviso:</span>
                                         <!-- Presenta el mensaje escapado para evitar interpretar HTML externo. -->
                                         <span><?= htmlspecialchars($mensajeVista, ENT_QUOTES, 'UTF-8') ?></span>
                                     <!-- Cierra la alerta del formulario. -->
@@ -138,8 +146,14 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                                         <p class="mb-2"><strong>Usuario:</strong> <?= htmlspecialchars((string) ($usuarioAutenticado ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
                                         <!-- Presenta el rol autorizado y escapa su contenido. -->
                                         <p class="mb-3"><strong>Área:</strong> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
+                                        <?php if (isset($_SESSION['user']['rol']) && in_array($_SESSION['user']['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
+                                            <!-- Ofrece acceso directo al módulo de catálogo desde el panel de bienvenida. -->
+                                            <a class="btn btn-success w-100 mb-2" href="index.php?c=producto&amp;a=editar">Productos e Inventario</a>
+                                            <!-- Ofrece acceso directo al formulario de alta de producto. -->
+                                            <a class="btn btn-outline-success w-100 mb-2" href="index.php?c=producto&amp;a=nuevo">Registrar Producto</a>
+                                        <?php endif; ?>
                                         <!-- Enlace directo al perfil del empleado. -->
-                                        <a class="btn btn-outline-success w-100" href="index.php?c=empleado&amp;a=perfil">👤 Mi Perfil</a>
+                                        <a class="btn btn-outline-success w-100" href="index.php?c=empleado&amp;a=perfil">Mi Perfil</a>
                                     <!-- Cierra el resumen de sesión. -->
                                     </div>
                                 <!-- Muestra el formulario si todavía no hay una sesión autenticada. -->
@@ -177,7 +191,7 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                                 <!-- Indica que el sistema está reservado para personal autorizado. -->
                                 <p class="small text-secondary d-flex align-items-center gap-2 mt-4 mb-0">
                                     <!-- Añade un indicador sencillo de información en línea. -->
-                                    <span class="badge rounded-circle text-bg-secondary p-1" aria-hidden="true">i</span>
+                                    <span class="fw-semibold">Información:</span>
                                     <!-- Presenta el aviso de acceso restringido. -->
                                     <span>Acceso exclusivo para personal autorizado.</span>
                                 <!-- Cierra el aviso informativo. -->
