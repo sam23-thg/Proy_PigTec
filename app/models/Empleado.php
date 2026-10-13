@@ -46,18 +46,22 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         return $consulta->fetch() ?: null; // Mantiene una respuesta clara para los casos con y sin coincidencia.
     } // Finaliza la búsqueda por usuario.
 
-    // Registra un empleado usando las columnas reales y almacena la contraseña con BCRYPT.
-    public function registrar(array $datos): bool // Recibe los datos del formulario y comunica si el INSERT tuvo éxito.
-    { // Inicia el registro de un empleado.
-        // Genera un hash BCRYPT antes de persistir la contraseña en la columna contrasenia.
-        $hashContrasenia = password_hash((string) $datos['contrasenia'], PASSWORD_BCRYPT); // Nunca guarda la contraseña proporcionada en texto plano.
-        // Detiene el registro si el proceso de hash no pudo generar una cadena válida.
-        if ($hashContrasenia === false) { // Comprueba explícitamente el resultado de la función de seguridad.
-            return false; // Evita guardar credenciales que no se hayan protegido correctamente.
-        } // Finaliza la validación del hash de contraseña.
+    // Comprueba con una consulta preparada si el CURP ya pertenece a un empleado.
+    public function buscarPorCurp(string $curp): bool // Devuelve si existe una fila con el CURP indicado.
+    { // Inicia la comprobación de unicidad del CURP.
+        // Prepara una búsqueda limitada que no modifica ningún registro.
+        $consulta = $this->db->prepare('SELECT id_empleado FROM empleado WHERE curp = :curp LIMIT 1'); // Mantiene el CURP fuera del texto SQL.
+        // Ejecuta la consulta asociando el valor recibido al parámetro nombrado.
+        $consulta->execute([':curp' => $curp]); // Evita inyección SQL y solo lee la tabla existente.
+        // Informa si la búsqueda encontró un identificador de empleado.
+        return $consulta->fetchColumn() !== false; // Convierte la existencia de una fila en un resultado booleano.
+    } // Finaliza la comprobación de CURP duplicado.
 
-        // Prepara la inserción con nombres exactos de columnas definidos para empleado.
-        $consulta = $this->db->prepare('INSERT INTO empleado (curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, contrasenia, rol, es_temporal) VALUES (:curp, :nombre, :seg_nombre, :apellido_p, :apellido_m, :genero, :telefono, :usuario, :contrasenia, :rol, :es_temporal)'); // Omite estado para respetar su valor predeterminado TRUE en el esquema.
+    // Registra un empleado usando las columnas reales y el hash generado por el controlador.
+    public function registrar(array $datos): bool // Recibe datos validados y la contraseña ya cifrada con BCRYPT.
+    { // Inicia el registro de un empleado.
+        // Prepara la inserción usando solo columnas reales y no incluye credenciales en el texto SQL.
+        $consulta = $this->db->prepare('INSERT INTO empleado (curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, contrasenia, rol) VALUES (:curp, :nombre, :seg_nombre, :apellido_p, :apellido_m, :genero, :telefono, :usuario, :contrasenia, :rol)'); // Omite identificador y estado para respetar sus valores por defecto.
         // Ejecuta el alta con valores parametrizados y los campos opcionales como null cuando no se proporcionan.
         return $consulta->execute([ // Devuelve el resultado de ejecución de PDO como indicador de éxito.
             ':curp' => (string) $datos['curp'], // Mapea el CURP obligatorio a la columna curp.
@@ -68,9 +72,8 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
             ':genero' => $datos['genero'] ?? null, // Mapea el género opcional o guarda null.
             ':telefono' => (string) $datos['telefono'], // Mapea el teléfono obligatorio a la columna telefono.
             ':usuario' => (string) $datos['usuario'], // Mapea el identificador de acceso a la columna usuario.
-            ':contrasenia' => $hashContrasenia, // Persiste únicamente el hash BCRYPT generado previamente.
+            ':contrasenia' => (string) $datos['contrasenia'], // Persiste únicamente el hash BCRYPT generado previamente por el controlador.
             ':rol' => (string) $datos['rol'], // Mapea el rol permitido por el ENUM existente.
-            ':es_temporal' => 0, // Marca la contraseña inicial como definitiva, no temporal.
         ]); // Finaliza la ejecución parametrizada del INSERT.
     } // Finaliza el registro de empleado.
 

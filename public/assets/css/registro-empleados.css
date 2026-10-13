@@ -1,0 +1,103 @@
+/* Ajusta el encabezado del formulario para continuar el ritmo visual de Figma. */
+.encabezado-pagina {
+    max-width: 1100px;
+    /* Conserva el ancho útil del contenido principal del diseño. */
+}
+
+/* Finaliza la anchura del encabezado. */
+
+/* Refuerza el contraste de la tarjeta de formulario sobre el lienzo marfil. */
+.tarjeta-registro {
+    border: 1px solid var(--empleados-borde);
+    /* Reutiliza el borde del sistema de empleados. */
+    border-radius: 0.75rem;
+    /* Mantiene las esquinas suaves de las tarjetas Figma. */
+    background-color: var(--empleados-superficie);
+    /* Mantiene una superficie blanca para los campos. */
+    box-shadow: 0 0.25rem 1.25rem rgba(43, 47, 39, 0.04);
+    /* Añade profundidad ligera sin competir con el formulario. */
+}
+
+/* Finaliza la tarjeta del formulario. */
+
+/* Mantiene tamaños legibles y bordes cálidos en los controles del alta. */
+.tarjeta-registro .form-control,
+.tarjeta-registro .form-select {
+    min-height: 2.75rem;
+    /* Proporciona espacio suficiente para interacción táctil. */
+    border-color: var(--empleados-borde);
+    /* Integra los campos con la paleta beige de la pantalla. */
+}
+
+/* Finaliza los campos del formulario. */
+
+/* Conserva un indicador de foco visible para teclado y puntero. */
+.tarjeta-registro .form-control:focus,
+.tarjeta-registro .form-select:focus {
+    border-color: #9aa990;
+    /* Destaca el control activo con el tono de acento del menú. */
+    box-shadow: 0 0 0 0.2rem rgba(109, 127, 105, 0.16);
+    /* Presenta un anillo de foco perceptible sin desplazar el diseño. */
+}
+
+/* Finaliza los estados de foco de campos y selección. */
+
+/* Delimita cada permiso para formar una grilla de opciones compactas. */
+.permiso-opcion {
+    min-height: 100%;
+    /* Alinea las casillas en filas de altura uniforme. */
+    border: 1px solid #eee8df;
+    /* Separa cada permiso mediante un borde cálido discreto. */
+    background-color: #fbfaf7;
+    /* Distingue las opciones de la superficie blanca de la tarjeta. */
+    cursor: pointer;
+    /* Indica que la etiqueta activa su casilla correspondiente. */
+}
+
+/* Finaliza la tarjeta de cada permiso. */
+
+/* Desactiva visualmente las capacidades que no corresponden al rol elegido. */
+.permiso-opcion:has(input:disabled) {
+    opacity: 0.55;
+    /* Reduce el énfasis de las opciones no disponibles para el rol. */
+    cursor: not-allowed;
+    /* Comunica que la casilla no se puede cambiar en ese estado. */
+}
+
+/* Finaliza el estado deshabilitado de permisos. */
+
+/* Destaca el mensaje explicativo sobre la persistencia de permisos. */
+.aviso-permisos {
+    padding: 0.7rem 0.8rem;
+    /* Separa la nota de los bordes de la tarjeta. */
+    border-left: 3px solid var(--empleados-acento);
+    /* Identifica la nota como información y no como error. */
+    background-color: #f7f8f4;
+    /* Mantiene un fondo secundario de bajo contraste. */
+    line-height: 1.45;
+    /* Mejora la lectura cuando el texto ocupa varias líneas. */
+}
+
+/* Finaliza el aviso de permisos. */
+
+/* Limita la altura del directorio compacto y deja sus filas cómodamente legibles. */
+.tabla-compacta tbody td {
+    padding-top: 0.65rem;
+    /* Reduce el espacio vertical respecto a la tabla completa. */
+    padding-bottom: 0.65rem;
+    /* Conserva altura suficiente para interacción y lectura. */
+}
+
+/* Finaliza el espaciado del listado compacto. */
+
+/* Reduce el espacio de las tarjetas en teléfonos pequeños. */
+@media (max-width: 575.98px) {
+    .tarjeta-registro .card-body {
+        padding: 1rem;
+        /* Conserva margen interior usable sin estrechar los campos. */
+    }
+
+    /* Finaliza la adaptación móvil del cuerpo de tarjeta. */
+}
+
+/* Finaliza el ajuste para teléfonos. */

@@ -102,10 +102,20 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
             <header class="encabezado-pagina mb-4">
                 <!-- Indica la ubicación de esta pantalla dentro del módulo administrativo. -->
                 <p class="miga-pan text-secondary small mb-2">Seguridad y acceso <span aria-hidden="true">›</span> Usuarios</p>
-                <!-- Describe de forma directa la información que puede consultar el administrador. -->
-                <h1 class="h2 fw-bold mb-2">Usuarios registrados</h1>
-                <!-- Resume las acciones disponibles en esta pantalla. -->
-                <p class="text-secondary mb-0">Consulta las cuentas, roles y datos de contacto del personal.</p>
+                <!-- Alinea el título descriptivo y el acceso al formulario de alta. -->
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                    <!-- Agrupa el título y la descripción de la lista. -->
+                    <div>
+                        <!-- Describe de forma directa la información que puede consultar el administrador. -->
+                        <h1 class="h2 fw-bold mb-2">Usuarios registrados</h1>
+                        <!-- Resume el contenido de esta pantalla. -->
+                        <p class="text-secondary mb-0">Consulta las cuentas, roles y datos de contacto del personal.</p>
+                    <!-- Cierra el bloque de texto del encabezado. -->
+                    </div>
+                    <!-- Enlaza a la pantalla del formulario de alta de usuarios. -->
+                    <a class="btn btn-primary flex-shrink-0" href="index.php?accion=empleados-registro">Registrar usuario</a>
+                <!-- Cierra la fila de encabezado y acción. -->
+                </div>
             <!-- Cierra el encabezado de la pantalla. -->
             </header>
             <!-- Agrupa la búsqueda, el total de empleados y la tabla en una tarjeta blanca. -->

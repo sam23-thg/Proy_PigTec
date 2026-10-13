@@ -94,6 +94,12 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
             $controladorEmpleado->lista(); // Obtiene los datos con listarTodos y renderiza la vista de empleados.
             break; // Finaliza el enrutamiento de la pantalla de usuarios.
 
+        case 'empleados-registro': // Atiende el formulario protegido de alta de empleados.
+            require_once dirname(__DIR__) . '/app/controllers/EmpleadoController.php'; // Carga el controlador con restricción para administradores.
+            $controladorEmpleado = new EmpleadoController(new Empleado($conexion)); // Comparte el modelo construido con la conexión PDO actual.
+            $controladorEmpleado->registro(); // Procesa el POST o presenta el formulario de registro.
+            break; // Finaliza el enrutamiento del alta de empleados.
+
         case 'cambiar-temporal': // Atiende la pantalla obligatoria para renovar una contraseña temporal.
             if ($requiereCambioTemporal !== true) { // Impide cambiar una contraseña que no esté marcada temporal.
                 $rolSesion = (string) ($usuarioSesion['rol'] ?? ''); // Recupera el rol de la cuenta autenticada.
