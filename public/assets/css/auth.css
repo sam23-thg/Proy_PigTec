@@ -1,0 +1,135 @@
+/* Define una paleta suave para el fondo y los textos secundarios de autenticación. */
+:root {
+    --color-fondo-autenticacion: #f7f8fc;
+    /* Mantiene un fondo neutro que centra la atención en la tarjeta. */
+    --color-texto-secundario: #6b7280;
+    /* Asegura contraste legible para las indicaciones auxiliares. */
+    --color-marca: #b4233c;
+    /* Distingue la identidad del sistema con un tono cálido y sobrio. */
+    --color-marca-suave: #fff0f2;
+    /* Resalta el distintivo sin competir con el botón principal. */
+}
+
+/* Finaliza la paleta local de la pantalla. */
+
+/* Aplica el color base y la familia tipográfica de la pantalla de acceso. */
+.pagina-autenticacion {
+    min-height: 100vh;
+    /* Ocupa al menos toda la altura visible del navegador. */
+    background: radial-gradient(circle at 14% 12%, #fff 0, var(--color-fondo-autenticacion) 48%, #eef1f8 100%);
+    /* Añade profundidad sutil manteniendo el fondo claro de la guía. */
+    color: #202534;
+    /* Define un color de lectura oscuro para textos principales. */
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    /* Usa fuentes disponibles sin cargar dependencias adicionales. */
+}
+
+/* Finaliza los estilos del cuerpo de autenticación. */
+
+/* Limita el ancho de la tarjeta para que permanezca centrada y legible. */
+.tarjeta-autenticacion {
+    width: min(100%, 460px);
+    /* Conserva un ancho responsivo con un máximo adecuado para el formulario. */
+    border-radius: 1.25rem;
+    /* Suaviza las esquinas de la tarjeta principal. */
+    background-color: #fff;
+    /* Mantiene el formulario sobre una superficie de alto contraste. */
+}
+
+/* Finaliza las dimensiones y apariencia de la tarjeta. */
+
+/* Estiliza el distintivo de marca circular sin requerir un recurso gráfico externo. */
+.marca-autenticacion {
+    width: 3.75rem;
+    /* Fija el ancho del distintivo de identidad. */
+    height: 3.75rem;
+    /* Mantiene la misma altura para conservar la forma circular. */
+    background-color: var(--color-marca-suave);
+    /* Separa el distintivo del fondo blanco de la tarjeta. */
+    color: var(--color-marca);
+    /* Aplica el color de marca al monograma. */
+    font-size: 1.1rem;
+    /* Da legibilidad a las iniciales dentro del círculo. */
+    font-weight: 800;
+    /* Refuerza visualmente las iniciales de la marca. */
+    letter-spacing: 0.04em;
+    /* Mejora la separación visual de las letras. */
+}
+
+/* Finaliza los estilos del distintivo de marca. */
+
+/* Define la jerarquía visual del nombre de sistema sobre el título. */
+.nombre-sistema {
+    color: var(--color-marca);
+    /* Usa el tono de marca para identificar el sistema. */
+    font-size: 0.75rem;
+    /* Mantiene el nombre de marca como texto auxiliar compacto. */
+    letter-spacing: 0.12em;
+    /* Distingue el rótulo mediante espaciado tipográfico. */
+}
+
+/* Finaliza el estilo del nombre de sistema. */
+
+/* Atenúa los textos de apoyo sin perder legibilidad. */
+.texto-secundario {
+    color: var(--color-texto-secundario);
+    /* Aplica el tono secundario definido para la pantalla. */
+}
+
+/* Finaliza el estilo para descripciones auxiliares. */
+
+/* Mejora la altura de los campos para facilitar su uso táctil y lectura. */
+.tarjeta-autenticacion .form-control {
+    min-height: 3.25rem;
+    /* Aumenta el área interactiva de cada campo. */
+    border-color: #d9deea;
+    /* Define un borde neutral visible sobre el fondo blanco. */
+    border-radius: 0.75rem;
+    /* Mantiene coherencia con la tarjeta de bordes suaves. */
+}
+
+/* Finaliza los ajustes de los campos de formulario. */
+
+/* Refuerza el campo activo con un indicador accesible y alineado con Bootstrap. */
+.tarjeta-autenticacion .form-control:focus {
+    border-color: #86a7ff;
+    /* Hace visible el foco del teclado y del puntero. */
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.14);
+    /* Conserva un anillo de foco compatible con el botón primario. */
+}
+
+/* Finaliza el estilo del foco de campos. */
+
+/* Da al botón principal una presencia táctil consistente con la guía de pantalla. */
+.boton-acceso {
+    min-height: 3.25rem;
+    /* Amplía la superficie activa del botón Ingresar. */
+    border-radius: 0.75rem;
+    /* Mantiene continuidad visual con los controles. */
+    font-weight: 700;
+    /* Refuerza la acción principal del formulario. */
+}
+
+/* Finaliza el estilo del botón principal. */
+
+/* Distingue la confirmación de sesión en la misma tarjeta compartida. */
+.resumen-sesion {
+    border: 1px solid #badbcc;
+    /* Enmarca el estado exitoso con el color semántico de Bootstrap. */
+    background-color: #f0faf5;
+    /* Resalta el contenido de sesión sin competir con la marca. */
+}
+
+/* Finaliza el estilo del resumen de sesión autenticada. */
+
+/* Reduce el relleno interior en pantallas pequeñas para conservar el espacio útil. */
+@media (max-width: 420px) {
+    .tarjeta-autenticacion {
+        border-radius: 1rem;
+        /* Ajusta levemente las esquinas de la tarjeta en móviles compactos. */
+    }
+
+    /* Finaliza el ajuste móvil de la tarjeta. */
+}
+
+/* Finaliza la adaptación a pantallas móviles pequeñas. */
