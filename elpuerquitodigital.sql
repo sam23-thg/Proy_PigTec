@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS cliente;
 DROP TABLE IF EXISTS empleado;
 
 CREATE TABLE empleado (
-    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado INT AUTO_INCREMENT PRIMAR Y KEY,
     curp VARCHAR(18) UNIQUE,
     nombre VARCHAR(100) NOT NULL,
     seg_nombre VARCHAR(100),
