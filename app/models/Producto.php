@@ -59,4 +59,45 @@ class Producto // Agrupa las operaciones de persistencia comercial y existencias
         } // Finaliza el control de errores de la creación transaccional.
     } // Finaliza la creación coordinada de producto e inventario.
 
+    // Actualiza producto e inventario bajo una única transacción para conservar su relación.
+    public function actualizarConInventario(int $id, array $datosProducto, int|float|string $cantidadActual): bool // Recibe el identificador, los datos comerciales y la cantidad acumulada.
+    { // Inicia el proceso transaccional de actualización.
+        // Inicia el bloque de control para revertir ambos cambios ante cualquier fallo.
+        try { // Agrupa las dos actualizaciones bajo manejo de excepciones.
+            // Abre la transacción antes de ejecutar cualquiera de las dos sentencias UPDATE.
+            $this->db->beginTransaction(); // Garantiza que producto e inventario cambien conjuntamente.
+
+            // Prepara la actualización de los datos comerciales con columnas exactas de producto.
+            $consultaProducto = $this->db->prepare('UPDATE producto SET nombre_producto = :nombre_producto, tipo_corte = :tipo_corte, precio_kg = :precio_kg, estado = :estado WHERE id_producto = :id_producto'); // Limita el cambio al producto identificado.
+            // Actualiza primero el producto con valores enviados como parámetros independientes.
+            $consultaProducto->execute([ // Ejecuta la sentencia comercial dentro de la transacción.
+                ':nombre_producto' => (string) $datosProducto['nombre_producto'], // Sustituye el nombre guardado en nombre_producto.
+                ':tipo_corte' => $datosProducto['tipo_corte'] ?? null, // Sustituye el tipo de corte o conserva null si es opcional.
+                ':precio_kg' => $datosProducto['precio_kg'], // Sustituye el precio decimal de venta por kilogramo.
+                ':estado' => $datosProducto['estado'], // Aplica el estado activo o inactivo recibido.
+                ':id_producto' => $id, // Selecciona la fila cuyo identificador coincide con el solicitado.
+            ]); // Finaliza la actualización parametrizada de producto.
+
+            // Prepara la actualización de existencias y fecha usando las columnas reales de inventario.
+            $consultaInventario = $this->db->prepare('UPDATE inventario SET cantidad_existencia = :cantidad_existencia, fecha_actualizacion = NOW() WHERE id_producto = :id_producto'); // Relaciona la actualización mediante id_producto.
+            // Actualiza inmediatamente la cantidad vinculada dentro de la misma transacción.
+            $consultaInventario->execute([ // Ejecuta la segunda sentencia UPDATE antes de confirmar.
+                ':cantidad_existencia' => $cantidadActual, // Sustituye la cantidad acumulada del inventario.
+                ':id_producto' => $id, // Limita el cambio al inventario del producto correspondiente.
+            ]); // Finaliza la actualización parametrizada de inventario.
+
+            // Confirma simultáneamente los cambios comerciales y de existencias.
+            $this->db->commit(); // Hace permanentes ambas actualizaciones solo si concluyeron correctamente.
+            // Indica que las dos tablas quedaron actualizadas correctamente.
+            return true; // Comunica el éxito de la operación transaccional.
+        } catch (Throwable $excepcion) { // Captura fallos de PDO y cualquier error que ocurra durante la transacción.
+            // Comprueba que haya una transacción activa antes de solicitar su reversión.
+            if ($this->db->inTransaction()) { // Protege contra una reversión innecesaria tras el cierre transaccional.
+                // Deshace la actualización previa si falla cualquiera de las sentencias o el commit.
+                $this->db->rollBack(); // Mantiene producto e inventario en su estado previo conjunto.
+            } // Finaliza la comprobación y reversión de la transacción activa.
+            // Devuelve un resultado controlado sin filtrar mensajes técnicos de la base de datos.
+            return false; // Permite que el controlador trate el fallo de manera segura.
+        } // Finaliza el control de errores de la actualización transaccional.
+    } // Finaliza la actualización coordinada de producto e inventario.
 } // Finaliza la definición de la clase Producto.
