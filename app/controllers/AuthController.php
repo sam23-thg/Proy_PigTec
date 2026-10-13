@@ -54,6 +54,19 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
             return; // Evita continuar con una identidad no autenticada.
         } // Finaliza la comprobación de credenciales.
 
+        // Obtiene el rol validado de la fila encontrada para seleccionar permisos estáticos.
+        $rolEmpleado = (string) $empleadoEncontrado['rol']; // Usa únicamente el rol almacenado en la base de datos.
+        // Define las capacidades autorizadas para cada rol sin depender de tablas de permisos inexistentes.
+        $permisosPorRol = [ // Mantiene el mapeo local y explícito para esta fase del sistema.
+            'ADMINISTRADOR' => ['gestionar_empleados', 'restablecer_password', 'ver_catalogo', 'editar_productos'], // Otorga al administrador las cuatro capacidades solicitadas.
+            'ALMACEN' => ['ver_catalogo', 'editar_productos'], // Limita almacén a consultar y editar productos.
+            'VENTAS' => ['ver_catalogo'], // Permite a ventas consultar el catálogo sin modificar productos.
+            'DISTRIBUCION' => ['ver_catalogo'], // Permite a distribución consultar el catálogo sin facultades administrativas.
+            'REPARTIDOR' => ['ver_catalogo'], // Asigna al repartidor el permiso básico de consulta.
+        ]; // Finaliza el mapeo estático de roles y permisos.
+        // Obtiene los permisos correspondientes o no concede capacidades a roles no reconocidos.
+        $permisosEmpleado = $permisosPorRol[$rolEmpleado] ?? []; // Aplica el principio de mínimo privilegio a roles desconocidos.
+
         // Deniega la cuenta si su estado no confirma explícitamente que está activa.
         if ((int) ($empleadoEncontrado['estado'] ?? 0) !== 1) { // Trata cero y la ausencia inesperada del estado como desactivados por seguridad.
             $this->mostrarLogin('Cuenta desactivada. Contacte al administrador.', 'danger'); // Presenta el mensaje controlado requerido para cuentas inactivas.
@@ -66,8 +79,8 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         $_SESSION['user'] = [ // Establece la estructura de sesión solicitada para el usuario.
             'id_empleado' => (int) $empleadoEncontrado['id_empleado'], // Almacena el identificador primario del empleado.
             'usuario' => (string) $empleadoEncontrado['usuario'], // Almacena el nombre de usuario verificado.
-            'rol' => (string) $empleadoEncontrado['rol'], // Almacena el rol validado contra el registro de empleado.
-            'permisos' => [], // Mantiene una lista segura porque el esquema documentado no define tabla ni columnas de permisos.
+            'rol' => $rolEmpleado, // Almacena el rol validado contra el registro de empleado.
+            'permisos' => $permisosEmpleado, // Almacena los permisos estáticos definidos para el rol autenticado.
         ]; // Finaliza la asignación de la identidad de sesión.
         // Conserva si la cuenta requiere renovar su contraseña antes de navegar.
         $_SESSION['requiereCambioTemporal'] = (array_key_exists('es_temporal', $empleadoEncontrado) && (int) $empleadoEncontrado['es_temporal'] === 1) || hash_equals('12345678', $contrasenia); // Usa la bandera del esquema cuando existe o simula el estado temporal con la clave genérica tras verificarla.
