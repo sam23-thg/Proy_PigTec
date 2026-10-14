@@ -1,14 +1,14 @@
 /* Define los colores y medidas de la pantalla a partir de la interfaz de acceso. */
 :root {
-    --login-fondo-panel: #fff5f8;
+    --login-fondo-panel: #f5f2fa;
     /* Mantiene un fondo frío y claro para el área de credenciales. */
     --login-panel-marca: #9d174d;
     /* Identifica el panel de bienvenida con un tono vino cálido. */
     --login-panel-marca-oscuro: #70143d;
     /* Da profundidad al degradado inferior del panel. */
-    --login-texto: #3b1727;
+    --login-texto: #2d2d2d;
     /* Mantiene contraste alto en títulos y etiquetas. */
-    --login-texto-secundario: #765766;
+    --login-texto-secundario: #4b4650;
     /* Diferencia instrucciones y texto de ayuda. */
     --login-acento: #be185d;
     /* Destaca controles de marca sin competir con la acción primaria. */
@@ -47,6 +47,17 @@ body {
     /* Evita espacios blancos fuera del layout. */
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     /* Aproxima la tipografía moderna usada en la pantalla de Figma. */
+}
+
+/* Aplica el fondo de formularios al paso de cambio obligatorio de contraseña. */
+.contenedor-autenticacion {
+    background-color: var(--login-fondo-panel);
+    /* Conserva el contraste de la tarjeta sobre la imagen de fondo. */
+    background-image: linear-gradient(rgba(245, 242, 250, 0.82), rgba(245, 242, 250, 0.82)), url("../fondo_formularios.png");
+    /* Centra el encuadre decorativo del fondo. */
+    background-position: center;
+    /* Cubre el contenedor sin deformar la imagen. */
+    background-size: cover;
 }
 
 /* Finaliza los estilos globales de autenticación. */
@@ -429,11 +440,11 @@ body {
 
 /* Distingue los mensajes de error con un rojo suave sin desajustar el resto del formulario. */
 .alerta-login.alert-danger {
-    border-color: #f1c7cd;
+    border-color: #ff0000;
     /* Define el borde de error. */
-    background-color: #fff3f4;
+    background-color: #ff0000;
     /* Separa el aviso del fondo blanco de la tarjeta. */
-    color: #8c2435;
+    color: #000000;
     /* Mantiene contraste para el mensaje. */
 }
 
@@ -441,11 +452,11 @@ body {
 
 /* Presenta un error técnico controlado con el mismo espacio de alerta del diseño. */
 .alerta-login.alert-warning {
-    border-color: #f0d7a6;
+    border-color: #e6b800;
     /* Identifica visualmente la falla de servicio. */
-    background-color: #fff8e8;
+    background-color: #fff3cd;
     /* Conserva una superficie suave para el aviso técnico. */
-    color: #674c16;
+    color: #664d03;
     /* Mantiene legible el mensaje de servicio. */
 }
 
@@ -559,7 +570,7 @@ body {
 
 /* Conserva un indicador de foco visible para teclado y puntero. */
 .entrada-login:focus {
-    border-color: #df82a5;
+    border-color: #9d174d;
     /* Muestra el campo activo sin cambiar su geometría. */
     outline: 0;
     /* Evita duplicar el contorno nativo con el anillo personalizado. */
@@ -647,11 +658,11 @@ body {
     /* Ubica el botón en y=349 con la ayuda sobre él. */
     padding: 0 16px;
     /* Centra el texto y evita cambios de tamaño por Bootstrap. */
-    border-color: #be185d;
+    border-color: #198754;
     /* Usa un tono de marca profundo en el botón primario. */
     border-radius: 8px;
     /* Mantiene la forma de esquina del sistema de componentes. */
-    background-color: #be185d;
+    background-color: #198754;
     /* Diferencia claramente la acción principal del panel claro. */
     color: #fff;
     /* Mantiene contraste del texto sobre el botón. */
@@ -667,9 +678,9 @@ body {
 
 /* Mantiene una respuesta visual coherente al pasar el puntero sobre el botón. */
 .boton-login:hover {
-    border-color: #a31550;
+    border-color: #146c43;
     /* Oscurece el borde en el estado interactivo. */
-    background-color: #a31550;
+    background-color: #146c43;
     /* Oscurece la superficie al pasar el puntero. */
 }
 
@@ -729,13 +740,13 @@ body {
     /* Conserva el espacio principal de contenido en el estado autenticado. */
     padding: 16px;
     /* Separa la confirmación de los bordes del contenedor. */
-    border: 1px solid #f3bfd1;
+    border: 1px solid #a3cfbb;
     /* Enmarca el estado exitoso con un tono verde. */
     border-radius: 8px;
     /* Mantiene la forma de los demás componentes. */
-    background-color: #fff0f5;
+    background-color: #d1e7dd;
     /* Identifica el acceso autorizado sin cambiar la composición. */
-    color: #831843;
+    color: #0f5132;
     /* Mantiene contraste con el fondo verde claro. */
     font-size: 13px;
     /* Conserva la escala de texto de la tarjeta. */

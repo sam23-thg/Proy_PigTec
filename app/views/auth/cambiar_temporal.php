@@ -88,6 +88,7 @@ $tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' :
                     <button class="btn btn-primary btn-lg w-100 boton-acceso" type="submit">Confirmar contraseña</button>
                 <!-- Cierra el formulario obligatorio de actualización de contraseña. -->
                 </form>
+                <a class="btn btn-outline-secondary w-100 mt-3" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
             <!-- Cierra el contenido interno de la tarjeta. -->
             </div>
         <!-- Cierra la tarjeta de cambio obligatorio. -->

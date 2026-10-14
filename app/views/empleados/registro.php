@@ -52,6 +52,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga la validación y selección de permisos desde un archivo JavaScript externo. -->
     <script src="assets/js/registro-empleados.js" defer></script>
+    <script src="assets/js/navegacion.js" defer></script>
 <!-- Cierra la cabecera y sus recursos externos. -->
 </head>
 <!-- Inicia la pantalla administrativa de registro. -->
@@ -59,9 +60,11 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
     <!-- Distribuye el menú administrativo lateral y el contenido de registro. -->
     <div class="contenedor-empleados d-flex min-vh-100">
         <!-- Reutiliza el menú lateral del módulo de usuarios mostrado en la referencia visual. -->
-        <aside class="barra-empleados d-none d-lg-flex flex-column p-3" aria-label="Navegación administrativa">
+        <aside class="barra-empleados d-flex flex-column p-3" aria-label="Navegación administrativa">
             <!-- Agrupa el distintivo y nombre de marca en la zona superior del menú. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-label="El Güero, lista de usuarios">
+                <!-- Usa el logotipo oficial en el encabezado uniforme del menú. -->
+                <img class="logo-sistema" src="assets/logoPIG.png" alt="Logotipo de El Güero">
                 <!-- Representa el distintivo de marca con una inicial accesible como decoración. -->
                 <!-- Apila el nombre de la tocinería y el descriptor de su sistema. -->
                 <span class="d-flex flex-column">
@@ -73,10 +76,19 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                 </span>
             <!-- Cierra el enlace de marca. -->
             </a>
+            <!-- Ofrece un acceso directo a la bienvenida del panel autenticado. -->
+            <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de control de personal disponibles para el administrador. -->
-            <nav class="mt-4" aria-label="Seguridad y acceso">
+            <nav class="mt-4" aria-label="Navegación del sistema">
+                <!-- Mantiene visibles los accesos de catálogo junto con los de seguridad. -->
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo"><span>Registrar Producto</span></a>
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar"><span>Productos e Inventario</span></a>
                 <!-- Nombra la categoría de navegación del módulo. -->
-                <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Seguridad y acceso</p>
+                </div>
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
                 <!-- Limita la visibilidad de ambos enlaces a una sesión de rol ADMINISTRADOR exacto. -->
                 <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
                     <!-- Enlaza a la lista de usuarios con el controlador y acción solicitados. -->
@@ -102,6 +114,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
                 </a>
+                </div>
             <!-- Cierra la navegación lateral. -->
             </nav>
             <!-- Presenta la identidad del administrador en el borde inferior del menú. -->
@@ -115,6 +128,8 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
                     <span class="small text-secondary">Administrador</span>
                 <!-- Cierra los datos de sesión. -->
                 </span>
+                <!-- Permite terminar la sesión desde el pie persistente del menú. -->
+                <a class="btn btn-sm btn-outline-secondary enlace-cerrar-sesion" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
             <!-- Cierra el bloque de sesión lateral. -->
             </div>
         <!-- Cierra el menú lateral. -->

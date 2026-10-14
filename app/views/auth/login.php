@@ -27,6 +27,7 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el comportamiento de validación desde un archivo externo y sin código JavaScript en línea. -->
     <script src="assets/js/auth.js" defer></script>
+    <script src="assets/js/navegacion.js" defer></script>
 <!-- Finaliza la cabecera del documento. -->
 </head>
 <!-- Inicia el contenido visible de la pantalla. -->
@@ -36,9 +37,11 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
         <!-- Distribuye los dos paneles en una fila sin separación entre columnas. -->
         <div class="row g-0 min-vh-100">
             <!-- Presenta la bienvenida del sistema como panel lateral en escritorio y la oculta en móviles. -->
-            <aside class="col-lg-5 d-none d-lg-flex flex-column bg-dark text-white p-5" aria-label="Presentación del sistema">
+            <aside class="panel-marca col-lg-5 d-none d-lg-flex flex-column bg-dark text-white p-5" aria-label="Presentación del sistema">
                 <!-- Agrupa el logotipo textual y la identificación de la tocinería. -->
                 <a class="d-flex align-items-center gap-3 text-white text-decoration-none" href="index.php?accion=login" aria-label="Tocinería El Güero, inicio">
+                    <!-- Presenta el archivo de marca compartido en todas las vistas de navegación. -->
+                    <img class="logo-sistema" src="assets/logoPIG.png" alt="Logotipo de El Güero">
                     <!-- Representa el monograma de marca con utilidades de Bootstrap. -->
                     <!-- Agrupa nombre comercial y descriptor en una columna compacta. -->
                     <span class="d-flex flex-column">
@@ -56,12 +59,16 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                     <nav class="list-group list-group-flush mt-4" aria-label="Control y navegación">
                         <?php if (isset($_SESSION['user']['rol']) && in_array($_SESSION['user']['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
                             <!-- Agrupa las opciones de catálogo e inventario disponibles para administración y almacén. -->
-                            <p class="small fw-semibold text-uppercase text-white-50 mt-2 mb-2">Catálogo e inventario</p>
+                            <button class="boton-categoria-navegacion text-white-50 small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="false" aria-controls="menu-lobby-catalogo">Catálogo e inventario</button>
+                            <div class="grupo-navegacion-contenido" id="menu-lobby-catalogo">
                             <!-- Enlaza al registro unificado de producto y existencia inicial. -->
                             <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=producto&amp;a=nuevo">Registrar Producto</a>
                             <!-- Enlaza a la búsqueda, edición y consulta de existencias del catálogo. -->
                             <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=producto&amp;a=editar">Productos e Inventario</a>
+                            </div>
                         <?php endif; ?>
+                        <button class="boton-categoria-navegacion text-white-50 small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="false" aria-controls="menu-lobby-seguridad">Seguridad y acceso</button>
+                        <div class="grupo-navegacion-contenido" id="menu-lobby-seguridad">
                         <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
                             <!-- Enlaza al directorio de usuarios con el controlador y la acción solicitados. -->
                             <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=lista">Lista de Usuarios</a>
@@ -70,6 +77,7 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                         <?php endif; ?>
                         <!-- Enlaza al perfil del usuario autenticado para cualquier rol. -->
                         <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=perfil">Mi Perfil</a>
+                        </div>
                     <!-- Cierra el menú visible. -->
                     </nav>
                 <!-- Finaliza la condición que restringe el menú a la sesión iniciada. -->
@@ -105,7 +113,7 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
             <!-- Cierra el panel de presentación de marca. -->
             </aside>
             <!-- Centra la tarjeta de Login en el espacio restante de la pantalla. -->
-            <section class="col-12 col-lg-7 d-flex align-items-center justify-content-center p-0" aria-label="Área de acceso">
+            <section class="panel-principal-login <?= $sesionIniciadaVista ? 'panel-lobby' : 'panel-formulario-login' ?> col-12 col-lg-7 d-flex align-items-center justify-content-center p-0" aria-label="Área de acceso">
                 <!-- Limita la tarjeta mediante las columnas internas de Bootstrap y la centra horizontalmente. -->
                 <div class="row w-100 justify-content-center g-0">
                     <!-- Ajusta el ancho de la tarjeta a escritorio y dispositivos pequeños. -->
@@ -140,21 +148,13 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                                 <?php endif; ?>
                                 <!-- Muestra un resumen cuando el Front Controller confirma una sesión autenticada. -->
                                 <?php if ($sesionIniciadaVista): ?>
-                                    <!-- Agrupa los datos de la sesión dentro de un contenedor de estado. -->
-                                    <div class="alert alert-success mb-0" role="status">
+                                    <!-- Presenta la identidad de la sesión sin duplicar los enlaces del menú lateral. -->
+                                    <div class="datos-sesion" role="group" aria-label="Datos de la sesión">
                                         <!-- Presenta el usuario validado y escapa su contenido. -->
                                         <p class="mb-2"><strong>Usuario:</strong> <?= htmlspecialchars((string) ($usuarioAutenticado ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
                                         <!-- Presenta el rol autorizado y escapa su contenido. -->
-                                        <p class="mb-3"><strong>Área:</strong> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
-                                        <?php if (isset($_SESSION['user']['rol']) && in_array($_SESSION['user']['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
-                                            <!-- Ofrece acceso directo al módulo de catálogo desde el panel de bienvenida. -->
-                                            <a class="btn btn-success w-100 mb-2" href="index.php?c=producto&amp;a=editar">Productos e Inventario</a>
-                                            <!-- Ofrece acceso directo al formulario de alta de producto. -->
-                                            <a class="btn btn-outline-success w-100 mb-2" href="index.php?c=producto&amp;a=nuevo">Registrar Producto</a>
-                                        <?php endif; ?>
-                                        <!-- Enlace directo al perfil del empleado. -->
-                                        <a class="btn btn-outline-success w-100" href="index.php?c=empleado&amp;a=perfil">Mi Perfil</a>
-                                    <!-- Cierra el resumen de sesión. -->
+                                        <p class="mb-0"><strong>Área:</strong> <?= htmlspecialchars((string) ($tituloPanel ?? ''), ENT_QUOTES, 'UTF-8') ?></p>
+                                    <!-- Cierra los datos informativos de la sesión. -->
                                     </div>
                                 <!-- Muestra el formulario si todavía no hay una sesión autenticada. -->
                                 <?php else: ?>

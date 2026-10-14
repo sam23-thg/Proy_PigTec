@@ -57,7 +57,7 @@
 /* Define el estado de foco para campos interactivos con el color verde acento del sistema. */
 .tarjeta-perfil .form-control:focus,
 .tarjeta-perfil .form-select:focus {
-    border-color: #df82a5;
+    border-color: #9d174d;
     /* Resalta el borde del campo activo con verde acento. */
     box-shadow: 0 0 0 0.2rem rgba(190, 24, 93, 0.18);
     /* Dibuja un aro de resplandor sutil para indicar foco del usuario. */
@@ -68,7 +68,7 @@
 /* Estiliza los controles estrictamente de solo lectura y deshabilitados para indicar bloqueo. */
 .campo-solo-lectura:disabled,
 .campo-solo-lectura[readonly] {
-    background-color: #fff0f5 !important;
+    background-color: #f3eff8 !important;
     /* Aplica un fondo grisáceo cálido para transmitir que no es editable. */
     color: var(--empleados-secundario) !important;
     /* Atenúa el color del texto para reforzar el estado bloqueado. */
@@ -86,7 +86,7 @@
     /* Aplica separación interior para que el texto respire cómodamente. */
     border-left: 3px solid var(--empleados-acento);
     /* Dibuja una franja verde a la izquierda como guía de atención. */
-    background-color: #fff7fa;
+    background-color: #f3eff8;
     /* Aplica fondo neutro suave de bajo contraste. */
     line-height: 1.5;
     /* Facilita la lectura de párrafos explicativos multilínea. */
@@ -98,9 +98,9 @@
 
 /* Define la insignia visual de estado de cuenta activa. */
 .insignia-estado-activo {
-    background-color: #fff0f5;
+    background-color: #e9e2f2;
     /* Aplica fondo verde pálido para el indicador de actividad. */
-    color: #831843;
+    color: #2d2d2d;
     /* Emplea un verde oscuro con alto contraste para el texto. */
     font-weight: 600;
     /* Enfatiza la legibilidad del estado de la cuenta. */

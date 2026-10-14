@@ -22,9 +22,36 @@ $camposDetalle = ['Identificador' => (string) ($empleadoDetalle['id_empleado'] ?
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="assets/css/empleados.css" rel="stylesheet">
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
+    <script src="assets/js/navegacion.js" defer></script>
 </head>
 <body class="pagina-empleados">
-    <main class="container py-4 py-md-5">
+    <div class="contenedor-empleados d-flex min-vh-100">
+        <aside class="barra-empleados d-flex flex-column p-3" aria-label="Navegación del sistema">
+            <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php" aria-label="El Güero, inicio">
+                <!-- Usa el logotipo oficial en el encabezado uniforme del menú. -->
+                <img class="logo-sistema" src="assets/logoPIG.png" alt="Logotipo de El Güero">
+                <span class="d-flex flex-column"><span class="fw-bold">El Güero</span><span class="small text-secondary">Tocinería · Sistema</span></span>
+            </a>
+            <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
+            <nav class="mt-4" aria-label="Navegación del sistema">
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo"><span>Registrar Producto</span></a>
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar"><span>Productos e Inventario</span></a>
+                </div>
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
+                <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-current="page"><span>Lista de Usuarios</span></a>
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro"><span>Agregar Usuario</span></a>
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil"><span>Mi Perfil</span></a>
+                </div>
+            </nav>
+            <div class="sesion-empleado d-flex align-items-center gap-2 mt-auto pt-3 border-top">
+                <span class="small fw-semibold text-truncate"><?= $escaparHtml((string) ($_SESSION['user']['usuario'] ?? 'Usuario')) ?></span>
+                <a class="btn btn-sm btn-outline-secondary enlace-cerrar-sesion" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
+            </div>
+        </aside>
+        <main class="contenido-empleados flex-grow-1 p-3 p-md-4 p-xl-5">
         <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <p class="miga-pan small mb-2">Seguridad y acceso / Usuarios</p>
@@ -44,6 +71,7 @@ $camposDetalle = ['Identificador' => (string) ($empleadoDetalle['id_empleado'] ?
                 </dl>
             </div>
         </section>
-    </main>
+        </main>
+    </div>
 </body>
 </html>

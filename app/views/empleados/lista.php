@@ -37,6 +37,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga desde un archivo externo la búsqueda interactiva de filas de la tabla. -->
     <script src="assets/js/empleados.js" defer></script>
+    <script src="assets/js/navegacion.js" defer></script>
 <!-- Finaliza la cabecera del documento. -->
 </head>
 <!-- Inicia la interfaz visible de la lista de empleados. -->
@@ -44,9 +45,11 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
     <!-- Organiza la navegación lateral y el contenido principal en una composición Bootstrap. -->
     <div class="contenedor-empleados d-flex min-vh-100">
         <!-- Presenta la navegación administrativa con el ancho visual del panel Figma. -->
-        <aside class="barra-empleados d-none d-lg-flex flex-column p-3" aria-label="Navegación administrativa">
+        <aside class="barra-empleados d-flex flex-column p-3" aria-label="Navegación administrativa">
             <!-- Agrupa el distintivo y el nombre de la tocinería en la cabecera lateral. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-label="El Güero, lista de usuarios">
+                <!-- Usa el logotipo oficial en el encabezado uniforme del menú. -->
+                <img class="logo-sistema" src="assets/logoPIG.png" alt="Logotipo de El Güero">
                 <!-- Representa el distintivo circular de la marca con la inicial de la tocinería. -->
                 <!-- Presenta el nombre comercial y su descriptor como dos líneas. -->
                 <span class="d-flex flex-column">
@@ -58,10 +61,19 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                 </span>
             <!-- Cierra el enlace de identidad de marca. -->
             </a>
+            <!-- Ofrece un acceso directo a la bienvenida del panel autenticado. -->
+            <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de control de personal bajo su categoría de navegación. -->
-            <nav class="mt-4" aria-label="Seguridad y acceso">
+            <nav class="mt-4" aria-label="Navegación del sistema">
+                <!-- Mantiene visibles los accesos de catálogo junto con los de seguridad. -->
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo"><span>Registrar Producto</span></a>
+                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar"><span>Productos e Inventario</span></a>
                 <!-- Identifica el grupo de navegación de seguridad. -->
-                <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Seguridad y acceso</p>
+                </div>
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
                 <!-- Muestra los enlaces del personal solo a una sesión con rol administrador exacto. -->
                 <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
                     <!-- Enlaza a la lista de usuarios usando el controlador y la acción solicitados. -->
@@ -87,6 +99,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
                 </a>
+                </div>
             <!-- Cierra la navegación lateral. -->
             </nav>
             <!-- Mantiene la identificación de sesión anclada al borde inferior del menú. -->
@@ -100,6 +113,8 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                     <span class="small text-secondary">Administrador</span>
                 <!-- Cierra las etiquetas de identidad de la sesión. -->
                 </span>
+                <!-- Permite terminar la sesión desde el pie persistente del menú. -->
+                <a class="btn btn-sm btn-outline-secondary enlace-cerrar-sesion" href="index.php?c=auth&amp;a=logout">Cerrar sesión</a>
             <!-- Cierra el bloque de sesión del menú lateral. -->
             </div>
         <!-- Cierra el menú lateral. -->

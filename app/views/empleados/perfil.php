@@ -57,6 +57,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el script de validación externa con el atributo defer para ejecución diferida. -->
     <script src="assets/js/perfil.js" defer></script>
+    <script src="assets/js/navegacion.js" defer></script>
 <!-- Cierra la cabecera del documento HTML. -->
 </head>
 <!-- Inicia el cuerpo de la página con la clase base del módulo. -->
@@ -64,9 +65,11 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
     <!-- Organiza la barra de navegación lateral y el contenido central. -->
     <div class="contenedor-empleados d-flex min-vh-100">
         <!-- Renderiza la barra lateral fija en pantallas grandes. -->
-        <aside class="barra-empleados d-none d-lg-flex flex-column p-3" aria-label="Navegación del sistema">
+        <aside class="barra-empleados d-flex flex-column p-3" aria-label="Navegación del sistema">
             <!-- Presenta la identidad de marca de la tocinería como enlace. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php" aria-label="El Güero, inicio">
+                <!-- Usa el logotipo oficial en el encabezado uniforme del menú. -->
+                <img class="logo-sistema" src="assets/logoPIG.png" alt="Logotipo de El Güero">
                 <!-- Muestra el distintivo circular con la letra G de la marca. -->
                 <!-- Agrupa el nombre comercial y descriptor en bloque vertical. -->
                 <span class="d-flex flex-column">
@@ -78,11 +81,13 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                 </span>
             <!-- Cierra el enlace de identidad de marca. -->
             </a>
+            <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de navegación accesibles según el rol. -->
             <nav class="mt-4" aria-label="Opciones de cuenta y navegación">
                 <?php if (isset($sesionVista['rol']) && in_array($sesionVista['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
                     <!-- Identifica las opciones de productos e inventario accesibles para estos roles. -->
-                    <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Catálogo e inventario</p>
+                    <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
+                    <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
                     <!-- Enlaza al registro unificado de producto y existencia inicial. -->
                     <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo">
                         <!-- Icono representativo del alta de producto. -->
@@ -98,11 +103,13 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                     <!-- Cierra el enlace al catálogo e inventario. -->
                     </a>
                     <!-- Separa las opciones del módulo de las opciones de cuenta. -->
-                    <p class="titulo-navegacion small fw-semibold text-uppercase mt-3 mb-2">Seguridad y acceso</p>
+                    </div>
+                    <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
                 <?php else: ?>
                 <!-- Muestra el título de categoría para la navegación. -->
-                <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Seguridad y acceso</p>
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
                 <?php endif; ?>
+                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
                 <!-- Renderiza accesos administrativos únicamente para usuarios con rol ADMINISTRADOR. -->
                 <?php if (isset($sesionVista['rol']) && $sesionVista['rol'] === 'ADMINISTRADOR'): ?>
                     <!-- Enlace directo al directorio de usuarios. -->
@@ -128,6 +135,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace de perfil. -->
                 </a>
+                </div>
             <!-- Cierra el contenedor de navegación. -->
             </nav>
             <!-- Muestra la información de la sesión actual al final del menú lateral. -->

@@ -43,6 +43,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el script de validación externa con el atributo defer. -->
     <script src="assets/js/productos.js" defer></script>
+    <script src="assets/js/navegacion.js" defer></script>
 <!-- Cierra la cabecera del documento HTML. -->
 </head>
 <!-- Inicia el cuerpo de la página con la clase base del sistema. -->
@@ -50,9 +51,11 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
     <!-- Organiza la barra de navegación lateral y el contenido central. -->
     <div class="contenedor-empleados d-flex min-vh-100">
         <!-- Renderiza la barra lateral fija en pantallas grandes. -->
-        <aside class="barra-empleados d-none d-lg-flex flex-column p-3" aria-label="Navegación del sistema">
+        <aside class="barra-empleados d-flex flex-column p-3" aria-label="Navegación del sistema">
             <!-- Presenta la identidad de marca de la tocinería como enlace. -->
             <a class="marca-empleados d-flex align-items-center gap-3 text-decoration-none" href="index.php" aria-label="El Güero, inicio">
+                <!-- Usa el logotipo oficial en el encabezado uniforme del menú. -->
+                <img class="logo-sistema" src="assets/logoPIG.png" alt="Logotipo de El Güero">
                 <!-- Distintivo circular de marca. -->
                 <!-- Agrupa el nombre comercial y descriptor. -->
                 <span class="d-flex flex-column">
@@ -64,10 +67,12 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 </span>
             <!-- Cierra el enlace de marca. -->
             </a>
+            <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de navegación según el rol autenticado. -->
             <nav class="mt-4" aria-label="Catálogo e inventarios">
                 <!-- Título de sección de catálogo. -->
-                <p class="titulo-navegacion small fw-semibold text-uppercase mb-2">Catálogo e inventario</p>
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
                 <!-- Enlace activo a registro de producto. -->
                 <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo" aria-current="page">
                     <!-- Icono representativo de nuevo producto. -->
@@ -83,7 +88,9 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                 <!-- Cierra el enlace de edición. -->
                 </a>
                 <!-- Título de sección de cuenta. -->
-                <p class="titulo-navegacion small fw-semibold text-uppercase mt-3 mb-2">Seguridad y acceso</p>
+                </div>
+                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
+                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
                 <!-- Accesos administrativos exclusivos para el rol ADMINISTRADOR. -->
                 <?php if ($rolSesion === 'ADMINISTRADOR'): ?>
                     <!-- Enlace a la lista de usuarios. -->
@@ -109,6 +116,7 @@ $urlCancelar = $rolSesion === 'ADMINISTRADOR' ? 'index.php?c=empleado&amp;a=list
                     <span>Mi Perfil</span>
                 <!-- Cierra el enlace al perfil. -->
                 </a>
+                </div>
             <!-- Cierra la navegación lateral. -->
             </nav>
             <!-- Pie de barra lateral con información de la sesión activa. -->

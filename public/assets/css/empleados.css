@@ -1,16 +1,16 @@
 /* Define los tonos cálidos extraídos de la pantalla administrativa del diseño Figma. */
 :root {
-    --empleados-fondo: #fff5f8;
+    --empleados-fondo: #f5f2fa;
     /* Reproduce el fondo marfil de la pantalla HU4. */
     --empleados-superficie: #ffffff;
     /* Mantiene las tarjetas y el menú en blanco. */
     --empleados-borde: #f0cbd8;
     /* Usa el borde beige visible entre paneles. */
-    --empleados-texto: #3b1727;
+    --empleados-texto: #2d2d2d;
     /* Mantiene un tono verde-neutro oscuro para títulos. */
-    --empleados-secundario: #765766;
+    --empleados-secundario: #4b4650;
     /* Atenúa títulos auxiliares y metadatos. */
-    --empleados-acento: #be185d;
+    --empleados-acento: #9d174d;
     /* Destaca la navegación activa con un verde suave. */
 }
 
@@ -30,20 +30,46 @@
     /* Usa una tipografía de sistema limpia sin dependencia adicional. */
 }
 
+/* Limita la aplicación al alto visible y deja el desplazamiento a cada panel. */
+.contenedor-empleados {
+    height: 100vh;
+    /* Evita que el documento se desplace junto con los paneles internos. */
+    overflow: hidden;
+}
+
 /* Finaliza el estilo general de la página. */
 
 /* Fija el menú lateral en el ancho de 260px medido en el marco Figma. */
 .barra-empleados {
+    position: fixed;
+    /* Ancla el menú en la esquina superior izquierda durante el desplazamiento. */
+    top: 0;
+    /* Alinea el borde lateral con la ventana. */
+    left: 0;
+    /* Mantiene la navegación por encima del área de contenido. */
+    z-index: 1030;
     flex: 0 0 260px;
     /* Mantiene constante el ancho del menú en escritorio. */
     width: 260px;
     /* Coincide con la dimensión del panel lateral del diseño. */
-    min-height: 100vh;
+    height: 100vh;
+    /* Permite fijar el pie y desplazar solo la lista de opciones. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    overflow-x: hidden;
     /* Extiende el menú por toda la altura de la pantalla. */
     border-right: 1px solid var(--empleados-borde);
     /* Separa el menú del contenido con el borde beige. */
     background-color: var(--empleados-superficie);
     /* Mantiene el área lateral blanca como en Figma. */
+}
+
+.barra-empleados nav {
+    flex: 0 0 auto;
+    /* Reserva el espacio para la marca y el pie de sesión. */
+    min-height: 0;
+    /* Habilita el desplazamiento propio si el menú supera el alto disponible. */
+    overflow: visible;
 }
 
 /* Finaliza las dimensiones y superficie de la barra lateral. */
@@ -100,7 +126,7 @@
 .enlace-navegacion.activo {
     background-color: #fce7ef;
     /* Aplica un relleno verde muy pálido para el estado activo. */
-    color: #831843;
+    color: #2d2d2d;
     /* Refuerza el contraste del enlace seleccionado. */
     font-weight: 600;
     /* Señala la página actual dentro del menú. */
@@ -110,7 +136,17 @@
 
 /* Presenta el separador superior de la identidad de sesión del menú. */
 .sesion-empleado {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
     min-height: 51px;
+    background-color: var(--empleados-superficie);
+    /* Apila identidad y salida para conservar el acceso al pie. */
+    flex-direction: column;
+    /* Ocupa el ancho completo de la parte inferior de la barra. */
+    align-items: stretch !important;
+    /* Evita que el menú largo comprima el pie de sesión. */
+    flex-shrink: 0;
     /* Coincide con la altura del bloque de sesión del diseño. */
     border-top: 1px solid var(--empleados-borde);
     /* Separa la identidad del resto del menú. */
@@ -128,7 +164,7 @@
     /* Conserva la proporción cuadrada previa al redondeo. */
     background-color: #fce7ef;
     /* Asocia el avatar a la paleta suave de la marca. */
-    color: #831843;
+    color: #2d2d2d;
     /* Mantiene legibles las iniciales. */
     font-size: 0.75rem;
     /* Ajusta las iniciales al tamaño del círculo. */
@@ -138,10 +174,52 @@
 
 /* Limita la superficie de trabajo al ancho disponible sin ampliar su contenido. */
 .contenido-empleados {
+    width: calc(100% - 260px);
+    /* Asigna al contenido solo el espacio que deja la barra fija. */
+    flex-basis: calc(100% - 260px);
+    /* Igual la altura de la zona central con la ventana. */
+    height: 100vh;
+    /* Desplaza el contenido para dejar libre el ancho de la barra. */
+    margin-left: 260px;
+    /* Mantiene tablas y formularios desplazables sin mover el menú. */
+    overflow-y: auto;
+    /* Evita que el desplazamiento central afecte a otros paneles. */
+    overscroll-behavior: contain;
     min-width: 0;
     /* Permite que la tabla responda a anchos reducidos. */
     background-color: var(--empleados-fondo);
-    /* Mantiene continuidad con el lienzo Figma. */
+    /* Coloca el fondo de formularios exclusivamente en el área central. */
+    background-image: linear-gradient(rgba(245, 242, 250, 0.82), rgba(245, 242, 250, 0.82)), url("../fondo_formularios.png");
+    /* Mantiene el punto principal de la textura en el centro. */
+    background-position: center;
+    /* Cubre el área de trabajo sin estirar la imagen. */
+    background-size: cover;
+}
+
+.enlace-inicio-navegacion {
+    display: flex;
+    /* Alinea el símbolo de inicio con su rótulo. */
+    align-items: center;
+    /* Separa el símbolo y el texto del acceso. */
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--empleados-borde);
+    border-radius: 0.5rem;
+    color: var(--empleados-texto);
+    text-decoration: none;
+}
+
+.enlace-inicio-navegacion:hover,
+.enlace-inicio-navegacion:focus-visible {
+    background-color: #e9e2f2;
+    color: var(--empleados-texto);
+}
+
+.sesion-empleado .enlace-cerrar-sesion {
+    flex-shrink: 0;
+    /* Separa el botón de salida de la identidad del usuario. */
+    margin-top: 0.75rem;
 }
 
 /* Finaliza el panel principal de empleados. */
@@ -180,7 +258,7 @@
 .busqueda-empleados .input-group-text {
     border-color: var(--empleados-borde);
     /* Unifica el contorno del icono y del campo. */
-    background-color: #fff7fa;
+    background-color: #f3eff8;
     /* Mantiene el extremo del input en una superficie clara. */
     color: var(--empleados-secundario);
     /* Usa contraste secundario para el símbolo. */
@@ -200,7 +278,7 @@
 .etiqueta-total {
     background-color: #fce7ef;
     /* Diferencia el contador mediante un relleno verde tenue. */
-    color: #831843;
+    color: #2d2d2d;
     /* Conserva alto contraste para la cantidad. */
     font-weight: 600;
     /* Refuerza la lectura del indicador numérico. */
@@ -256,7 +334,7 @@
 
 /* Usa una tinta diferente para nombres de usuario con formato de cuenta. */
 .texto-usuario {
-    color: #9d174d;
+    color: #2d2d2d;
     /* Distingue el usuario sin usar un color de enlace. */
     font-weight: 600;
     /* Hace reconocible el identificador de inicio de sesión. */
@@ -268,7 +346,7 @@
 .etiqueta-rol {
     background-color: #fce7ef;
     /* Usa un gris cálido neutral para todas las categorías. */
-    color: #831843;
+    color: #2d2d2d;
     /* Conserva legibilidad en el distintivo. */
     font-weight: 600;
     /* Marca la categoría sin competir con el nombre. */
@@ -287,8 +365,16 @@
 /* Recorta el espacio horizontal en tabletas, conservando la tabla desplazable. */
 @media (max-width: 991.98px) {
     .contenido-empleados {
-        width: 100%;
-        /* Permite que el contenido ocupe la pantalla al ocultarse el menú lateral. */
+        width: calc(100% - 220px);
+        /* Ajusta el panel al ancho reducido de la barra en tabletas. */
+        flex-basis: calc(100% - 220px);
+        margin-left: 220px;
+    }
+
+    .barra-empleados {
+        width: 220px;
+        /* Conserva la correspondencia entre la barra y el espacio central. */
+        flex-basis: 220px;
     }
 
     /* Finaliza la adaptación del panel principal en dispositivos pequeños. */
