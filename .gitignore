@@ -1,0 +1,41 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Configuración y archivos temporales de editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+*.bak
+*~
+
+# Dependencias y cachés del frontend
+node_modules/
+.npm/
+.cache/
+.vite/
+dist/
+build/
+coverage/
+
+# Temporales y registros de servidores locales
+*.log
+logs/
+tmp/
+temp/
+.phpunit.cache/
+
+# Archivos de entorno y credenciales
+.env
+.env.*
+!.env.example
+!.env.example.*
+
+# Archivos de respaldo y temporales comunes
+*.old
+*.orig
+*.save
