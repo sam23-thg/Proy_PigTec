@@ -39,3 +39,15 @@ temp/
 *.old
 *.orig
 *.save
+# Carpetas locales solicitadas fuera del repositorio
+/database/
+/docs/
+/Documentacion/
+/.vscode/
+
+# Instrucciones y configuración de agentes locales
+/agents.md
+/AGENTS.md
+/AGENT.md
+/.codex/
+*.agent.md
