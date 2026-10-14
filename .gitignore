@@ -42,7 +42,6 @@ temp/
 # Carpetas locales solicitadas fuera del repositorio
 /database/
 /docs/
-/Documentacion/
 /.vscode/
 
 # Instrucciones y configuración de agentes locales
