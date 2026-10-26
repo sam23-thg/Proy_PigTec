@@ -75,7 +75,7 @@ CREATE TABLE ticket (
     id_producto INT NOT NULL,
     cantidad_kg DECIMAL(10, 3) NOT NULL,
     precio_kg DECIMAL(10, 2) NOT NULL,
-    Total DECIMAL(10, 2) NOT NULL,
+    total DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_venta) REFERENCES venta(id_venta) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
