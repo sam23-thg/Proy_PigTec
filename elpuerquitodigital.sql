@@ -75,13 +75,13 @@ CREATE TABLE ticket (
     id_producto INT NOT NULL,
     cantidad_kg DECIMAL(10, 3) NOT NULL,
     precio_kg DECIMAL(10, 2) NOT NULL,
-    subtotal DECIMAL(10, 2) NOT NULL,
+    Total DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_venta) REFERENCES venta(id_venta) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE pedido (
-    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    id_pedido INT AUTO_INCREMENT PRIMARY KEY,s
     id_venta INT NOT NULL UNIQUE,
     id_empleado_rep INT,
     direccion_entrega TEXT NOT NULL,
