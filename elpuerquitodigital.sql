@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS cliente;
 DROP TABLE IF EXISTS empleado;
 
 CREATE TABLE empleado (
-    id_empleado INT AUTO_INCREMENT PRIMAR Y KEY,
+    id_empleado INT AUTO_INCREMENT PRIMARY KEY,
     curp VARCHAR(18) UNIQUE,
     nombre VARCHAR(100) NOT NULL,
     seg_nombre VARCHAR(100),
@@ -81,7 +81,7 @@ CREATE TABLE ticket (
 ) ENGINE=InnoDB;
 
 CREATE TABLE pedido (
-    id_pedido INT AUTO_INCREMENT PRIMARY KEY,s
+    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
     id_venta INT NOT NULL UNIQUE,
     id_empleado_rep INT,
     direccion_entrega TEXT NOT NULL,
@@ -168,7 +168,6 @@ CREATE INDEX idx_venta_folio ON venta(folio_nota);
 CREATE INDEX idx_producto_corte ON producto(tipo_corte);
 CREATE INDEX idx_distribucion_estado ON distribution(estado_entrega);
 
--- 1. EMPLEADOS
 INSERT INTO empleado (curp, nombre, seg_nombre, apellido_p, apellido_m, genero, telefono, usuario, contrasenia, rol) VALUES
 ('RAMA980101HDFR01', 'Alexis', 'Jair', 'Ramírez', 'González', 'Masculino', '5551234567', 'alexis_admin', '$2b$10$HASHED_PASSWORD_HERE', 'ADMINISTRADOR'),
 ('LOPD990202HDFR02', 'David', 'Samuel', 'López', 'Valencia', 'Masculino', '5559876543', 'david_dist', '$2b$10$HASHED_PASSWORD_HERE', 'DISTRIBUCION'),
@@ -181,7 +180,6 @@ INSERT INTO cliente (nombre_razonsocial, telefono, calle, colonia, codigo_postal
 ('Restaurante La Cerdita / Ana Ruiz', '5554445566', 'Calle Reforma 45', 'Juárez', '06600', 'Ciudad de México'),
 ('Público General / Venta Mostrador', '5550000000', 'N/A', 'N/A', '00000', 'N/A');
 
--- 3. PRODUCTOS
 INSERT INTO producto (nombre_producto, tipo_corte, precio_kg, estado) VALUES
 ('Tocino Ahumado Rebanado', 'Tocino', 180.00, TRUE),
 ('Tocino Tira Especial', 'Tocino', 165.50, TRUE),
@@ -189,7 +187,6 @@ INSERT INTO producto (nombre_producto, tipo_corte, precio_kg, estado) VALUES
 ('Costilla para BBQ', 'Costilla', 155.00, TRUE),
 ('Chicharrón Prensadito', 'Chicharrón', 120.00, TRUE);
 
--- 4. INVENTARIO
 INSERT INTO inventario (id_producto, cantidad_kg) VALUES
 (1, 50.000),  
 (2, 30.000),  
@@ -197,27 +194,22 @@ INSERT INTO inventario (id_producto, cantidad_kg) VALUES
 (4, 40.000),  
 (5, 25.000);  
 
--- 5. VENTA EN MOSTRADOR
 INSERT INTO venta (folio_nota, id_cliente, id_empleado_ven, metodo_pago, total_venta, estado_venta) VALUES
 (1001, 3, 4, 'EFECTIVO', 605.00, 'COMPLETADA');
 
--- Items de la nota 
-INSERT INTO ticket (id_venta, id_producto, cantidad_kg, precio_kg, subtotal) VALUES
+INSERT INTO ticket (id_venta, id_producto, cantidad_kg, precio_kg, total) VALUES
 (1, 1, 2.500, 180.00, 450.00), 
 (1, 4, 1.000, 155.00, 155.00); 
 
--- 6. VENTA CON PEDIDO Y DISTRIBUCIÓN
 INSERT INTO venta (folio_nota, id_cliente, id_empleado_ven, metodo_pago, total_venta, estado_venta) VALUES
 (1002, 1, 4, 'TRANSFERENCIA', 900.00, 'COMPLETADA');
 
-INSERT INTO ticket (id_venta, id_producto, cantidad_kg, precio_kg, subtotal) VALUES
+INSERT INTO ticket (id_venta, id_producto, cantidad_kg, precio_kg, total) VALUES
 (2, 1, 5.000, 180.00, 900.00);
 
--- Registra el Pedido
 INSERT INTO pedido (id_venta, id_empleado_rep, direccion_entrega, estado_preparacion) VALUES
 (2, 2, 'Av. Insurgentes 123, Col. Centro', 'PREPARADO');
 
--- Registrando la Distribución del Pedido
 INSERT INTO distribution (id_pedido, transporte, estado_entrega) VALUES
 (1, 'Motocicleta Izuka 150', 'EN_CAMINO');
 
@@ -244,7 +236,7 @@ SELECT
     p.nombre_producto,
     t.cantidad_kg,
     t.precio_kg,
-    t.subtotal
+    t.total
 FROM ticket t
 JOIN venta v ON t.id_venta = v.id_venta
 JOIN producto p ON t.id_producto = p.id_producto;
