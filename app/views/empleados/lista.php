@@ -37,7 +37,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga desde un archivo externo la búsqueda interactiva de filas de la tabla. -->
     <script src="assets/js/empleados.js" defer></script>
-    <script src="assets/js/navegacion.js" defer></script>
+    <script src="assets/js/navegacion.js?v=menu-persistente-2" defer></script>
 <!-- Finaliza la cabecera del documento. -->
 </head>
 <!-- Inicia la interfaz visible de la lista de empleados. -->
@@ -64,44 +64,7 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
             <!-- Ofrece un acceso directo a la bienvenida del panel autenticado. -->
             <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de control de personal bajo su categoría de navegación. -->
-            <nav class="mt-4" aria-label="Navegación del sistema">
-                <!-- Mantiene visibles los accesos de catálogo junto con los de seguridad. -->
-                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
-                <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo"><span>Registrar Producto</span></a>
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar"><span>Productos e Inventario</span></a>
-                <!-- Identifica el grupo de navegación de seguridad. -->
-                </div>
-                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
-                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
-                <!-- Muestra los enlaces del personal solo a una sesión con rol administrador exacto. -->
-                <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
-                    <!-- Enlaza a la lista de usuarios usando el controlador y la acción solicitados. -->
-                    <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista" aria-current="page">
-                        <!-- Muestra un indicador visual para la lista de usuarios. -->
-                        <!-- Nombra de forma explícita la lista de usuarios. -->
-                        <span>Lista de Usuarios</span>
-                    <!-- Cierra el enlace a la lista administrativa. -->
-                    </a>
-                    <!-- Enlaza al formulario de alta mediante el controlador y acción especificados. -->
-                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
-                        <!-- Representa la acción de alta con un signo más. -->
-                        <!-- Nombra claramente la acción de agregar un usuario. -->
-                        <span>Agregar Usuario</span>
-                    <!-- Cierra el enlace al formulario de registro. -->
-                    </a>
-                <!-- Finaliza la condición de visibilidad de las opciones administrativas. -->
-                <?php endif; ?>
-                <!-- Enlaza al perfil del usuario autenticado disponible para cualquier rol. -->
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
-                    <!-- Representa la acción de perfil con un símbolo descriptivo. -->
-                    <!-- Identifica el acceso al perfil personal. -->
-                    <span>Mi Perfil</span>
-                <!-- Cierra el enlace al perfil. -->
-                </a>
-                </div>
-            <!-- Cierra la navegación lateral. -->
-            </nav>
+            <?php require dirname(__DIR__) . '/partials/menu_lateral.php'; ?>
             <!-- Mantiene la identificación de sesión anclada al borde inferior del menú. -->
             <div class="sesion-empleado d-flex align-items-center gap-2 mt-auto pt-3">
                 <!-- Presenta las iniciales de la cuenta administrativa autenticada. -->
@@ -195,6 +158,8 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                                     <th scope="col">Rol</th>
                                     <!-- Encabeza el número de contacto del empleado. -->
                                     <th scope="col">Teléfono</th>
+                                    <!-- Encabeza el estado de acceso de cada cuenta. -->
+                                    <th scope="col">Estado</th>
                                     <!-- Encabeza los controles visibles de cada fila. -->
                                     <th scope="col" class="text-end">Acciones</th>
                                 <!-- Cierra la fila de encabezados. -->
@@ -211,6 +176,8 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                                     <?php $rolTecnicoVista = (string) ($empleadoVista['rol'] ?? ''); ?>
                                     <!-- Traduce los valores conocidos del ENUM y conserva otros valores escapados. -->
                                     <?php $rolVisibleVista = $etiquetasRoles[$rolTecnicoVista] ?? $rolTecnicoVista; ?>
+                                    <!-- Convierte el estado almacenado en un valor booleano para la insignia. -->
+                                    <?php $cuentaActivaVista = (int) ($empleadoVista['estado'] ?? 1) === 1; ?>
                                     <!-- Asocia todos los campos visibles en un atributo de búsqueda para el filtro externo. -->
                                     <tr data-fila-empleado data-terminos="<?= $escaparHtml(implode(' ', [(string) ($empleadoVista['nombre_completo'] ?? ''), (string) ($empleadoVista['usuario'] ?? ''), $rolVisibleVista, (string) ($empleadoVista['telefono'] ?? '')])) ?>">
                                         <!-- Muestra el identificador de la cuenta. -->
@@ -223,12 +190,24 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
                                         <td><span class="badge etiqueta-rol rounded-pill"><?= $escaparHtml($rolVisibleVista) ?></span></td>
                                         <!-- Muestra el teléfono o una indicación si el dato está vacío. -->
                                         <td><?= $escaparHtml((string) ($empleadoVista['telefono'] ?? '')) ?: '—' ?></td>
+                                        <!-- Muestra el estado actual sin permitir modificarlo desde la tabla. -->
+                                        <td>
+                                            <!-- Presenta una insignia verde cuando la cuenta puede iniciar sesión. -->
+                                            <?php if ($cuentaActivaVista): ?>
+                                                <span class="badge rounded-pill text-bg-success">🟢 Activo</span>
+                                            <!-- Presenta una insignia roja cuando la cuenta está bloqueada. -->
+                                            <?php else: ?>
+                                                <span class="badge rounded-pill text-bg-danger">🔴 Inactivo</span>
+                                            <!-- Finaliza la selección de insignia de solo lectura. -->
+                                            <?php endif; ?>
+                                        <!-- Cierra la celda informativa de estado. -->
+                                        </td>
                                         <!-- Presenta acciones con texto visible y etiquetas accesibles. -->
                                         <td class="text-end">
                                             <!-- Agrupa los botones de fila sin mezclar JavaScript en el marcado. -->
                                             <div class="d-inline-flex flex-wrap justify-content-end gap-2">
-                                                <!-- Abre la ficha con los datos personales no secretos del empleado. -->
-                                                <a class="btn btn-sm btn-outline-secondary" href="index.php?c=empleado&amp;a=ver&amp;id=<?= $idEmpleadoVista ?>">Ver</a>
+                                                <!-- Abre el formulario precargado para editar los datos del empleado. -->
+                                                <a class="btn btn-sm btn-outline-secondary" href="index.php?c=empleado&amp;a=ver&amp;id=<?= $idEmpleadoVista ?>">Editar</a>
                                                 <!-- Envía el restablecimiento mediante un formulario POST. -->
                                                 <form action="index.php?c=empleado&amp;a=restablecer" method="post" class="d-inline" data-confirmar-restablecimiento>
                                                     <!-- Identifica la cuenta seleccionada sin tomar datos desde la URL. -->

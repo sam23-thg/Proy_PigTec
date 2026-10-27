@@ -1,0 +1,174 @@
+/* Ajusta la cabecera para conservar el formato compacto de Registrar Producto. */
+.encabezado-productos {
+    max-width: 1000px; /* Iguala el ancho de lectura del formulario de productos. */
+}
+
+/* Conserva el relleno del contenido si no se carga la hoja externa de Bootstrap. */
+.contenido-empleados {
+    padding: 1.5rem; /* Mantiene una separación clara entre el formulario y los bordes. */
+}
+
+/* Aplica el relleno de la tarjeta que normalmente aporta la utilidad de Bootstrap. */
+.tarjeta-producto .card-body {
+    padding: 1.25rem; /* Mantiene aire alrededor de los campos y el título interno. */
+}
+
+/* Distingue el encabezado de sección del bloque de captura. */
+.encabezado-formulario-cliente {
+    margin-bottom: 1.5rem; /* Separa el título de la cuadrícula de campos. */
+    padding-bottom: 0.5rem; /* Reserva aire antes del borde inferior. */
+    border-bottom: 1px solid #dee2e6; /* Reproduce el separador de Registrar Producto. */
+}
+
+/* Define la grilla del formulario incluso cuando Bootstrap no está disponible. */
+.grilla-formulario-cliente {
+    display: grid; /* Conserva la alineación en columnas del formulario de producto. */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* Organiza los datos en dos columnas iguales. */
+    gap: 1rem; /* Mantiene separación uniforme entre campos. */
+    margin: 0 0 1.5rem; /* Separa la grilla de la zona de acciones. */
+}
+
+/* Normaliza las columnas de Bootstrap dentro de la grilla propia del formulario. */
+.grilla-formulario-cliente > .campo-cliente {
+    width: auto; /* Deja que la grilla calcule el ancho del control. */
+    max-width: none; /* Evita conservar anchos parciales de columnas Bootstrap. */
+    padding: 0; /* Mantiene el espacio definido por gap en lugar de duplicarlo. */
+}
+
+/* Permite que el nombre ocupe ambas columnas como un campo principal. */
+.grilla-formulario-cliente > .campo-cliente-completo {
+    grid-column: 1 / -1; /* Extiende el nombre comercial sobre el ancho de la tarjeta. */
+}
+
+/* Mantiene etiquetas claras y consistentes con los formularios de productos. */
+.tarjeta-producto .form-label {
+    display: block; /* Coloca cada etiqueta encima de su control. */
+    margin-bottom: 0.5rem; /* Separa visualmente la etiqueta del campo. */
+    color: var(--empleados-texto, #2d2d2d); /* Usa el color de lectura del sistema. */
+}
+
+/* Completa los controles con dimensiones, borde y fondo del formulario de productos. */
+.tarjeta-producto .form-control {
+    display: block; /* Ocupa la columna completa disponible. */
+    width: 100%; /* Alinea cada campo con su etiqueta. */
+    min-height: 2.75rem; /* Conserva una altura cómoda para interacción. */
+    padding: 0.625rem 0.75rem; /* Mantiene espacio interior para el texto. */
+    border: 1px solid var(--empleados-borde, #f0cbd8); /* Reutiliza el borde cálido del proyecto. */
+    border-radius: 0.375rem; /* Conserva las esquinas suaves de Bootstrap. */
+    background-color: #fff; /* Distingue los controles de la tarjeta blanca. */
+    color: var(--empleados-texto, #2d2d2d); /* Mantiene texto de alto contraste. */
+    font: inherit; /* Respeta la familia tipográfica del sistema. */
+    line-height: 1.5; /* Conserva la lectura cómoda de los campos. */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Suaviza el cambio al enfocar un control. */
+}
+
+/* Destaca los campos activos con el color de foco utilizado en el sistema. */
+.tarjeta-producto .form-control:focus {
+    border-color: #df82a5; /* Resalta el borde del campo seleccionado. */
+    outline: 0; /* Sustituye el contorno del navegador por el anillo del proyecto. */
+    box-shadow: 0 0 0 0.2rem rgba(190, 24, 93, 0.18); /* Añade un indicador de foco visible. */
+}
+
+/* Presenta las ayudas debajo de cada control con el estilo de texto secundario. */
+.tarjeta-producto .form-text {
+    display: block; /* Reserva una línea para la ayuda del campo. */
+    margin-top: 0.25rem; /* Separa la nota del borde del control. */
+    color: #6c757d; /* Usa el tono secundario habitual de Bootstrap. */
+    font-size: 0.875em; /* Mantiene la ayuda visualmente subordinada. */
+}
+
+/* Oculta inicialmente los mensajes de validación hasta que el campo falle. */
+.tarjeta-producto .invalid-feedback {
+    display: none; /* Evita mostrar errores antes de interactuar con el formulario. */
+    width: 100%; /* Reserva todo el ancho disponible para el mensaje. */
+    margin-top: 0.25rem; /* Separa el error del control asociado. */
+    color: #dc3545; /* Usa el tono de error de Bootstrap. */
+    font-size: 0.875em; /* Mantiene el error legible sin competir con la etiqueta. */
+}
+
+/* Muestra el error cuando JavaScript marca un campo obligatorio como inválido. */
+.tarjeta-producto .form-control.is-invalid ~ .invalid-feedback {
+    display: block; /* Comunica el error junto al campo que debe corregirse. */
+}
+
+/* Define las acciones en fila y permite envolverlas en pantallas estrechas. */
+.acciones-cliente {
+    display: flex; /* Alinea los botones al extremo derecho de la tarjeta. */
+    flex-wrap: wrap; /* Permite acomodar los botones si falta espacio horizontal. */
+    justify-content: flex-end; /* Mantiene el orden de acciones de Registrar Producto. */
+    gap: 0.5rem; /* Separa Cancelar de Guardar Cliente. */
+    padding-top: 1rem; /* Separa las acciones de los campos. */
+    border-top: 1px solid #dee2e6; /* Divide el formulario y sus acciones. */
+}
+
+/* Reproduce las dimensiones y la tipografía de botones Bootstrap 5.3. */
+.acciones-cliente .btn {
+    display: inline-block; /* Conserva el botón en línea dentro del grupo. */
+    padding: 0.5rem 1.5rem; /* Mantiene el tamaño visual de los botones de producto. */
+    border: 1px solid transparent; /* Reserva el mismo contorno en ambas variantes. */
+    border-radius: 0.375rem; /* Usa el radio estándar de Bootstrap. */
+    font: inherit; /* Conserva la tipografía general de la aplicación. */
+    line-height: 1.5; /* Centra verticalmente el texto del botón. */
+    text-align: center; /* Centra la etiqueta de cada acción. */
+    text-decoration: none; /* Evita subrayado en el enlace Cancelar. */
+    cursor: pointer; /* Comunica que ambos elementos son accionables. */
+}
+
+/* Aplica la variante primaria rosa definida en la paleta del proyecto. */
+.acciones-cliente .btn-primary {
+    border-color: #be185d; /* Iguala el borde con el color primario. */
+    background-color: #be185d; /* Mantiene el botón principal de la aplicación. */
+    color: #fff; /* Asegura contraste con el fondo rosa. */
+}
+
+/* Oscurece el botón principal al pasar el puntero o recibir foco. */
+.acciones-cliente .btn-primary:hover,
+.acciones-cliente .btn-primary:focus-visible {
+    border-color: #a31550; /* Refuerza el borde en interacción. */
+    background-color: #a31550; /* Comunica el estado activo del botón. */
+}
+
+/* Aplica la variante secundaria delineada del formulario de producto. */
+.acciones-cliente .btn-outline-secondary {
+    border-color: #6c757d; /* Delimita la acción secundaria. */
+    background-color: transparent; /* Conserva el fondo de la tarjeta. */
+    color: #6c757d; /* Distingue la acción de cancelación. */
+}
+
+/* Refuerza la acción secundaria durante la interacción. */
+.acciones-cliente .btn-outline-secondary:hover,
+.acciones-cliente .btn-outline-secondary:focus-visible {
+    background-color: #6c757d; /* Da respuesta visual al puntero y al teclado. */
+    color: #fff; /* Conserva el contraste cuando el fondo se rellena. */
+}
+
+/* Reduce las columnas a una sola en pantallas móviles estrechas. */
+@media (max-width: 575.98px) {
+    .contenido-empleados {
+        padding: 1rem; /* Reduce el relleno lateral en teléfonos. */
+    }
+
+    /* Conserva márgenes cómodos en la superficie del formulario móvil. */
+    .tarjeta-producto .card-body {
+        padding: 1rem; /* Evita estrechar los campos en pantallas pequeñas. */
+    }
+
+    .grilla-formulario-cliente {
+        grid-template-columns: minmax(0, 1fr); /* Evita que los campos queden demasiado angostos. */
+    }
+
+    /* Mantiene el nombre en la única columna disponible. */
+    .grilla-formulario-cliente > .campo-cliente-completo {
+        grid-column: auto; /* Evita una extensión innecesaria en el diseño móvil. */
+    }
+
+    /* Apila las acciones para darles espacio táctil en teléfonos. */
+    .acciones-cliente {
+        flex-direction: column-reverse; /* Deja Guardar Cliente al final del grupo. */
+    }
+
+    /* Amplía los botones al ancho disponible en móviles. */
+    .acciones-cliente .btn {
+        width: 100%; /* Facilita la selección de cada acción táctil. */
+    }
+}

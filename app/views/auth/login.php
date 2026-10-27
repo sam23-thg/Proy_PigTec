@@ -24,7 +24,7 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
     <title>Iniciar sesión | Tocinería El Güero</title>
     <!-- Carga Bootstrap 5.3.3 desde jsDelivr con control de integridad del recurso. -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="assets/css/paleta-rosa.css" rel="stylesheet">
+    <link href="assets/css/paleta-rosa.css?v=menu-texto-blanco" rel="stylesheet">
     <!-- Carga el comportamiento de validación desde un archivo externo y sin código JavaScript en línea. -->
     <script src="assets/js/auth.js" defer></script>
     <script src="assets/js/navegacion.js" defer></script>
@@ -55,31 +55,8 @@ $sesionIniciadaVista = !empty($modoSesionIniciada); // Reutiliza la página como
                 </a>
                 <!-- Muestra las opciones de navegación únicamente en el panel del usuario autenticado. -->
                 <?php if ($sesionIniciadaVista): ?>
-                    <!-- Agrupa los accesos como lista vertical Bootstrap dentro de la barra lateral. -->
-                    <nav class="list-group list-group-flush mt-4" aria-label="Control y navegación">
-                        <?php if (isset($_SESSION['user']['rol']) && in_array($_SESSION['user']['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
-                            <!-- Agrupa las opciones de catálogo e inventario disponibles para administración y almacén. -->
-                            <button class="boton-categoria-navegacion text-white-50 small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="false" aria-controls="menu-lobby-catalogo">Catálogo e inventario</button>
-                            <div class="grupo-navegacion-contenido" id="menu-lobby-catalogo">
-                            <!-- Enlaza al registro unificado de producto y existencia inicial. -->
-                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=producto&amp;a=nuevo">Registrar Producto</a>
-                            <!-- Enlaza a la búsqueda, edición y consulta de existencias del catálogo. -->
-                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=producto&amp;a=editar">Productos e Inventario</a>
-                            </div>
-                        <?php endif; ?>
-                        <button class="boton-categoria-navegacion text-white-50 small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="false" aria-controls="menu-lobby-seguridad">Seguridad y acceso</button>
-                        <div class="grupo-navegacion-contenido" id="menu-lobby-seguridad">
-                        <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
-                            <!-- Enlaza al directorio de usuarios con el controlador y la acción solicitados. -->
-                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=lista">Lista de Usuarios</a>
-                            <!-- Enlaza al formulario de alta de empleados con la ruta MVC solicitada. -->
-                            <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3 mb-1" href="index.php?c=empleado&amp;a=registro">Registrar Empleado</a>
-                        <?php endif; ?>
-                        <!-- Enlaza al perfil del usuario autenticado para cualquier rol. -->
-                        <a class="list-group-item list-group-item-action bg-transparent border-secondary text-white rounded-3" href="index.php?c=empleado&amp;a=perfil">Mi Perfil</a>
-                        </div>
-                    <!-- Cierra el menú visible. -->
-                    </nav>
+                    <!-- Reutiliza el menú común para mostrar los mismos módulos y roles en el inicio y en las demás vistas. -->
+                    <?php require dirname(__DIR__) . '/partials/menu_lateral.php'; ?>
                 <!-- Finaliza la condición que restringe el menú a la sesión iniciada. -->
                 <?php endif; ?>
                 <!-- Centra el mensaje de bienvenida entre la marca y el pie del panel. -->

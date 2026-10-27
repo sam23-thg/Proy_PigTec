@@ -57,7 +57,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga el script de validación externa con el atributo defer para ejecución diferida. -->
     <script src="assets/js/perfil.js" defer></script>
-    <script src="assets/js/navegacion.js" defer></script>
+    <script src="assets/js/navegacion.js?v=menu-persistente-2" defer></script>
 <!-- Cierra la cabecera del documento HTML. -->
 </head>
 <!-- Inicia el cuerpo de la página con la clase base del módulo. -->
@@ -83,61 +83,7 @@ $urlCancelar = ($sesionVista['rol'] ?? '') === 'ADMINISTRADOR' ? 'index.php?c=em
             </a>
             <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de navegación accesibles según el rol. -->
-            <nav class="mt-4" aria-label="Opciones de cuenta y navegación">
-                <?php if (isset($sesionVista['rol']) && in_array($sesionVista['rol'], ['ADMINISTRADOR', 'ALMACEN'], true)): ?>
-                    <!-- Identifica las opciones de productos e inventario accesibles para estos roles. -->
-                    <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
-                    <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
-                    <!-- Enlaza al registro unificado de producto y existencia inicial. -->
-                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo">
-                        <!-- Icono representativo del alta de producto. -->
-                        <!-- Nombre del acceso al alta de producto. -->
-                        <span>Registrar Producto</span>
-                    <!-- Cierra el enlace al alta de producto. -->
-                    </a>
-                    <!-- Enlaza al catálogo de productos y la gestión de existencias. -->
-                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar">
-                        <!-- Icono representativo de catálogo e inventario. -->
-                        <!-- Nombre del acceso al catálogo. -->
-                        <span>Productos e Inventario</span>
-                    <!-- Cierra el enlace al catálogo e inventario. -->
-                    </a>
-                    <!-- Separa las opciones del módulo de las opciones de cuenta. -->
-                    </div>
-                    <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
-                <?php else: ?>
-                <!-- Muestra el título de categoría para la navegación. -->
-                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
-                <?php endif; ?>
-                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
-                <!-- Renderiza accesos administrativos únicamente para usuarios con rol ADMINISTRADOR. -->
-                <?php if (isset($sesionVista['rol']) && $sesionVista['rol'] === 'ADMINISTRADOR'): ?>
-                    <!-- Enlace directo al directorio de usuarios. -->
-                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
-                        <!-- Icono o viñeta de la lista. -->
-                        <!-- Nombre del enlace a la lista. -->
-                        <span>Lista de Usuarios</span>
-                    <!-- Cierra el enlace a lista. -->
-                    </a>
-                    <!-- Enlace directo al formulario de alta de usuarios. -->
-                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro">
-                        <!-- Signo de adición para el formulario de alta. -->
-                        <!-- Nombre del enlace de alta. -->
-                        <span>Agregar Usuario</span>
-                    <!-- Cierra el enlace de registro. -->
-                    </a>
-                <!-- Finaliza la restricción de opciones de administración. -->
-                <?php endif; ?>
-                <!-- Enlace al perfil de usuario activo marcado con la clase activo. -->
-                <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil" aria-current="page">
-                    <!-- Icono representativo del perfil de usuario. -->
-                    <!-- Título de la opción de perfil. -->
-                    <span>Mi Perfil</span>
-                <!-- Cierra el enlace de perfil. -->
-                </a>
-                </div>
-            <!-- Cierra el contenedor de navegación. -->
-            </nav>
+            <?php require dirname(__DIR__) . '/partials/menu_lateral.php'; ?>
             <!-- Muestra la información de la sesión actual al final del menú lateral. -->
             <div class="sesion-empleado d-flex align-items-center justify-content-between mt-auto pt-3 border-top">
                 <!-- Agrupa el avatar y nombres de la sesión. -->

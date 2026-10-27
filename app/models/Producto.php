@@ -177,4 +177,17 @@ class Producto // Agrupa las operaciones de persistencia comercial y existencias
         // Devuelve el conjunto de productos como arreglo asociativo.
         return $consulta->fetchAll(PDO::FETCH_ASSOC); // Entrega la colección para la vista y el buscador.
     } // Finaliza la consulta del catálogo completo.
+
+    // Consulta los productos activos junto con su existencia para la pantalla de disponibilidad de ventas.
+    public function obtenerCatalogoConStock(): array // Devuelve los datos comerciales y la cantidad física asociada.
+    { // Inicia la consulta aislada del catálogo de ventas.
+        // Prepara una unión interna para incluir únicamente productos con registro relacionado de inventario.
+        $consulta = $this->db->prepare('SELECT p.id_producto, p.nombre_producto, p.tipo_corte, p.precio_kg, i.cantidad_kg FROM producto AS p INNER JOIN inventario AS i ON i.id_producto = p.id_producto WHERE p.estado = :estado ORDER BY p.nombre_producto ASC'); // Mantiene los nombres del esquema documentado y ordena alfabéticamente.
+        // Enlaza el estado activo como entero para mostrar únicamente productos disponibles para venta.
+        $consulta->bindValue(':estado', 1, PDO::PARAM_INT); // Evita interpolar el estado dentro del SQL.
+        // Ejecuta la consulta preparada de catálogo sin alterar los métodos existentes del modelo.
+        $consulta->execute(); // Recupera las filas relacionadas de producto e inventario.
+        // Devuelve las filas como arreglos asociativos para la vista.
+        return $consulta->fetchAll(PDO::FETCH_ASSOC); // Entrega el catálogo con su stock actual.
+    } // Finaliza la consulta aislada de catálogo con existencias.
 } // Finaliza la definición de la clase Producto.

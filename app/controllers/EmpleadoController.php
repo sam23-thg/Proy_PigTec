@@ -187,6 +187,10 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
         if (!isset($_SESSION['tokenRestablecimiento']) || !is_string($_SESSION['tokenRestablecimiento'])) { // Reutiliza el token durante la navegación actual.
             $_SESSION['tokenRestablecimiento'] = bin2hex(random_bytes(32)); // Genera un valor impredecible y lo conserva en la sesión.
         } // Finaliza la inicialización del token administrativo.
+        // Inicializa un token independiente para editar datos y cambiar estados de cuenta.
+        if (!isset($_SESSION['tokenAdministracionEmpleado']) || !is_string($_SESSION['tokenAdministracionEmpleado'])) { // Reutiliza el token mientras dure la sesión.
+            $_SESSION['tokenAdministracionEmpleado'] = bin2hex(random_bytes(32)); // Genera un valor impredecible para proteger los formularios administrativos.
+        } // Finaliza la inicialización del token de administración de empleados.
         // Obtiene los datos de la tabla empleado a través del método PDO preparado del modelo.
         $usuarios = $this->empleado->listarTodos(); // No accede directamente a la base de datos desde el controlador.
         // Recupera un único aviso después de que la consulta de la lista se completó correctamente.
@@ -257,13 +261,25 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
         exit; // Detiene la solicitud después de iniciar la redirección.
     } // Finaliza la acción de restablecimiento.
 
-    // Muestra a un administrador la ficha de una cuenta sin revelar credenciales.
-    public function ver(): void // Define la acción administrativa de consulta de empleado.
-    { // Inicia la búsqueda individual del empleado.
-        // Restringe la ficha de otros usuarios al rol administrador.
-        $this->verificarRolAdministrador(); // Reutiliza el control de acceso administrativo.
-        // Valida que el identificador recibido sea un entero positivo.
-        $idEmpleado = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT); // No acepta identificadores mal formados.
+    // Muestra y actualiza la ficha administrativa sin modificar la lógica del perfil personal.
+    public function ver(): void // Conserva la ruta anterior y añade edición de datos y estado.
+    { // Inicia la consulta o actualización de la cuenta seleccionada.
+        // Restringe la ficha y sus formularios al rol administrador.
+        $this->verificarRolAdministrador(); // Reutiliza el control de acceso existente.
+        // Inicializa un token independiente para proteger los formularios de esta ficha.
+        if (!isset($_SESSION['tokenAdministracionEmpleado']) || !is_string($_SESSION['tokenAdministracionEmpleado'])) { // Permite abrir directamente la ficha.
+            $_SESSION['tokenAdministracionEmpleado'] = bin2hex(random_bytes(32)); // Genera el secreto de validación en la sesión.
+        } // Finaliza la preparación del token.
+        // Determina si la solicitud representa una edición enviada desde la ficha o el estado de la lista.
+        $esEnvio = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'; // No permite mutaciones mediante enlaces GET.
+        // Lee el identificador desde POST al modificar o desde GET al consultar la ficha.
+        $idEmpleado = filter_var($esEnvio ? ($_POST['id_empleado'] ?? null) : ($_GET['id'] ?? null), FILTER_VALIDATE_INT); // Exige un entero recibido por el canal esperado.
+        // Inicializa el mensaje de la ficha para errores de edición.
+        $avisoDetalle = $_SESSION['avisoDetalle'] ?? null; // Recupera el resultado de un guardado anterior.
+        // Consume el mensaje para evitar que reaparezca al recargar.
+        unset($_SESSION['avisoDetalle']); // Mantiene la notificación de una sola lectura.
+        // Inicializa los valores editables para conservar entradas ante un error.
+        $datosEdicion = []; // Se completa con la fila actual o con el formulario enviado.
         // Consulta el registro únicamente si el identificador cumple la validación.
         $empleadoDetalle = is_int($idEmpleado) && $idEmpleado > 0 ? $this->empleado->buscarPorId($idEmpleado) : null; // La consulta está parametrizada en el modelo.
         // Devuelve un estado 404 cuando no existe el empleado solicitado.
@@ -271,15 +287,121 @@ class EmpleadoController // Mantiene juntas las acciones protegidas del rol admi
             http_response_code(404); // Informa que no se encontró el recurso.
             exit('No se encontró el usuario solicitado.'); // Detiene el renderizado sin filtrar información técnica.
         } // Finaliza la validación de existencia.
+        // Procesa únicamente las modificaciones enviadas mediante POST.
+        if ($esEnvio) { // Separa las lecturas de las escrituras administrativas.
+            // Recupera el token enviado para comprobar el origen del formulario.
+            $tokenEnviado = ValidacionFormulario::texto($_POST['token_administracion'] ?? null); // Descarta valores que no sean texto.
+            // Exige coincidencia exacta con el token de la sesión administrativa.
+            if (!isset($_SESSION['tokenAdministracionEmpleado']) || !hash_equals((string) $_SESSION['tokenAdministracionEmpleado'], $tokenEnviado)) { // Mitiga envíos desde otros sitios.
+                http_response_code(403); // Informa que la solicitud no está autorizada.
+                exit('La solicitud no es válida. Actualiza la ficha e inténtalo nuevamente.'); // Detiene la modificación sin tocar la cuenta.
+            } // Finaliza la comprobación del token.
+            // Lee la operación permitida indicada por el formulario administrativo.
+            $accionEmpleado = ValidacionFormulario::texto($_POST['accion_empleado'] ?? null); // Evita aceptar acciones arbitrarias.
+            // Alterna el estado con una acción independiente de los demás datos del formulario.
+            if ($accionEmpleado === 'cambiar_estado') { // Permite activar o desactivar sin requerir guardar los campos de perfil.
+                // Calcula el estado opuesto usando el valor vigente leído de la base de datos.
+                $estadoNuevo = (int) ($empleadoDetalle['estado'] ?? 1) === 1 ? 0 : 1; // No confía en un estado arbitrario enviado por el navegador.
+                // Intenta actualizar exclusivamente la columna de estado mediante el modelo.
+                try { // Mantiene los errores de persistencia fuera de la pantalla.
+                    $estadoActualizado = $this->empleado->actualizarEstadoCuenta($idEmpleado, $estadoNuevo); // Ejecuta la acción aislada de activación o bloqueo.
+                } catch (Throwable $excepcion) { // Captura fallos sin revelar datos técnicos.
+                    error_log('Falló el cambio independiente del estado de una cuenta de empleado.'); // Registra un mensaje seguro para diagnóstico.
+                    $estadoActualizado = false; // Prepara una respuesta controlada para la vista.
+                } // Finaliza el manejo de errores del cambio de estado.
+                // Guarda un aviso para mostrar el resultado después de redirigir.
+                $_SESSION['avisoDetalle'] = ['tipo' => $estadoActualizado ? 'success' : 'danger', 'mensaje' => $estadoActualizado ? ($estadoNuevo === 1 ? 'Cuenta habilitada.' : 'Cuenta inhabilitada.') : 'No fue posible cambiar el estado de la cuenta.']; // Separa este resultado del guardado general.
+                // Regresa a la ficha actualizada sin reenviar el formulario al recargar.
+                header('Location: index.php?c=empleado&a=ver&id=' . $idEmpleado, true, 303); // Aplica el patrón POST/Redirect/GET.
+                exit; // Detiene la solicitud tras completar la alternancia.
+            } // Finaliza la acción independiente de estado.
+            // Acepta únicamente el guardado de los demás campos administrativos.
+            if ($accionEmpleado !== 'actualizar_datos') { // Rechaza operaciones que no pertenecen a esta ficha.
+                // Informa que la solicitud no representa una acción válida de esta ficha.
+                http_response_code(400); // Rechaza cualquier operación fuera de la lista permitida.
+                // Detiene la solicitud antes de modificar cualquier columna.
+                exit('La acción solicitada no es válida.'); // Detiene el flujo antes de modificar datos.
+            } // Finaliza la validación de la acción de guardado.
+            // Recupera todos los datos administrativos que se guardan juntos desde el formulario.
+            $datosEdicion = [ // Conserva lo enviado para repoblar el formulario cuando haya errores.
+                'nombre' => trim(ValidacionFormulario::texto($_POST['nombre'] ?? null)), // Normaliza el nombre obligatorio.
+                'seg_nombre' => trim(ValidacionFormulario::texto($_POST['seg_nombre'] ?? null)), // Conserva el segundo nombre opcional.
+                'apellido_p' => trim(ValidacionFormulario::texto($_POST['apellido_p'] ?? null)), // Normaliza el apellido paterno obligatorio.
+                'apellido_m' => trim(ValidacionFormulario::texto($_POST['apellido_m'] ?? null)), // Conserva el apellido materno opcional.
+                'telefono' => trim(ValidacionFormulario::texto($_POST['telefono'] ?? null)), // Conserva el teléfono como texto.
+                'genero' => trim(ValidacionFormulario::texto($_POST['genero'] ?? null)), // Recupera el género seleccionado.
+                'usuario' => trim(ValidacionFormulario::texto($_POST['usuario'] ?? null)), // Recupera el usuario que identifica el acceso.
+                'curp' => strtoupper(trim(ValidacionFormulario::texto($_POST['curp'] ?? null))), // Normaliza la CURP para aplicar las mismas reglas del alta.
+                'rol' => trim(ValidacionFormulario::texto($_POST['rol'] ?? null)), // Recupera el rol que se asignará al empleado.
+            ]; // Finaliza la lectura de los datos editables.
+            // Define los roles que la aplicación permite asignar según el formulario de registro.
+            $rolesPermitidos = ['ADMINISTRADOR', 'VENTAS', 'ALMACEN', 'DISTRIBUCION', 'REPARTIDOR']; // Evita asignar valores ajenos al ENUM funcional.
+            // Busca otra cuenta con el mismo usuario sin marcar la cuenta editada como duplicada.
+            $usuarioExistente = $this->empleado->buscarPorUsuario($datosEdicion['usuario']); // Usa la consulta preparada del modelo.
+            // Comprueba si el usuario pertenece a un empleado distinto del objetivo.
+            $usuarioDuplicado = $usuarioExistente !== null && (int) ($usuarioExistente['id_empleado'] ?? 0) !== $idEmpleado; // Permite conservar el identificador actual.
+            // Busca una CURP repetida excluyendo el registro que se está editando.
+            $curpDuplicado = $this->empleado->buscarPorCurpExcluyendoId($datosEdicion['curp'], $idEmpleado); // Mantiene la unicidad al cambiar o conservar la CURP.
+            // Comprueba campos requeridos, formatos, listas permitidas y valores estrictos del estado.
+            $datosValidos = $datosEdicion['nombre'] !== '' && $datosEdicion['apellido_p'] !== '' && $datosEdicion['usuario'] !== '' && $datosEdicion['curp'] !== '' && $datosEdicion['telefono'] !== '' && $datosEdicion['rol'] !== '' && ValidacionFormulario::nombrePersona($datosEdicion['nombre']) && ValidacionFormulario::nombrePersona($datosEdicion['seg_nombre'], false) && ValidacionFormulario::nombrePersona($datosEdicion['apellido_p']) && ValidacionFormulario::nombrePersona($datosEdicion['apellido_m'], false) && ValidacionFormulario::telefono($datosEdicion['telefono']) && preg_match('/^[A-Za-z0-9._-]{3,50}$/D', $datosEdicion['usuario']) === 1 && ValidacionFormulario::curp($datosEdicion['curp']) && in_array($datosEdicion['rol'], $rolesPermitidos, true) && ($datosEdicion['genero'] === '' || in_array($datosEdicion['genero'], ['Masculino', 'Femenino', 'Otro'], true)) && !$usuarioDuplicado && !$curpDuplicado; // Replica en servidor las reglas del registro y evita duplicados.
+            // Rechaza cualquier dato incompleto, duplicado o con formato no permitido.
+            if (!$datosValidos) { // Impide persistir campos mal formados.
+                $mensajeValidacion = $usuarioDuplicado ? 'Ese nombre de usuario ya está registrado.' : ($curpDuplicado ? 'Esa CURP ya está registrada.' : 'Revisa nombre, apellidos, usuario, CURP, teléfono, rol y género.'); // Identifica duplicados y resume los campos que deben corregirse.
+                $avisoDetalle = ['tipo' => 'danger', 'mensaje' => $mensajeValidacion]; // Mantiene las entradas enviadas para que el administrador las corrija.
+            } else { // Continúa con la actualización administrativa integral.
+                // Intenta guardar todos los cambios validados en una sola sentencia del modelo.
+                try { // Controla errores de PDO sin afectar el flujo de autenticación.
+                    $datosActualizados = $this->empleado->actualizarDatosAdministrativos($idEmpleado, $datosEdicion); // Incluye el estado en el mismo guardado de datos y rol.
+                } catch (Throwable $excepcion) { // Mantiene los detalles técnicos fuera de la respuesta.
+                    error_log('Falló la edición administrativa de datos de empleado.'); // Registra un mensaje genérico.
+                    $datosActualizados = false; // Permite mostrar una alerta controlada.
+                } // Finaliza el manejo de errores de edición.
+                // Redirige tras guardar correctamente para evitar repetir el POST.
+                if ($datosActualizados) { // Confirma el cambio antes de redirigir.
+                    $_SESSION['avisoDetalle'] = ['tipo' => 'success', 'mensaje' => 'Datos de la cuenta actualizados.']; // Conserva una confirmación de una sola lectura.
+                    header('Location: index.php?c=empleado&a=ver&id=' . $idEmpleado, true, 303); // Vuelve a cargar la ficha desde la base.
+                    exit; // Detiene el procesamiento tras el redireccionamiento.
+                } // Finaliza la confirmación de edición.
+                // Presenta un mensaje seguro si el UPDATE no pudo completarse.
+                $avisoDetalle = ['tipo' => 'danger', 'mensaje' => 'No fue posible guardar los cambios; revisa que el usuario y la CURP no estén registrados en otra cuenta.']; // No revela el error interno del SGBD.
+            } // Finaliza la validación y persistencia de datos editables.
+        } // Finaliza el procesamiento POST de la ficha.
+        // Inicializa el formulario con la información vigente cuando no hubo datos enviados.
+        if ($datosEdicion === []) { // Conserva lo enviado si la validación mostró errores.
+            $datosEdicion = [ // Prepara los valores guardados para el formulario precargado.
+                'nombre' => (string) ($empleadoDetalle['nombre'] ?? ''), // Carga el nombre desde la fila encontrada.
+                'seg_nombre' => (string) ($empleadoDetalle['seg_nombre'] ?? ''), // Carga el segundo nombre si está disponible.
+                'apellido_p' => (string) ($empleadoDetalle['apellido_p'] ?? ''), // Carga el apellido paterno.
+                'apellido_m' => (string) ($empleadoDetalle['apellido_m'] ?? ''), // Carga el apellido materno.
+                'telefono' => (string) ($empleadoDetalle['telefono'] ?? ''), // Carga el teléfono guardado.
+                'genero' => (string) ($empleadoDetalle['genero'] ?? ''), // Carga el género guardado.
+                'usuario' => (string) ($empleadoDetalle['usuario'] ?? ''), // Carga el nombre de usuario registrado.
+                'curp' => (string) ($empleadoDetalle['curp'] ?? ''), // Carga la CURP vigente.
+                'rol' => (string) ($empleadoDetalle['rol'] ?? ''), // Carga el rol vigente.
+            ]; // Finaliza la preparación del formulario.
+        } // Finaliza la selección de valores de formulario.
+        // Compone el nombre para el encabezado de la ficha.
+        $nombreCompleto = trim(implode(' ', array_filter([(string) ($empleadoDetalle['nombre'] ?? ''), (string) ($empleadoDetalle['seg_nombre'] ?? ''), (string) ($empleadoDetalle['apellido_p'] ?? ''), (string) ($empleadoDetalle['apellido_m'] ?? '')]))); // Omite componentes vacíos.
         // Pasa la identidad administrativa al menú lateral de la vista.
         $usuarioSesion = $_SESSION['user']; // Usa exclusivamente la identidad autenticada.
-        // Renderiza una ficha de datos personales sin incluir la contraseña.
+        // Renderiza la ficha editable sin incluir la contraseña.
         require dirname(__DIR__) . '/views/empleados/detalle.php'; // Mantiene la presentación separada del controlador.
-    } // Finaliza la acción de consulta individual.
+    } // Finaliza la acción de ficha, edición y estado.
 
     // Carga los datos del perfil activo y procesa la actualización por el método POST.
     public function perfil(): void // Define el punto de entrada para que cualquier empleado autenticado gestione su perfil.
     { // Inicia la acción de perfil de usuario.
+        // Lee el rol desde la identidad autenticada y no desde los parámetros de la solicitud.
+        $rolPerfil = (string) ($_SESSION['user']['rol'] ?? ''); // Conserva el valor validado durante el inicio de sesión.
+        // Declara los roles autorizados para consultar y actualizar su propio perfil.
+        $rolesPerfilPermitidos = ['ALMACEN', 'VENTAS', 'ADMINISTRADOR', 'DISTRIBUCION', 'REPARTIDOR']; // Coincide con la visibilidad de Mi Perfil en la navegación.
+        // Rechaza perfiles cuyo rol no pertenece al conjunto operativo autorizado.
+        if (!in_array($rolPerfil, $rolesPerfilPermitidos, true)) { // Evita que un rol ajeno use la ruta aunque conozca su URL.
+            // Informa al navegador que la sesión no tiene permiso para acceder al perfil.
+            http_response_code(403); // Usa el estado HTTP estándar de acceso prohibido.
+            // Detiene la acción antes de consultar los datos personales de la cuenta.
+            exit('Acceso denegado: el rol no tiene acceso al perfil personal.'); // Mantiene la autorización del servidor alineada con el menú.
+        } // Finaliza la comprobación explícita de rol.
         // Obtiene el identificador numérico del empleado desde los datos de sesión activa.
         $idEmpleado = (int) ($_SESSION['user']['id_empleado'] ?? 0); // Localiza al usuario sin confiar en parámetros externos.
         // Inicializa el mensaje de alerta para la vista sin notificaciones previas.

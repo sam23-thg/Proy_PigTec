@@ -52,7 +52,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
     <link href="assets/css/paleta-rosa.css" rel="stylesheet">
     <!-- Carga la validación y selección de permisos desde un archivo JavaScript externo. -->
     <script src="assets/js/registro-empleados.js" defer></script>
-    <script src="assets/js/navegacion.js" defer></script>
+    <script src="assets/js/navegacion.js?v=menu-persistente-2" defer></script>
 <!-- Cierra la cabecera y sus recursos externos. -->
 </head>
 <!-- Inicia la pantalla administrativa de registro. -->
@@ -79,44 +79,7 @@ $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderiz
             <!-- Ofrece un acceso directo a la bienvenida del panel autenticado. -->
             <a class="enlace-inicio-navegacion" href="index.php" aria-label="Ir a la pantalla principal">⌂ <span>Inicio</span></a>
             <!-- Agrupa las opciones de control de personal disponibles para el administrador. -->
-            <nav class="mt-4" aria-label="Navegación del sistema">
-                <!-- Mantiene visibles los accesos de catálogo junto con los de seguridad. -->
-                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-catalogo">Catálogo e inventario</button>
-                <div class="grupo-navegacion-contenido is-open" id="menu-catalogo">
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=nuevo"><span>Registrar Producto</span></a>
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=producto&amp;a=editar"><span>Productos e Inventario</span></a>
-                <!-- Nombra la categoría de navegación del módulo. -->
-                </div>
-                <button class="boton-categoria-navegacion titulo-navegacion small fw-semibold text-uppercase" type="button" data-menu-desplegable aria-expanded="true" aria-controls="menu-seguridad">Seguridad y acceso</button>
-                <div class="grupo-navegacion-contenido is-open" id="menu-seguridad">
-                <!-- Limita la visibilidad de ambos enlaces a una sesión de rol ADMINISTRADOR exacto. -->
-                <?php if (isset($_SESSION['user']['rol']) && $_SESSION['user']['rol'] === 'ADMINISTRADOR'): ?>
-                    <!-- Enlaza a la lista de usuarios con el controlador y acción solicitados. -->
-                    <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=lista">
-                        <!-- Representa el acceso a la lista con un indicador visual sencillo. -->
-                        <!-- Identifica claramente la lista de cuentas. -->
-                        <span>Lista de Usuarios</span>
-                    <!-- Cierra el enlace a la lista. -->
-                    </a>
-                    <!-- Indica la sección actual de registro con el estado activo. -->
-                    <a class="enlace-navegacion activo d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=registro" aria-current="page">
-                        <!-- Representa el acceso de alta mediante un signo más. -->
-                        <!-- Nombra el formulario actual de incorporación. -->
-                        <span>Agregar Usuario</span>
-                    <!-- Cierra el enlace al formulario de registro. -->
-                    </a>
-                <!-- Finaliza la condición de visibilidad para roles que no sean administrador. -->
-                <?php endif; ?>
-                <!-- Enlaza al perfil del usuario autenticado disponible para cualquier rol. -->
-                <a class="enlace-navegacion d-flex align-items-center gap-2 rounded-3 px-3 py-2 text-decoration-none" href="index.php?c=empleado&amp;a=perfil">
-                    <!-- Representa la acción de perfil con un símbolo descriptivo. -->
-                    <!-- Identifica el acceso al perfil personal. -->
-                    <span>Mi Perfil</span>
-                <!-- Cierra el enlace al perfil. -->
-                </a>
-                </div>
-            <!-- Cierra la navegación lateral. -->
-            </nav>
+            <?php require dirname(__DIR__) . '/partials/menu_lateral.php'; ?>
             <!-- Presenta la identidad del administrador en el borde inferior del menú. -->
             <div class="sesion-empleado d-flex align-items-center gap-2 mt-auto pt-3">
                 <!-- Muestra las iniciales de la cuenta autenticada. -->

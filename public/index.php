@@ -24,6 +24,10 @@ $accionSolicitada = isset($_GET['a']) ? (string) $_GET['a'] : ''; // Evita depen
 $rutasPorControlador = [ // Evita despachar clases o métodos arbitrarios desde parámetros HTTP.
     'empleado' => ['lista' => 'empleados-lista', 'registro' => 'empleados-registro', 'perfil' => 'empleados-perfil', 'ver' => 'empleados-ver', 'restablecer' => 'empleados-restablecer'], // Mantiene las rutas de consulta y administración de empleados.
     'producto' => ['nuevo' => 'productos-nuevo', 'editar' => 'productos-editar'], // Registra las acciones del módulo de catálogo e inventarios.
+    'cliente' => ['registro' => 'clientes-registro', 'consulta' => 'clientes-consulta'], // Registra las pantallas separadas de alta y consulta de clientes.
+    'inventario' => ['catalogo' => 'inventario-catalogo'], // Registra la consulta de disponibilidad para el módulo de ventas.
+    'venta' => ['nueva' => 'ventas-nueva', 'nueva-cliente' => 'ventas-nueva-cliente', 'disponibilidad' => 'ventas-disponibilidad'], // Separa venta local, venta por cliente y consulta periódica de stock.
+    'pedido' => ['pendientes' => 'pedidos-pendientes', 'realizar' => 'pedidos-realizar'], // Registra la consulta y el cambio de estado de pedidos.
     'auth' => ['logout' => 'cerrar-sesion'], // Convierte el enlace de salida en una acción interna permitida.
 ]; // Finaliza el mapa permitido de alias MVC.
 // Resuelve los alias c=...&a=... o usa la ruta accion existente como alternativa.
@@ -184,6 +188,68 @@ try { // Permite presentar errores controlados si falla el SGBD o la configuraci
             $controladorProducto = new ProductoController(new Producto($conexion), new Inventario($conexion)); // Inyecta las dependencias con la conexión activa.
             $controladorProducto->editar(); // Busca el producto o procesa la actualización transaccional.
             break; // Finaliza el enrutamiento de la edición de producto.
+
+        case 'clientes-registro': // Atiende el formulario de alta autorizado para ventas y administración.
+            require_once dirname(__DIR__) . '/app/models/Cliente.php'; // Carga la capa de persistencia de clientes.
+            require_once dirname(__DIR__) . '/app/controllers/ClienteController.php'; // Carga la protección de acceso y el procesamiento del formulario.
+            $controladorCliente = new ClienteController(new Cliente($conexion)); // Comparte la conexión PDO ya configurada con el modelo.
+            $controladorCliente->registro(); // Presenta el formulario o procesa el alta.
+            break; // Finaliza el enrutamiento de clientes.
+
+        case 'clientes-consulta': // Atiende el listado y filtro de clientes autorizado para ventas y administración.
+            require_once dirname(__DIR__) . '/app/models/Cliente.php'; // Carga el modelo compartido por las acciones del módulo.
+            require_once dirname(__DIR__) . '/app/controllers/ClienteController.php'; // Carga el controlador que verifica el rol permitido.
+            $controladorCliente = new ClienteController(new Cliente($conexion)); // Inyecta la conexión PDO existente.
+            $controladorCliente->consulta(); // Renderiza la tabla de clientes completa o filtrada.
+            break; // Finaliza la ruta de consulta de clientes.
+
+        case 'inventario-catalogo': // Atiende la consulta de productos y existencias disponible para ventas.
+            require_once dirname(__DIR__) . '/app/models/Producto.php'; // Carga el método aislado de consulta de catálogo.
+            require_once dirname(__DIR__) . '/app/controllers/InventarioController.php'; // Carga la acción de catálogo con acceso de solo lectura.
+            $controladorInventario = new InventarioController(new Producto($conexion)); // Comparte la conexión PDO configurada por el enrutador.
+            $controladorInventario->catalogo(); // Consulta y presenta los productos con su stock.
+            break; // Finaliza la ruta de consulta del catálogo de ventas.
+
+        case 'ventas-nueva': // Atiende el punto de venta para los roles autorizados por su controlador.
+            require_once dirname(__DIR__) . '/app/models/Cliente.php'; // Carga la lectura de clientes disponibles para la venta.
+            require_once dirname(__DIR__) . '/app/models/Producto.php'; // Carga la lectura del catálogo con existencias.
+            require_once dirname(__DIR__) . '/app/models/Venta.php'; // Carga la persistencia transaccional de la venta.
+            require_once dirname(__DIR__) . '/app/controllers/VentaController.php'; // Carga la protección de rol y coordinación de la pantalla.
+            $controladorVenta = new VentaController(new Venta($conexion), new Cliente($conexion), new Producto($conexion)); // Comparte la conexión PDO existente con los modelos.
+            $controladorVenta->nueva(); // Presenta el formulario o procesa la nota enviada por POST.
+            break; // Finaliza el despacho del punto de venta.
+
+        case 'ventas-nueva-cliente': // Atiende la venta iniciada desde el perfil de un cliente.
+            require_once dirname(__DIR__) . '/app/models/Cliente.php'; // Carga el listado y perfil de clientes disponibles.
+            require_once dirname(__DIR__) . '/app/models/Producto.php'; // Carga la consulta del catálogo con existencias.
+            require_once dirname(__DIR__) . '/app/models/Venta.php'; // Carga la persistencia transaccional compartida.
+            require_once dirname(__DIR__) . '/app/controllers/VentaController.php'; // Carga las acciones protegidas del punto de venta.
+            $controladorVenta = new VentaController(new Venta($conexion), new Cliente($conexion), new Producto($conexion)); // Comparte la conexión PDO configurada por el sistema.
+            $controladorVenta->nuevaCliente(); // Presenta el mismo formulario con cliente fijo e información visible.
+            break; // Finaliza el despacho de venta para cliente específico.
+
+        case 'ventas-disponibilidad': // Atiende la consulta periódica de existencias desde el formulario de venta.
+            require_once dirname(__DIR__) . '/app/models/Cliente.php'; // Carga las dependencias que requiere el constructor protegido.
+            require_once dirname(__DIR__) . '/app/models/Producto.php'; // Carga la consulta de catálogo con existencias.
+            require_once dirname(__DIR__) . '/app/models/Venta.php'; // Carga el modelo requerido por el controlador compartido.
+            require_once dirname(__DIR__) . '/app/controllers/VentaController.php'; // Carga la autorización y la acción JSON.
+            $controladorVenta = new VentaController(new Venta($conexion), new Cliente($conexion), new Producto($conexion)); // Reutiliza la conexión PDO activa.
+            $controladorVenta->disponibilidad(); // Consulta y devuelve únicamente el stock vigente.
+            break; // Finaliza la respuesta del punto de venta.
+
+        case 'pedidos-pendientes': // Atiende la consulta de pedidos pendientes para almacén y administración.
+            require_once dirname(__DIR__) . '/app/models/Pedido.php'; // Carga el modelo que consulta pedido, venta y ticket.
+            require_once dirname(__DIR__) . '/app/controllers/PedidoController.php'; // Carga el controlador con validación estricta de rol.
+            $controladorPedido = new PedidoController(new Pedido($conexion)); // Inyecta la conexión PDO configurada por la aplicación.
+            $controladorPedido->pendientes(); // Consulta y muestra la lista ordenada por fecha.
+            break; // Finaliza el despacho de pedidos pendientes.
+
+        case 'pedidos-realizar': // Atiende el cambio protegido de un pedido abierto a realizado.
+            require_once dirname(__DIR__) . '/app/models/Pedido.php'; // Carga el modelo que actualiza el estado existente.
+            require_once dirname(__DIR__) . '/app/controllers/PedidoController.php'; // Carga la verificación de rol y token.
+            $controladorPedido = new PedidoController(new Pedido($conexion)); // Comparte la conexión PDO de la solicitud.
+            $controladorPedido->realizar(); // Procesa únicamente el pedido enviado mediante POST.
+            break; // Finaliza el despacho del cambio de estado.
 
         default: // Rechaza cualquier acción no incluida en esta sección del proyecto.
             http_response_code(404); // Informa que la ruta solicitada no está implementada.

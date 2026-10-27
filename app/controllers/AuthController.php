@@ -67,17 +67,17 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         $rolEmpleado = (string) $empleadoEncontrado['rol']; // Usa únicamente el rol almacenado en la base de datos.
         // Define las capacidades autorizadas para cada rol sin depender de tablas de permisos inexistentes.
         $permisosPorRol = [ // Mantiene el mapeo local y explícito para esta fase del sistema.
-            'ADMINISTRADOR' => ['gestionar_empleados', 'restablecer_password', 'ver_catalogo', 'editar_productos'], // Otorga al administrador las cuatro capacidades solicitadas.
+            'ADMINISTRADOR' => ['gestionar_empleados', 'restablecer_password', 'ver_catalogo', 'editar_productos', 'gestionar_clientes'], // Otorga al administrador las capacidades administrativas y de clientes.
             'ALMACEN' => ['ver_catalogo', 'editar_productos'], // Limita almacén a consultar y editar productos.
-            'VENTAS' => ['ver_catalogo'], // Permite a ventas consultar el catálogo sin modificar productos.
+            'VENTAS' => ['ver_catalogo', 'gestionar_clientes'], // Permite a todo el rol de ventas consultar y registrar clientes.
             'DISTRIBUCION' => ['ver_catalogo'], // Permite a distribución consultar el catálogo sin facultades administrativas.
             'REPARTIDOR' => ['ver_catalogo'], // Asigna al repartidor el permiso básico de consulta.
         ]; // Finaliza el mapeo estático de roles y permisos.
         // Obtiene los permisos correspondientes o no concede capacidades a roles no reconocidos.
         $permisosEmpleado = $permisosPorRol[$rolEmpleado] ?? []; // Aplica el principio de mínimo privilegio a roles desconocidos.
 
-        // Deniega la cuenta inactiva cuando el esquema dispone de una columna de estado.
-        if (array_key_exists('estado', $empleadoEncontrado) && (int) $empleadoEncontrado['estado'] !== 1) { // Conserva el bloqueo para esquemas con estado y acepta el esquema actual sin esa columna.
+        // Deniega la cuenta cuando sus credenciales son correctas pero estado vale cero.
+        if (array_key_exists('estado', $empleadoEncontrado) && (int) $empleadoEncontrado['estado'] === 0) { // Aplica el bloqueo sin cambiar la verificación de contraseña.
             $this->mostrarLogin('Cuenta desactivada. Contacte al administrador.', 'danger'); // Presenta el mensaje controlado requerido para cuentas inactivas.
             return; // No crea sesión para una cuenta inactiva.
         } // Finaliza la validación de estado de la cuenta.

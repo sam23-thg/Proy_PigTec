@@ -57,6 +57,17 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         return $consulta->fetchColumn() !== false; // Convierte la existencia de una fila en un resultado booleano.
     } // Finaliza la comprobación de CURP duplicado.
 
+    // Comprueba si otra cuenta, excluyendo la actual, ya utiliza la CURP indicada.
+    public function buscarPorCurpExcluyendoId(string $curp, int $idEmpleado): bool // Permite conservar la CURP de la cuenta editada.
+    { // Inicia la búsqueda de CURP en las demás cuentas.
+        // Prepara una consulta parametrizada que omite el identificador editado.
+        $consulta = $this->db->prepare('SELECT id_empleado FROM empleado WHERE curp = :curp AND id_empleado <> :id_empleado LIMIT 1'); // Evita marcar como duplicado el valor propio.
+        // Ejecuta la búsqueda con CURP y cuenta actual separados del SQL.
+        $consulta->execute([':curp' => $curp, ':id_empleado' => $idEmpleado]); // Mantiene segura la comparación de unicidad.
+        // Informa si otra cuenta tiene la misma CURP.
+        return $consulta->fetchColumn() !== false; // Devuelve falso cuando el valor está libre para esta cuenta.
+    } // Finaliza la comprobación de CURP en otras cuentas.
+
     // Busca un empleado por su identificador primario y devuelve sus columnas para el perfil.
     public function buscarPorId(int $id): ?array // Facilita la carga de datos del perfil por identificador de sesión.
     { // Inicia la búsqueda de un empleado por su clave primaria.
@@ -121,6 +132,26 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         ]); // Finaliza la ejecución parametrizada del UPDATE.
     } // Finaliza la actualización de datos personales.
 
+    // Actualiza los campos administrativos del formulario sin modificar el estado de la cuenta.
+    public function actualizarDatosAdministrativos(int $id, array $datos): bool // Recibe valores validados de los datos de la cuenta y su rol.
+    { // Inicia la actualización administrativa de datos generales.
+        // Prepara un UPDATE parametrizado para guardar los datos de la cuenta y el rol.
+        $consulta = $this->db->prepare('UPDATE empleado SET nombre = :nombre, seg_nombre = :seg_nombre, apellido_p = :apellido_p, apellido_m = :apellido_m, telefono = :telefono, genero = :genero, usuario = :usuario, curp = :curp, rol = :rol WHERE id_empleado = :id_empleado'); // Mantiene el estado fuera del guardado de los demás datos.
+        // Ejecuta la actualización con todos los valores ligados por parámetros.
+        return $consulta->execute([ // Deja que la base aplique toda la edición en un solo comando.
+            ':nombre' => (string) $datos['nombre'], // Actualiza el nombre requerido.
+            ':seg_nombre' => $datos['seg_nombre'] !== '' ? (string) $datos['seg_nombre'] : null, // Guarda NULL cuando no se captura segundo nombre.
+            ':apellido_p' => (string) $datos['apellido_p'], // Actualiza el apellido paterno requerido.
+            ':apellido_m' => $datos['apellido_m'] !== '' ? (string) $datos['apellido_m'] : null, // Guarda NULL cuando no se captura apellido materno.
+            ':telefono' => (string) $datos['telefono'], // Actualiza el teléfono validado como texto.
+            ':genero' => $datos['genero'] !== '' ? (string) $datos['genero'] : null, // Mantiene género opcional.
+            ':usuario' => (string) $datos['usuario'], // Actualiza el identificador de acceso validado.
+            ':curp' => (string) $datos['curp'], // Actualiza la CURP validada y normalizada.
+            ':rol' => (string) $datos['rol'], // Guarda únicamente uno de los roles admitidos.
+            ':id_empleado' => $id, // Limita el cambio a la cuenta que se está editando.
+        ]); // Finaliza el UPDATE parametrizado.
+    } // Finaliza la actualización administrativa de datos generales.
+
     // Cambia exclusivamente el hash de contraseña de la cuenta indicada.
     public function cambiarPassword(int $id, string $hash, bool $temporal = false): bool // Recibe el identificador, un hash y si debe forzarse su renovación.
     { // Inicia la actualización de credenciales.
@@ -133,6 +164,25 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
         ]); // Finaliza la ejecución parametrizada del cambio de contraseña.
         return $consulta->rowCount() === 1; // Solo confirma éxito cuando se actualizó la cuenta objetivo.
     } // Finaliza la actualización de credenciales.
+
+    // Actualiza exclusivamente el estado de acceso de la cuenta indicada.
+    public function actualizarEstadoCuenta(int $id, int $estado): bool // Recibe el identificador y el nuevo valor booleano.
+    { // Inicia la actualización controlada del estado.
+        // Rechaza identificadores o estados que no representen valores permitidos.
+        if ($id < 1 || !in_array($estado, [0, 1], true)) { // Limita la operación a una cuenta y estados válidos.
+            // Informa al controlador que no se ejecutó una actualización.
+            return false; // Evita que valores arbitrarios alcancen la base de datos.
+        } // Finaliza la validación de identificador y estado.
+        // Prepara una actualización que modifica únicamente la columna estado.
+        $consulta = $this->db->prepare('UPDATE empleado SET estado = :estado WHERE id_empleado = :id_empleado'); // Mantiene intactos los demás datos de la cuenta.
+        // Ejecuta la actualización mediante parámetros tipificados.
+        $consulta->execute([ // Impide que los valores alteren la instrucción SQL.
+            ':estado' => $estado, // Guarda 1 para activo o 0 para inactivo.
+            ':id_empleado' => $id, // Limita el cambio al identificador recibido.
+        ]); // Finaliza la ejecución parametrizada.
+        // Confirma que la fila objetivo exista aunque su estado ya tuviera el valor solicitado.
+        return $consulta->rowCount() === 1 || $this->buscarPorId($id) !== null; // Permite una alternancia idempotente en reenvíos.
+    } // Finaliza la actualización del estado de la cuenta.
 
     // Devuelve el listado de empleados sin exponer hashes de contraseñas.
     public function listarUsuarios(): array // Proporciona una colección asociativa con los datos de listado.
@@ -149,7 +199,7 @@ class Empleado // Representa las operaciones de persistencia de empleados del si
     public function listarTodos(): array // Devuelve los datos básicos de cada empleado en formato asociativo.
     { // Inicia la consulta que alimenta la vista de lista de empleados.
         // Prepara una consulta que excluye contrasenia y compone el nombre usando los campos reales del esquema.
-        $consulta = $this->db->prepare("SELECT id_empleado, CONCAT_WS(' ', nombre, NULLIF(seg_nombre, ''), apellido_p, NULLIF(apellido_m, '')) AS nombre_completo, usuario, rol, telefono FROM empleado ORDER BY id_empleado DESC"); // Omite la contraseña y presenta primero los registros recientes.
+        $consulta = $this->db->prepare("SELECT id_empleado, CONCAT_WS(' ', nombre, NULLIF(seg_nombre, ''), apellido_p, NULLIF(apellido_m, '')) AS nombre_completo, usuario, rol, telefono, estado FROM empleado ORDER BY id_empleado DESC"); // Omite la contraseña e incluye el estado visible de la cuenta.
         // Ejecuta la consulta preparada, aunque no reciba filtros externos.
         $consulta->execute(); // Conserva el uso de PDO preparado solicitado para esta operación.
         // Devuelve las filas de forma asociativa para que la vista escape cada valor al renderizarlo.

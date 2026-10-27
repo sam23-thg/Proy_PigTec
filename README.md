@@ -19,6 +19,28 @@ Aplicación web MVC para la gestión del sistema de la tocinería El Puerquito D
 - Los campos de texto respetan los límites de las columnas y los selectores de rol, género, categoría y unidad rechazan valores ajenos a sus opciones.
 - Las contraseñas nuevas requieren al menos 8 caracteres y se limitan a 72 bytes para evitar el truncamiento de BCRYPT.
 
+## Catálogo de ventas
+
+- La ruta `index.php?c=inventario&a=catalogo` muestra productos activos con inventario asociado a usuarios VENTAS y ADMINISTRADOR.
+- El catálogo consulta producto e inventario mediante una unión interna y filtra las filas en el navegador mientras se escribe.
+
+## Registro de ventas
+
+- La ruta `index.php?c=venta&a=nueva` presenta el punto de venta a usuarios VENTAS y ADMINISTRADOR.
+- La venta y sus artículos se guardan en una sola transacción PDO; los triggers existentes de la base de datos validan y actualizan el inventario al insertar cada detalle.
+- Si el trigger informa stock insuficiente con SQLSTATE `45000`, el sistema revierte la transacción y conserva el carrito para corregirlo.
+
+## Pedidos de almacén
+
+- La ruta `index.php?c=pedido&a=pendientes` muestra los pedidos en estado PENDIENTE o EN_PREPARACION a usuarios ALMACEN y ADMINISTRADOR.
+- Cada tarjeta presenta el folio y la fecha de venta, y despliega por producto los kilogramos que deben prepararse.
+
+## Control de cuentas de empleados
+
+- La ruta `index.php?c=empleado&a=lista` permite al administrador consultar, editar los datos personales y alternar el estado de las cuentas.
+- Las cuentas con `estado = 0` se identifican como inactivas y no pueden iniciar sesión; habilitarlas vuelve a permitir el acceso.
+- La ficha conserva usuario, CURP y rol como datos de solo lectura, y nunca muestra la contraseña.
+
 ## Requisitos de entorno
 
 - PHP 8 o posterior con PDO MySQL habilitado.
