@@ -22,12 +22,23 @@ dist/
 build/
 coverage/
 
+# Dependencias PHP instaladas localmente y ejecutables descargados
+/vendor/
+composer.phar
+
+# Cachés generadas por herramientas de análisis y formato de PHP
+.phpunit.result.cache
+.php-cs-fixer.cache
+
 # Temporales y registros de servidores locales
 *.log
 logs/
 tmp/
 temp/
 .phpunit.cache/
+php_errorlog
+error_log
+*.pid
 
 # Archivos de entorno y credenciales
 .env
