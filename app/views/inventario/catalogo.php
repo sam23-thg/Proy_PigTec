@@ -275,7 +275,7 @@ $tiposCorteCatalogo = array_values($tiposCorteCatalogo); // Mantiene el orden en
                         <!-- Cierra el contenedor responsivo. -->
                         </div>
                         <!-- Informa cuando el término escrito no coincide con ninguna fila. -->
-                        <p class="alert alert-warning mt-3 mb-0" data-mensaje-sin-resultados role="status" aria-live="polite" hidden>No se encontró ningún producto con ese nombre o tipo de corte.</p>
+                        <p class="alert alert-danger mt-3 mb-0" data-mensaje-sin-resultados role="status" aria-live="polite" hidden>No se encontró ningún producto con ese nombre o tipo de corte.</p>
                     <!-- Finaliza la selección entre catálogo vacío y tabla de productos. -->
                     <?php endif; ?>
                 <!-- Cierra el cuerpo de la tarjeta. -->

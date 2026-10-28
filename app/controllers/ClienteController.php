@@ -99,7 +99,7 @@ class ClienteController // Separa el flujo HTTP de las consultas PDO del modelo.
                     // Busca coincidencia exacta del nombre o teléfono antes de insertar.
                     if ($this->cliente->comprobarDuplicado($datosFormulario['nombre_razonsocial'], $datosFormulario['telefono'])) { // Aplica la regla de duplicidad solicitada.
                         $mensaje = 'El cliente ya existe.'; // Informa que alguno de los campos ya está registrado.
-                        $tipoAlerta = 'warning'; // Distingue una duplicidad de un fallo del sistema.
+                        $tipoAlerta = 'danger'; // Presenta el registro duplicado como un resultado negativo.
                     } else { // Inserta los datos únicamente cuando no hay coincidencias.
                         // Envía el registro validado al modelo PDO.
                         if ($this->cliente->registrar($datosFormulario)) { // Persiste los campos permitidos de cliente.
@@ -134,7 +134,7 @@ class ClienteController // Separa el flujo HTTP de las consultas PDO del modelo.
         // Inicializa el aviso que la vista puede mostrar por ausencia de coincidencias.
         $mensaje = ''; // No muestra alerta hasta que una búsqueda no tenga resultados.
         // Define la variante Bootstrap por omisión para posibles avisos.
-        $tipoAlerta = 'warning'; // Presenta una consulta sin coincidencias como advertencia.
+        $tipoAlerta = 'danger'; // Reserva el rojo para cualquier resultado de consulta sin coincidencias.
         // Recupera todos los registros para que el buscador pueda filtrarlos al escribir.
         $clientes = $this->cliente->listarTodos(); // Mantiene disponibles todas las filas cuando se limpia el filtro.
         // Lee el identificador opcional del cliente que la persona desea usar en una venta.

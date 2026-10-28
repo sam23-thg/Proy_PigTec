@@ -8,7 +8,7 @@ $sesionVista = isset($usuarioSesion) && is_array($usuarioSesion) ? $usuarioSesio
 // Normaliza el mensaje enviado por el controlador o usa una cadena vacía.
 $mensajeVista = isset($mensaje) ? (string) $mensaje : ''; // Prepara el texto de la alerta.
 // Normaliza la clase de alerta de Bootstrap permitiendo únicamente variantes seguras.
-$tipoAlertaVista = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'danger'; // Aplica estilo estándar.
+$tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para actualizaciones correctas y rojo para errores.
 // Define el diccionario de etiquetas legibles para los roles del ENUM del sistema.
 $etiquetasRoles = [ // Mantiene sincronizadas las etiquetas de visualización por rol.
     'ADMINISTRADOR' => 'Administrador', // Rol con privilegios totales.

@@ -48,7 +48,8 @@ $cuentaActiva = (int) ($empleadoDetalle['estado'] ?? 1) === 1; // Usa activo com
                 <!-- Presenta mensajes de validación o guardado sin insertar HTML dinámico. -->
                 <?php if (isset($avisoDetalle) && is_array($avisoDetalle)): ?>
                     <!-- Usa una alerta Bootstrap acorde al resultado del formulario. -->
-                    <div class="alert alert-<?= $escaparHtml((string) ($avisoDetalle['tipo'] ?? 'danger')) ?>" role="status"><?= $escaparHtml((string) ($avisoDetalle['mensaje'] ?? '')) ?></div>
+                    <?php $tipoAlertaDetalle = ($avisoDetalle['tipo'] ?? '') === 'success' ? 'success' : 'danger'; // Limita los resultados de edición a confirmación verde o error rojo. ?>
+                    <div class="alert alert-<?= $escaparHtml($tipoAlertaDetalle) ?>" role="status"><?= $escaparHtml((string) ($avisoDetalle['mensaje'] ?? '')) ?></div>
                 <!-- Finaliza la condición de aviso. -->
                 <?php endif; ?>
                 <!-- Identifica el formulario que permite modificar la cuenta seleccionada. -->

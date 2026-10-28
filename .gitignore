@@ -50,12 +50,30 @@ error_log
 *.old
 *.orig
 *.save
-# Carpetas locales solicitadas fuera del repositorio
-/database/
-/docs/
-/.vscode/
 
-# Instrucciones y configuración de agentes locales
+# Base de datos local con archivos generados o específicos del entorno
+/database/
+
+# Documentación ajena a los sprints mantenida fuera del repositorio
+/docs/*
+!/docs/sprint1/
+!/docs/sprint2/
+
+# Archivos de documentación del Sprint 1 que deben aparecer en Git
+/docs/sprint1/*
+!/docs/sprint1/architecture_context.md
+!/docs/sprint1/requirements.md
+!/docs/sprint1/tasks.md
+!/docs/sprint1/ui_design_guide.md
+
+# Archivos de documentación del Sprint 2 que deben aparecer en Git
+/docs/sprint2/*
+!/docs/sprint2/architecture_context.md
+!/docs/sprint2/requirements.md
+!/docs/sprint2/tasks.md
+!/docs/sprint2/ui_design_guide.md
+
+# Archivos de instrucciones y configuración local de agentes
 /agents.md
 /AGENTS.md
 /AGENT.md

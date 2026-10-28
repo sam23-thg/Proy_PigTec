@@ -10,7 +10,7 @@ $rolPedidoVista = (string) ($sesionPedidoVista['rol'] ?? ''); // No permite cont
 // Normaliza el aviso de actualización para presentarlo después de una redirección.
 $mensajePedidoVista = isset($mensajePedido) ? (string) $mensajePedido : ''; // Mantiene limpia la pantalla cuando no hay notificaciones.
 // Limita la clase de alerta a las variantes Bootstrap admitidas.
-$tipoAlertaPedidoVista = isset($tipoAlertaPedido) && in_array($tipoAlertaPedido, ['success', 'warning', 'danger'], true) ? $tipoAlertaPedido : 'success'; // Evita clases recibidas desde el navegador.
+$tipoAlertaPedidoVista = isset($tipoAlertaPedido) && $tipoAlertaPedido === 'success' ? 'success' : 'danger'; // Reserva verde para pedidos realizados y rojo para cambios fallidos.
 ?>
 <!-- Declara el documento HTML5 de consulta de pedidos. -->
 <!DOCTYPE html>

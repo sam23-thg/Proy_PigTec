@@ -6,7 +6,7 @@ $datosClienteVista = isset($datosFormulario) && is_array($datosFormulario) ? $da
 // Garantiza una lista de errores por campo preparada por el controlador.
 $erroresClienteVista = isset($erroresCampos) && is_array($erroresCampos) ? $erroresCampos : []; // Permite marcar cada entrada sin avisos de PHP.
 // Limita la variante de alerta a clases Bootstrap permitidas.
-$tipoAlertaCliente = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'danger'; // Evita clases arbitrarias.
+$tipoAlertaCliente = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para confirmaciones y rojo para errores.
 // Normaliza el mensaje mostrado junto al formulario.
 $mensajeCliente = isset($mensaje) ? (string) $mensaje : ''; // Permite cargar la vista sin notificación inicial.
 // Obtiene la identidad validada de la sesión para el menú común.

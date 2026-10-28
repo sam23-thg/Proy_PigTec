@@ -106,7 +106,8 @@ $etiquetasRoles = [ // Mantiene los nombres técnicos separados de los nombres v
             </header>
             <?php if (isset($avisoAdministrativo) && is_array($avisoAdministrativo)): ?>
                 <!-- Comunica el resultado de la acción administrativa que acaba de completarse. -->
-                <div class="alert alert-<?= $escaparHtml((string) ($avisoAdministrativo['tipo'] ?? 'danger')) ?>" role="status">
+                <?php $tipoAlertaAdministrativa = ($avisoAdministrativo['tipo'] ?? '') === 'success' ? 'success' : 'danger'; // Limita las respuestas administrativas a éxito verde o error rojo. ?>
+                <div class="alert alert-<?= $escaparHtml($tipoAlertaAdministrativa) ?>" role="status">
                     <p class="mb-1"><?= $escaparHtml((string) ($avisoAdministrativo['mensaje'] ?? '')) ?></p>
                     <?php if (!empty($avisoAdministrativo['contraseniaTemporal'])): ?>
                         <!-- Muestra por única vez al administrador la credencial que debe entregar al empleado. -->

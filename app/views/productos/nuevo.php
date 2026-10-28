@@ -8,7 +8,7 @@ $sesionVista = isset($usuarioSesion) && is_array($usuarioSesion) ? $usuarioSesio
 // Normaliza el mensaje enviado por el controlador o usa una cadena vacía.
 $mensajeVista = isset($mensaje) ? (string) $mensaje : ''; // Prepara el texto de la alerta.
 // Normaliza el tipo de alerta de Bootstrap permitiendo únicamente variantes seguras.
-$tipoAlertaVista = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'danger'; // Aplica estilo estándar.
+$tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para altas correctas y rojo para resultados negativos.
 // Define el listado de categorías disponibles para el catálogo comercial.
 $categoriasDisponibles = ['Cortes de Cerdo', 'Tocinería', 'Embutidos', 'Ahumados', 'Especialidades']; // Opciones de categoría en la vista.
 // Define las unidades de medida disponibles para la venta.

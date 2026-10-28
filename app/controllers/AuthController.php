@@ -48,7 +48,7 @@ class AuthController // Mantiene el procesamiento de credenciales fuera de las v
         } catch (Throwable $excepcion) { // Captura errores de conexión y consulta sin revelar detalles al navegador.
             error_log('Falló la consulta de una cuenta durante el inicio de sesión.'); // Registra información genérica sin credenciales.
             http_response_code(503); // Informa que el servicio de autenticación no está disponible por un fallo técnico.
-            $this->mostrarLogin('No fue posible conectar con el sistema. Inténtalo nuevamente más tarde.', 'warning'); // Expone un error de servicio, no detalles del servidor.
+            $this->mostrarLogin('No fue posible conectar con el sistema. Inténtalo nuevamente más tarde.', 'danger'); // Presenta el fallo del servicio con la alerta roja.
             return; // Finaliza el proceso sin crear sesión ni aceptar la contraseña.
         } // Finaliza el manejo controlado de errores PDO.
         // Detecta el marcador temporal sin modificar el hash BCRYPT que valida password_verify.

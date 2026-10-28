@@ -8,7 +8,7 @@ $terminoVista = isset($terminoBusqueda) ? (string) $terminoBusqueda : ''; // Man
 // Normaliza el aviso emitido por la acción de consulta.
 $mensajeVista = isset($mensaje) ? (string) $mensaje : ''; // Permite indicar cuando un filtro no encuentra resultados.
 // Restringe la variante de alerta a clases conocidas de Bootstrap.
-$tipoAlertaVista = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'warning'; // Evita clases controladas por datos externos.
+$tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para confirmaciones y rojo para resultados negativos.
 // Conserva los datos de la sesión ya autorizada para el menú lateral.
 $sesionClienteVista = isset($usuarioSesion) && is_array($usuarioSesion) ? $usuarioSesion : []; // Usa identidad validada por el controlador.
 // Conserva el cliente seleccionado únicamente cuando el controlador confirmó que existe.

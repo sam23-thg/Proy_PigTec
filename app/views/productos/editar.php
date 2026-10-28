@@ -10,7 +10,7 @@ $sesionVista = isset($usuarioSesion) && is_array($usuarioSesion) ? $usuarioSesio
 // Normaliza el mensaje del controlador o usa cadena vacía.
 $mensajeVista = isset($mensaje) ? (string) $mensaje : ''; // Prepara el texto de la alerta.
 // Normaliza el tipo de alerta de Bootstrap validando únicamente variantes seguras.
-$tipoAlertaVista = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'danger'; // Aplica estilo estándar.
+$tipoAlertaVista = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para cambios guardados y rojo para errores.
 // Recupera el rol autenticado para controlar la navegación según el rol.
 $rolSesion = (string) ($sesionVista['rol'] ?? ''); // Lee el rol de la sesión activa.
 // Determina si el producto seleccionado tiene estado activo para preseleccionar el interruptor.

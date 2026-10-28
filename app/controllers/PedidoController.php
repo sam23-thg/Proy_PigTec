@@ -40,7 +40,7 @@ class PedidoController // Coordina el rol autenticado, el modelo y la vista.
             // Recupera el mensaje temporal guardado por la acción de cambio de estado.
             $mensajePedido = (string) ($_SESSION['resultadoPedido']['mensaje'] ?? ''); // Muestra el resultado cerca del encabezado.
             // Limita la clase de alerta a valores permitidos.
-            $tipoAlertaPedido = in_array($_SESSION['resultadoPedido']['tipo'] ?? '', ['success', 'warning', 'danger'], true) ? (string) $_SESSION['resultadoPedido']['tipo'] : 'success'; // Evita clases controladas por una solicitud.
+            $tipoAlertaPedido = ($_SESSION['resultadoPedido']['tipo'] ?? '') === 'success' ? 'success' : 'danger'; // Usa verde solo para pedidos actualizados y rojo para resultados negativos.
             // Elimina la notificación después de leerla una vez.
             unset($_SESSION['resultadoPedido']); // Evita repetir el aviso en cargas posteriores.
         } // Finaliza la recuperación del resultado temporal.
@@ -87,7 +87,7 @@ class PedidoController // Coordina el rol autenticado, el modelo y la vista.
                 $_SESSION['resultadoPedido'] = ['tipo' => 'success', 'mensaje' => 'El pedido con folio #' . (int) ($folioPedido ?? $idPedido) . ' se marcó como Realizado.']; // Confirma la acción con el folio de venta.
             } else { // Atiende pedidos que ya no están abiertos o que no existen.
                 // Informa que otro proceso ya cambió el estado o que el pedido no está disponible.
-                $_SESSION['resultadoPedido'] = ['tipo' => 'warning', 'mensaje' => 'El pedido ya no está pendiente o no existe.']; // Evita fingir una actualización.
+                $_SESSION['resultadoPedido'] = ['tipo' => 'danger', 'mensaje' => 'El pedido ya no está pendiente o no existe.']; // Muestra en rojo que no se pudo realizar el cambio.
             } // Finaliza la preparación del resultado.
         } // Finaliza la validación y actualización del pedido.
         // Regresa al listado usando GET para evitar repetir la actualización al recargar.

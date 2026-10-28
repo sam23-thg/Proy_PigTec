@@ -118,7 +118,7 @@ class VentaController // Mantiene el flujo de venta separado de sus modelos y pl
             // Explica la configuración faltante si no existe un perfil para ventas locales.
             if ($clienteVentaSeleccionado === null) { // No inventa ni modifica clientes para iniciar una venta.
                 $mensaje = 'No se encontró el cliente Público General / Venta Mostrador. Regístralo para habilitar ventas locales.'; // Indica por qué no hay cliente fijo disponible.
-                $tipoAlerta = 'warning'; // Presenta el problema como configuración pendiente.
+                $tipoAlerta = 'danger'; // Presenta la falta de configuración como un resultado negativo.
                 $erroresCampos['id_cliente'] = 'No está disponible el perfil de Público General.'; // Asocia el aviso al bloque de cliente.
             } // Finaliza la notificación de perfil local faltante.
         } // Finaliza la resolución del cliente fijo.
@@ -130,7 +130,7 @@ class VentaController // Mantiene el flujo de venta separado de sus modelos y pl
             // Recupera el texto de confirmación o error guardado en sesión.
             $mensaje = (string) ($_SESSION['resultadoVenta']['mensaje'] ?? ''); // Conserva el resultado de la operación previa.
             // Limita la clase de alerta a opciones Bootstrap conocidas.
-            $tipoAlerta = in_array($_SESSION['resultadoVenta']['tipo'] ?? '', ['success', 'danger', 'warning', 'info'], true) ? (string) $_SESSION['resultadoVenta']['tipo'] : 'danger'; // Evita inyectar clases desde sesión.
+            $tipoAlerta = ($_SESSION['resultadoVenta']['tipo'] ?? '') === 'success' ? 'success' : 'danger'; // Muestra en verde solo confirmaciones y en rojo cualquier fallo.
             // Elimina el mensaje para que no vuelva a mostrarse en otra visita.
             unset($_SESSION['resultadoVenta']); // Consume la notificación temporal.
         } // Finaliza la lectura de mensajes de sesión.

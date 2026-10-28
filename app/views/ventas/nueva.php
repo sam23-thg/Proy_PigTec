@@ -12,7 +12,7 @@ $sesionVentaVista = isset($usuarioSesion) && is_array($usuarioSesion) ? $usuario
 // Lee el rol que controla los enlaces visibles en la navegación lateral.
 $rolVentaVista = (string) ($sesionVentaVista['rol'] ?? ''); // No obtiene permisos desde la solicitud HTTP.
 // Limita el tipo de alerta a variantes conocidas de Bootstrap.
-$tipoAlertaVenta = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'danger'; // Evita clases CSS arbitrarias.
+$tipoAlertaVenta = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para ventas confirmadas y rojo para resultados negativos.
 // Normaliza el mensaje del controlador antes de presentarlo.
 $mensajeVentaVista = isset($mensaje) ? (string) $mensaje : ''; // Mantiene la plantilla segura ante una carga inicial.
 // Serializa el carrito inicial para que JavaScript pueda reconstruirlo después de un error.

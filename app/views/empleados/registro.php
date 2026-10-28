@@ -23,7 +23,7 @@ $opcionesPermisos = [ // Usa las mismas claves estáticas que el controlador de 
     'editar_productos' => ['etiqueta' => 'Editar productos', 'roles' => ['ADMINISTRADOR', 'ALMACEN']], // Limita cambios del catálogo a administrador y almacén.
 ]; // Finaliza la definición de permisos para el formulario.
 // Normaliza el tipo de alerta recibido y limita sus variantes a clases conocidas de Bootstrap.
-$tipoAlertaRegistro = isset($tipoAlerta) && in_array($tipoAlerta, ['success', 'danger', 'warning', 'info'], true) ? $tipoAlerta : 'danger'; // Evita insertar clases arbitrarias en el atributo HTML.
+$tipoAlertaRegistro = isset($tipoAlerta) && $tipoAlerta === 'success' ? 'success' : 'danger'; // Reserva verde para registros correctos y rojo para resultados negativos.
 // Determina si el controlador ha preparado un mensaje para mostrar sobre el formulario.
 $mensajeRegistro = isset($mensaje) ? (string) $mensaje : ''; // Permite renderizar la vista sin alertas iniciales.
 ?>
