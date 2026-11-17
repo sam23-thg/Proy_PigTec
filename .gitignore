@@ -54,7 +54,24 @@ error_log
 # Base de datos local con archivos generados o específicos del entorno
 /database/
 
+# Documentación ajena a los sprints mantenida fuera del repositorio
+/doc/
+/doc/sprint1/
+/doc/sprint2/
 
+# Archivos de documentación del Sprint 1 que no deben aparecer en Git
+/doc/sprint1/*
+/doc/sprint1/architecture_context.md
+/doc/sprint1/requirements.md
+/doc/sprint1/tasks.md
+/doc/sprint1/ui_design_guide.md
+
+# Archivos de documentación del Sprint 2 que deben aparecer en Git
+/doc/sprint2/*
+/doc/sprint2/architecture_context.md
+/doc/sprint2/requirements.md
+/doc/sprint2/tasks.md
+/doc/sprint2/ui_design_guide.md
 
 # Archivos de instrucciones y configuración local de agentes
 /agents.md
